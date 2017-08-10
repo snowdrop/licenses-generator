@@ -1,0 +1,6 @@
+.idea
+*.iml
+*.zip
+*-maven-repository
+build.metadata
+target
