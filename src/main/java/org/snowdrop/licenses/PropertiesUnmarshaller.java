@@ -35,16 +35,8 @@ public class PropertiesUnmarshaller {
     private final Unmarshaller unmarshaller;
 
     public PropertiesUnmarshaller() throws JAXBException {
-        this(JAXBContext.newInstance(Property.class));
-    }
-
-    public PropertiesUnmarshaller(JAXBContext context) throws JAXBException {
-        this(context, context.createUnmarshaller());
-    }
-
-    public PropertiesUnmarshaller(JAXBContext context, Unmarshaller unmarshaller) {
-        this.context = context;
-        this.unmarshaller = unmarshaller;
+        this.context = JAXBContext.newInstance(Property.class);
+        this.unmarshaller = this.context.createUnmarshaller();
     }
 
     public List<Property> unmarshal(XMLStreamReader reader) throws JAXBException, XMLStreamException {

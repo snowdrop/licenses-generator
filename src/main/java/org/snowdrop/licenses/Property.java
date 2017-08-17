@@ -16,6 +16,8 @@
 
 package org.snowdrop.licenses;
 
+import java.util.Objects;
+
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
@@ -26,6 +28,8 @@ public class Property {
     private final String value;
 
     public Property(String key, String value) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
         this.key = key;
         this.value = value;
     }
@@ -44,5 +48,29 @@ public class Property {
                 "key='" + key + '\'' +
                 ", value='" + value + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Property property = (Property) o;
+
+        if (key != null ? !key.equals(property.key) : property.key != null) {
+            return false;
+        }
+        return value != null ? value.equals(property.value) : property.value == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key != null ? key.hashCode() : 0;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        return result;
     }
 }
