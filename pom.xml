@@ -19,23 +19,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.jboss.snowdrop</groupId>
-    <artifactId>spring-boot-1.4-bom</artifactId>
-    <version>2.0.0.redhat-15</version>
-  </parent>
-
   <groupId>org.jboss.snowdrop</groupId>
   <artifactId>licenses-generator</artifactId>
   <version>1.0</version>
-
-  <properties>
-    <templates.dir>${project.basedir}/src/main/resources/templates</templates.dir>
-    <licenses.dir>${project.basedir}/src/main/resources/licenses</licenses.dir>
-
-    <license-maven-plugin.version>1.13</license-maven-plugin.version>
-    <xml-maven-plugin.version>1.0.1</xml-maven-plugin.version>
-  </properties>
 
   <repositories>
     <repository>
@@ -46,115 +32,91 @@
   </repositories>
 
   <dependencies>
-    <!-- TODO add dependencies which should be included in licenses.xml generation -->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.2.11</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-aether</artifactId>
+      <version>0.10.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>3.0.5</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonatype.aether</groupId>
+          <artifactId>aether-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-plexus</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>3.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.sisu</groupId>
+      <artifactId>sisu-inject-plexus</artifactId>
+      <version>2.3.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-bean</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-settings</artifactId>
+      <version>3.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-settings-builder</artifactId>
+      <version>3.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.8.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
+        <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <filesets>
-            <fileset>
-              <directory>${licenses.dir}</directory>
-            </fileset>
-          </filesets>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <version>${license-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>generate-initial-licenses</id>
-            <goals>
-              <goal>aggregate-download-licenses</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <licensesOutputFile>${project.build.directory}/licenses.xml</licensesOutputFile>
-              <offline>true</offline>
-            </configuration>
-          </execution>
-          <execution>
-            <id>download-licenses</id>
-            <goals>
-              <goal>aggregate-download-licenses</goal>
-            </goals>
-            <phase>process-resources</phase>
-            <configuration>
-              <licensesConfigFile>${project.build.directory}/licenses.xml</licensesConfigFile>
-              <licensesOutputFile>${licenses.dir}/licenses.xml</licensesOutputFile>
-              <licensesOutputDirectory>${licenses.dir}/content</licensesOutputDirectory>
-              <sortByGroupIdAndArtifactId>true</sortByGroupIdAndArtifactId>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>xml-maven-plugin</artifactId>
-        <version>${xml-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>fix-licenses</id>
-            <goals>
-              <goal>transform</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <transformationSets>
-                <transformationSet>
-                  <dir>${project.build.directory}</dir>
-                  <includes>
-                    <include>licenses.xml</include>
-                  </includes>
-                  <stylesheet>${templates.dir}/licenses-fix.xsl</stylesheet>
-                  <outputDir>${project.build.directory}</outputDir>
-                  <fileMappers>
-                    <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                      <targetExtension>.xml</targetExtension>
-                    </fileMapper>
-                  </fileMappers>
-                </transformationSet>
-              </transformationSets>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate-licenses-html</id>
-            <goals>
-              <goal>transform</goal>
-            </goals>
-            <phase>process-resources</phase>
-            <configuration>
-              <transformationSets>
-                <transformationSet>
-                  <dir>${project.build.directory}</dir>
-                  <includes>
-                    <include>licenses.xml</include>
-                  </includes>
-                  <stylesheet>${templates.dir}/licenses.xsl</stylesheet>
-                  <outputDir>${licenses.dir}</outputDir>
-                  <fileMappers>
-                    <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                      <targetExtension>.html</targetExtension>
-                    </fileMapper>
-                  </fileMappers>
-                  <parameters>
-                    <parameter>
-                      <name>product</name>
-                      <value>${parent.artifactId}:${parent.version}</value>
-                    </parameter>
-                  </parameters>
-                </transformationSet>
-              </transformationSets>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
