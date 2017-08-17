@@ -22,10 +22,10 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,12 +34,23 @@ import java.util.stream.Stream;
  */
 public final class DependencyUtils {
 
+    // TODO make configurable
+    private static final List<RemoteRepository> REPOSITORIES = Arrays.asList(
+            new RemoteRepository("maven-central", "default", "http://repo1.maven.org/maven2/"),
+            new RemoteRepository("indy", "default",
+                    "http://indy.cloud.pnc.engineering.redhat.com/api/group/builds-untested+shared-imports+public"));
+
+    private final Logger logger = Logger.getLogger(DependencyUtils.class.getSimpleName());
+
     public List<Dependency> replaceVersionsWithProperties(List<Dependency> dependencies, Properties properties) {
         List<Dependency> fixedDependencies = new ArrayList<>(dependencies.size());
         for (Dependency dependency : dependencies) {
             if (isPropertyString(dependency.getVersion())) {
-                fixedDependencies.add(replaceVersionWithProperty(dependency, properties));
+                Dependency fixedDependency = replaceVersionWithProperty(dependency, properties);
+                logger.fine(String.format("Fixed %s to %s", dependency, fixedDependency));
+                fixedDependencies.add(fixedDependency);
             } else {
+                logger.fine(String.format("Did not fix %s", dependency));
                 fixedDependencies.add(dependency);
             }
         }
@@ -49,19 +60,21 @@ public final class DependencyUtils {
     public List<Dependency> getTransitiveDependencies(List<Dependency> dependencies) {
         // TODO refactor
         File local = new File("target/local-repository");
-        Collection<RemoteRepository> remotes = Collections.singletonList(
-                new RemoteRepository("maven-central", "default", "http://repo1.maven.org/maven2/"));
-        Aether aether = new Aether(remotes, local);
+        Aether aether = new Aether(REPOSITORIES, local);
 
         return dependencies.stream()
                 .flatMap(d -> {
                     try {
-                        return aether.resolve(d.toArtifact(), "runtime").stream();
+                        logger.fine(String.format("Getting transitive dependencies for %s", d));
+                        return aether.resolve(d.toArtifact(), "runtime")
+                                .stream();
                     } catch (DependencyResolutionException e) {
-                        e.printStackTrace();
+                        logger.warning(
+                                String.format("Failed to get transitive dependencies for %s: %s", d, e.getMessage()));
                         return Stream.empty();
                     }
-                }).map(Dependency::new)
+                })
+                .map(Dependency::new)
                 .collect(Collectors.toList());
     }
 
