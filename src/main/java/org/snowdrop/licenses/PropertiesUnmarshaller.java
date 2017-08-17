@@ -22,8 +22,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -35,12 +35,12 @@ public class PropertiesUnmarshaller {
     private final Unmarshaller unmarshaller;
 
     public PropertiesUnmarshaller() throws JAXBException {
-        this.context = JAXBContext.newInstance(Property.class);
+        this.context = JAXBContext.newInstance(SimpleEntry.class);
         this.unmarshaller = this.context.createUnmarshaller();
     }
 
-    public List<Property> unmarshal(XMLStreamReader reader) throws JAXBException, XMLStreamException {
-        List<Property> properties = new ArrayList<>();
+    public Properties unmarshal(XMLStreamReader reader) throws JAXBException, XMLStreamException {
+        Properties properties = new Properties();
 
         if (!reader.hasNext() || !reader.isStartElement() || !"properties".equals(reader.getLocalName())) {
             return properties;
@@ -55,7 +55,7 @@ public class PropertiesUnmarshaller {
                 String key = reader.getLocalName();
                 if (reader.next() == XMLStreamConstants.CHARACTERS) {
                     String value = reader.getText();
-                    properties.add(new Property(key, value));
+                    properties.put(key, value);
                 }
             }
         }

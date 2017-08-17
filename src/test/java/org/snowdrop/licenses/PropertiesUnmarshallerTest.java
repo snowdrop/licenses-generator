@@ -8,7 +8,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
-import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,10 +39,10 @@ public class PropertiesUnmarshallerTest {
         XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(stringReader);
 
         xmlStreamReader.next();
-        List<Property> properties = unmarshaller.unmarshal(xmlStreamReader);
+        Properties properties = unmarshaller.unmarshal(xmlStreamReader);
 
-        assertThat(properties).containsExactly(new Property("testProperty1", "testValue1"),
-                new Property("testProperty2", "testValue2"));
+        assertThat(properties).containsExactly(new SimpleEntry<>("testProperty1", "testValue1"),
+                new SimpleEntry<>("testProperty2", "testValue2"));
     }
 
     @Test
