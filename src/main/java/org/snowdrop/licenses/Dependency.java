@@ -31,7 +31,7 @@ public class Dependency {
 
     private String version;
 
-    private String scope;
+    private String type;
 
     private String classifier;
 
@@ -44,11 +44,11 @@ public class Dependency {
         this.version = version;
     }
 
-    public Dependency(String groupId, String artifactId, String version, String scope, String classifier) {
+    public Dependency(String groupId, String artifactId, String version, String type, String classifier) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
-        this.scope = scope;
+        this.type = type;
         this.classifier = classifier;
     }
 
@@ -79,13 +79,13 @@ public class Dependency {
         this.version = version;
     }
 
-    public String getScope() {
-        return scope;
+    public String getType() {
+        return type;
     }
 
     @XmlElement
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getClassifier() {
@@ -99,13 +99,8 @@ public class Dependency {
 
     @Override
     public String toString() {
-        return "Dependency{" +
-                "groupId='" + groupId + '\'' +
-                ", artifactId='" + artifactId + '\'' +
-                ", version='" + version + '\'' +
-                ", scope='" + scope + '\'' +
-                ", classifier='" + classifier + '\'' +
-                '}';
+        return String.format("%s{groupId='%s', artifactId='%s', version='%s', type='%s', classifier='%s'}",
+                Dependency.class.getSimpleName(), groupId, artifactId, version, type, classifier);
     }
 
     @Override
@@ -128,7 +123,7 @@ public class Dependency {
         if (version != null ? !version.equals(that.version) : that.version != null) {
             return false;
         }
-        if (scope != null ? !scope.equals(that.scope) : that.scope != null) {
+        if (type != null ? !type.equals(that.type) : that.type != null) {
             return false;
         }
         return classifier != null ? classifier.equals(that.classifier) : that.classifier == null;
@@ -139,7 +134,7 @@ public class Dependency {
         int result = groupId != null ? groupId.hashCode() : 0;
         result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (classifier != null ? classifier.hashCode() : 0);
         return result;
     }

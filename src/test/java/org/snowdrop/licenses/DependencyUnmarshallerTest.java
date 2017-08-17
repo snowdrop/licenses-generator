@@ -1,6 +1,5 @@
 package org.snowdrop.licenses;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,14 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DependencyUnmarshallerTest {
 
-    private static final String TEST_DEPENDENCY = "<dependency>"
-            + "<groupId>testGroup</groupId>"
-            + "<artifactId>testArtifact</artifactId>"
-            + "<version>testVersion</version>"
-            + "<scope>testScope</scope>"
-            + "<classifier>testClassifier</classifier>"
-            + "</dependency>";
-
     private DependencyUnmarshaller unmarshaller;
 
     private XMLInputFactory xmlInputFactory;
@@ -36,8 +27,25 @@ public class DependencyUnmarshallerTest {
     }
 
     @Test
-    public void shouldUnmarshallDependency() throws XMLStreamException, JAXBException {
-        StringReader stringReader = new StringReader(TEST_DEPENDENCY);
+    public void shouldUnmarshallDependencyWithExtraFields() throws XMLStreamException, JAXBException {
+        String dependencyString = "<dependency>"
+                + "<groupId>testGroup</groupId>"
+                + "<artifactId>testArtifact</artifactId>"
+                + "<version>testVersion</version>"
+                + "<type>testType</type>"
+                + "<scope>testScope</scope>"
+                + "<optional>true</optional>"
+                + "<classifier>testClassifier</classifier>"
+                + "<systemPath>testSystemPath</systemPath>"
+                + "<exclusions>"
+                + "<exclusion>"
+                + "<groupId>testExclusionGroup</groupId>"
+                + "<artifactId>testExclusionArtifact</artifactId>"
+                + "</exclusion>"
+                + "</exclusions>"
+                + "</dependency>";
+
+        StringReader stringReader = new StringReader(dependencyString);
         XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(stringReader);
 
         xmlStreamReader.next();
@@ -46,8 +54,28 @@ public class DependencyUnmarshallerTest {
         assertThat(dependency.getGroupId()).isEqualTo("testGroup");
         assertThat(dependency.getArtifactId()).isEqualTo("testArtifact");
         assertThat(dependency.getVersion()).isEqualTo("testVersion");
-        assertThat(dependency.getScope()).isEqualTo("testScope");
+        assertThat(dependency.getType()).isEqualTo("testType");
         assertThat(dependency.getClassifier()).isEqualTo("testClassifier");
+    }
+
+    @Test
+    public void shouldUnmarshallDependencyWithMissingFields() throws XMLStreamException, JAXBException {
+        String dependencyString = "<dependency>"
+                + "<groupId>testGroup</groupId>"
+                + "<artifactId>testArtifact</artifactId>"
+                + "</dependency>";
+
+        StringReader stringReader = new StringReader(dependencyString);
+        XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(stringReader);
+
+        xmlStreamReader.next();
+        Dependency dependency = unmarshaller.unmarshal(xmlStreamReader);
+
+        assertThat(dependency.getGroupId()).isEqualTo("testGroup");
+        assertThat(dependency.getArtifactId()).isEqualTo("testArtifact");
+        assertThat(dependency.getVersion()).isNull();
+        assertThat(dependency.getType()).isNull();
+        assertThat(dependency.getClassifier()).isNull();
     }
 
     @Test

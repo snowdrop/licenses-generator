@@ -42,7 +42,7 @@ public final class DependencyUtils {
         String key = version.substring(2, version.length() - 1);
         String fixedVersion = properties.getProperty(key, version);
 
-        return new Dependency(dependency.getGroupId(), dependency.getArtifactId(), fixedVersion, dependency.getScope(),
+        return new Dependency(dependency.getGroupId(), dependency.getArtifactId(), fixedVersion, dependency.getType(),
                 dependency.getClassifier());
     }
 
