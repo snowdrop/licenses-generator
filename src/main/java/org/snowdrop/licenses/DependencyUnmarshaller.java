@@ -31,16 +31,8 @@ public class DependencyUnmarshaller {
     private final Unmarshaller unmarshaller;
 
     public DependencyUnmarshaller() throws JAXBException {
-        this(JAXBContext.newInstance(Dependency.class));
-    }
-
-    public DependencyUnmarshaller(JAXBContext context) throws JAXBException {
-        this(context, context.createUnmarshaller());
-    }
-
-    public DependencyUnmarshaller(JAXBContext context, Unmarshaller unmarshaller) {
-        this.context = context;
-        this.unmarshaller = unmarshaller;
+        this.context = JAXBContext.newInstance(Dependency.class);
+        this.unmarshaller = this.context.createUnmarshaller();
     }
 
     public Dependency unmarshal(XMLStreamReader reader) throws JAXBException {
