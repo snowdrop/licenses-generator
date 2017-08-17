@@ -107,4 +107,40 @@ public class Dependency {
                 ", classifier='" + classifier + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Dependency that = (Dependency) o;
+
+        if (groupId != null ? !groupId.equals(that.groupId) : that.groupId != null) {
+            return false;
+        }
+        if (artifactId != null ? !artifactId.equals(that.artifactId) : that.artifactId != null) {
+            return false;
+        }
+        if (version != null ? !version.equals(that.version) : that.version != null) {
+            return false;
+        }
+        if (scope != null ? !scope.equals(that.scope) : that.scope != null) {
+            return false;
+        }
+        return classifier != null ? classifier.equals(that.classifier) : that.classifier == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = groupId != null ? groupId.hashCode() : 0;
+        result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (scope != null ? scope.hashCode() : 0);
+        result = 31 * result + (classifier != null ? classifier.hashCode() : 0);
+        return result;
+    }
 }
