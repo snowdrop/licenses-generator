@@ -43,4 +43,16 @@ public class DependencyUtilsTest {
         assertThat(fixedDependencies).containsExactly(dependency);
     }
 
+    @Test
+    public void shouldGetTransitiveDependencies() {
+        Dependency junitDependency = new Dependency("junit", "junit", "4.12", "jar", "");
+        Dependency hamcrestDependency = new Dependency("org.hamcrest", "hamcrest-core", "1.3", "jar", "");
+        DependencyUtils utils = new DependencyUtils();
+
+        List<Dependency> actualDependencies =
+                utils.getTransitiveDependencies(Collections.singletonList(junitDependency));
+
+        assertThat(actualDependencies).containsExactly(junitDependency, hamcrestDependency);
+    }
+
 }

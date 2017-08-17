@@ -16,6 +16,9 @@
 
 package org.snowdrop.licenses;
 
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -50,6 +53,11 @@ public class Dependency {
         this.version = version;
         this.type = type;
         this.classifier = classifier;
+    }
+
+    public Dependency(Artifact artifact) {
+        this(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), artifact.getExtension(),
+                artifact.getClassifier());
     }
 
     public String getGroupId() {
@@ -95,6 +103,10 @@ public class Dependency {
     @XmlElement
     public void setClassifier(String classifier) {
         this.classifier = classifier;
+    }
+
+    public Artifact toArtifact() {
+        return new DefaultArtifact(groupId, artifactId, classifier, type, version);
     }
 
     @Override

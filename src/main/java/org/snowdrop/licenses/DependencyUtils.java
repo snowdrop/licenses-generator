@@ -16,9 +16,18 @@
 
 package org.snowdrop.licenses;
 
+import com.jcabi.aether.Aether;
+import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.DependencyResolutionException;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -35,6 +44,25 @@ public final class DependencyUtils {
             }
         }
         return fixedDependencies;
+    }
+
+    public List<Dependency> getTransitiveDependencies(List<Dependency> dependencies) {
+        // TODO refactor
+        File local = new File("target/local-repository");
+        Collection<RemoteRepository> remotes = Collections.singletonList(
+                new RemoteRepository("maven-central", "default", "http://repo1.maven.org/maven2/"));
+        Aether aether = new Aether(remotes, local);
+
+        return dependencies.stream()
+                .flatMap(d -> {
+                    try {
+                        return aether.resolve(d.toArtifact(), "runtime").stream();
+                    } catch (DependencyResolutionException e) {
+                        e.printStackTrace();
+                        return Stream.empty();
+                    }
+                }).map(Dependency::new)
+                .collect(Collectors.toList());
     }
 
     private Dependency replaceVersionWithProperty(Dependency dependency, Properties properties) {
