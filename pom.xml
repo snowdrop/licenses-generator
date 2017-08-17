@@ -23,14 +23,6 @@
   <artifactId>licenses-generator</artifactId>
   <version>1.0</version>
 
-  <repositories>
-    <repository>
-      <id>indy-untested-builds</id>
-      <name>Indy Untested Builds</name>
-      <url>http://indy.cloud.pnc.engineering.redhat.com/api/group/builds-untested+shared-imports+public</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>javax.xml.bind</groupId>
