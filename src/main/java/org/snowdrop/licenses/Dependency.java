@@ -39,12 +39,14 @@ public class Dependency {
     private String classifier;
 
     public Dependency() {
+        this.type = "jar";
     }
 
     public Dependency(String groupId, String artifactId, String version) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+        this.type = "jar";
     }
 
     public Dependency(String groupId, String artifactId, String version, String type, String classifier) {
@@ -111,8 +113,7 @@ public class Dependency {
 
     @Override
     public String toString() {
-        return String.format("%s{groupId='%s', artifactId='%s', version='%s', type='%s', classifier='%s'}",
-                Dependency.class.getSimpleName(), groupId, artifactId, version, type, classifier);
+        return String.format("%s:%s:%s:%s:%s", groupId, artifactId, version, type, classifier);
     }
 
     @Override
