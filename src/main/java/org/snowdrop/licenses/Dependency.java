@@ -35,6 +35,23 @@ public class Dependency {
 
     private String classifier;
 
+    public Dependency() {
+    }
+
+    public Dependency(String groupId, String artifactId, String version) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+    }
+
+    public Dependency(String groupId, String artifactId, String version, String scope, String classifier) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.scope = scope;
+        this.classifier = classifier;
+    }
+
     public String getGroupId() {
         return groupId;
     }
