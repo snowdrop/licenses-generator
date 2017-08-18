@@ -23,7 +23,32 @@
   <artifactId>licenses-generator</artifactId>
   <version>1.0</version>
 
+  <repositories>
+    <repository>
+      <id>jenkins-ci-releases</id>
+      <url>http://repo.jenkins-ci.org/releases/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
+    <!-- Maven Embedder -->
+    <dependency>
+      <groupId>org.jenkins-ci.lib</groupId>
+      <artifactId>lib-jenkins-maven-embedder</artifactId>
+      <version>3.12.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-transport-http</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
+    <!-- JAXB -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
@@ -40,52 +65,7 @@
       <version>2.2.11</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.jcabi</groupId>
-      <artifactId>jcabi-aether</artifactId>
-      <version>0.10.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>3.0.5</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.sonatype.aether</groupId>
-          <artifactId>aether-impl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.sonatype.sisu</groupId>
-          <artifactId>sisu-inject-plexus</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>3.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.sisu</groupId>
-      <artifactId>sisu-inject-plexus</artifactId>
-      <version>2.3.4</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.sonatype.sisu</groupId>
-          <artifactId>sisu-inject-bean</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-settings</artifactId>
-      <version>3.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-settings-builder</artifactId>
-      <version>3.0.5</version>
-    </dependency>
+    <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -96,6 +76,12 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.8.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>2.8.47</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
