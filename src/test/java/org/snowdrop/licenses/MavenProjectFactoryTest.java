@@ -26,8 +26,6 @@ import static org.mockito.Mockito.when;
  */
 public class MavenProjectFactoryTest {
 
-    private static final String REMOTE_REPOSITORY_NAME = "Indy";
-
     @Mock
     private ArtifactHandler mockArtifactHandler;
 
