@@ -16,9 +16,6 @@
 
 package org.snowdrop.licenses;
 
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,6 +33,8 @@ public class Dependency {
 
     private String type;
 
+    private String scope;
+
     private String classifier;
 
     public Dependency() {
@@ -49,17 +48,13 @@ public class Dependency {
         this.type = "jar";
     }
 
-    public Dependency(String groupId, String artifactId, String version, String type, String classifier) {
+    public Dependency(String groupId, String artifactId, String version, String type, String scope, String classifier) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
         this.type = type;
+        this.scope = scope;
         this.classifier = classifier;
-    }
-
-    public Dependency(Artifact artifact) {
-        this(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), artifact.getExtension(),
-                artifact.getClassifier());
     }
 
     public String getGroupId() {
@@ -98,6 +93,15 @@ public class Dependency {
         this.type = type;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
+    @XmlElement
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
     public String getClassifier() {
         return classifier;
     }
@@ -105,10 +109,6 @@ public class Dependency {
     @XmlElement
     public void setClassifier(String classifier) {
         this.classifier = classifier;
-    }
-
-    public Artifact toArtifact() {
-        return new DefaultArtifact(groupId, artifactId, classifier, type, version);
     }
 
     @Override
@@ -139,6 +139,9 @@ public class Dependency {
         if (type != null ? !type.equals(that.type) : that.type != null) {
             return false;
         }
+        if (scope != null ? !scope.equals(that.scope) : that.scope != null) {
+            return false;
+        }
         return classifier != null ? classifier.equals(that.classifier) : that.classifier == null;
     }
 
@@ -148,6 +151,7 @@ public class Dependency {
         result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (scope != null ? scope.hashCode() : 0);
         result = 31 * result + (classifier != null ? classifier.hashCode() : 0);
         return result;
     }
