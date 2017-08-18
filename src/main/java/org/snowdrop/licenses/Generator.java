@@ -16,45 +16,13 @@
 
 package org.snowdrop.licenses;
 
-import org.sonatype.aether.resolution.DependencyResolutionException;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.stream.StreamSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class Generator {
 
-    public static void main(String... args) throws DependencyResolutionException, JAXBException, XMLStreamException {
-        XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
-        StreamSource streamSource = new StreamSource("src/test/resources/test-pom.xml");
-        XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(streamSource);
-        PropertiesUnmarshaller propertiesUnmarshaller = new PropertiesUnmarshaller();
-        DependencyUnmarshaller dependencyUnmarshaller = new DependencyUnmarshaller();
+    public static void main(String... args) throws Exception {
 
-        List<Dependency> dependencies = new ArrayList<>();
-        Properties properties = new Properties();
-
-        while (xmlStreamReader.hasNext()) {
-            if (propertiesUnmarshaller.isSupportedElement(xmlStreamReader)) {
-                properties = propertiesUnmarshaller.unmarshal(xmlStreamReader);
-            } else if (dependencyUnmarshaller.isSupportedElement(xmlStreamReader)) {
-                dependencies.add(dependencyUnmarshaller.unmarshal(xmlStreamReader));
-            }
-            xmlStreamReader.next();
-        }
-
-        DependencyUtils dependencyUtils = new DependencyUtils();
-        List<Dependency> fixedDependencies = dependencyUtils.replaceVersionsWithProperties(dependencies, properties);
-        List<Dependency> transitiveDependencies = dependencyUtils.getTransitiveDependencies(fixedDependencies);
-        System.out.println(transitiveDependencies);
     }
 
 }

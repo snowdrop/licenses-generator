@@ -16,6 +16,8 @@
 
 package org.snowdrop.licenses;
 
+import org.apache.maven.artifact.Artifact;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -55,6 +57,15 @@ public class Dependency {
         this.type = type;
         this.scope = scope;
         this.classifier = classifier;
+    }
+
+    public Dependency(Artifact artifact) {
+        this.groupId = artifact.getGroupId();
+        this.artifactId = artifact.getArtifactId();
+        this.version = artifact.getVersion();
+        this.type = artifact.getType();
+        this.scope = artifact.getScope();
+        this.classifier = artifact.getClassifier();
     }
 
     public String getGroupId() {
