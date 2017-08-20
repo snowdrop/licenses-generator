@@ -16,10 +16,13 @@
 
 package org.snowdrop.licenses;
 
+import org.apache.maven.project.MavenProject;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -33,6 +36,16 @@ class DependencyElement {
     private final String version;
 
     private final Set<LicenseElement> licenses;
+
+    public DependencyElement(MavenProject mavenProject) {
+        this.groupId = mavenProject.getGroupId();
+        this.artifactId = mavenProject.getArtifactId();
+        this.version = mavenProject.getVersion();
+        this.licenses = mavenProject.getLicenses()
+                .stream()
+                .map(LicenseElement::new)
+                .collect(Collectors.toSet());
+    }
 
     public DependencyElement(String groupId, String artifactId, String version) {
         this(groupId, artifactId, version, new HashSet<>());

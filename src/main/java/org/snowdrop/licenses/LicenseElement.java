@@ -16,6 +16,8 @@
 
 package org.snowdrop.licenses;
 
+import org.apache.maven.model.License;
+
 import java.util.Objects;
 
 /**
@@ -26,6 +28,11 @@ class LicenseElement {
     private final String name;
 
     private final String url;
+
+    public LicenseElement(License license) {
+        this.name = license.getName();
+        this.url = license.getUrl();
+    }
 
     public LicenseElement(String name, String url) {
         Objects.requireNonNull(name, "name cannot be null");
