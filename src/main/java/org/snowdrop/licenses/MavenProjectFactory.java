@@ -17,8 +17,9 @@
 package org.snowdrop.licenses;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -41,21 +42,16 @@ public class MavenProjectFactory {
     }
 
     public MavenProject getMavenProject(Dependency dependency) {
-        Artifact artifact = dependencyToArtifact(dependency);
-        return getMavenProject(artifact);
+        return getMavenProject(dependencyToArtifact(dependency));
     }
 
     public MavenProject getMavenProject(Artifact artifact) {
         try {
-            return getProjectBuilder().build(artifact, projectBuildingRequest).getProject();
+            return getProjectBuilder().build(artifact, projectBuildingRequest)
+                    .getProject();
         } catch (ProjectBuildingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e); // TODO replace with normal exception
         }
-    }
-
-    private Artifact dependencyToArtifact(Dependency dependency) {
-        return new DefaultArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(),
-                dependency.getScope(), dependency.getType(), dependency.getClassifier(), getArtifactHandler());
     }
 
     private ProjectBuilder getProjectBuilder() {
@@ -66,11 +62,18 @@ public class MavenProjectFactory {
         }
     }
 
-    private ArtifactHandler getArtifactHandler() {
+    private ArtifactFactory getArtifactFactory() {
         try {
-            return plexusContainer.lookup(ArtifactHandler.class);
+            return plexusContainer.lookup(ArtifactFactory.class);
         } catch (ComponentLookupException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Artifact dependencyToArtifact(Dependency dependency) {
+        VersionRange versionRange = VersionRange.createFromVersion(dependency.getVersion());
+        return getArtifactFactory().createDependencyArtifact(dependency.getGroupId(), dependency.getArtifactId(),
+                versionRange, dependency.getType(), dependency.getClassifier(), dependency.getScope(),
+                dependency.isOptional());
     }
 }

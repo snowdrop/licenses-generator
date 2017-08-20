@@ -5,6 +5,7 @@ import hudson.maven.MavenRequest;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -60,9 +61,9 @@ public class MavenProjectFactoryTest {
         Artifact hamcrestArtifact =
                 new DefaultArtifact("org.hamcrest", "hamcrest-core", "1.3", null, "jar", null, mockArtifactHandler);
 
-        Dependency dependency = new Dependency(junitArtifact.getGroupId(), junitArtifact.getArtifactId(),
-                junitArtifact.getVersion(), junitArtifact.getType(), junitArtifact.getScope(),
-                junitArtifact.getClassifier());
+        Dependency dependency = new DependencyFactory().getDependency(junitArtifact.getGroupId(),
+                junitArtifact.getArtifactId(), junitArtifact.getVersion(), junitArtifact.getType(),
+                junitArtifact.getScope(), junitArtifact.getClassifier(), junitArtifact.isOptional());
 
         MavenProjectFactory factory = new MavenProjectFactory(container, projectBuildingRequest);
         MavenProject project = factory.getMavenProject(dependency);
