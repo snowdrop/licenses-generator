@@ -22,7 +22,10 @@ package org.snowdrop.licenses;
 public class Generator {
 
     public static void main(String... args) throws Exception {
-
+        DependencyContainerFactory factory = new DependencyContainerFactory();
+        DependencyContainer container = factory.getDependencyContainer("org.springframework.boot", "spring-boot",
+                "1.4.1.RELEASE");
+        container.getDependencies().forEach(System.out::println);
     }
 
 }
