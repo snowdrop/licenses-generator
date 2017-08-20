@@ -18,12 +18,13 @@ package org.snowdrop.licenses;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class DependencyElement {
+class DependencyElement {
 
     private final String groupId;
 
@@ -33,7 +34,14 @@ public class DependencyElement {
 
     private final Set<LicenseElement> licenses;
 
+    public DependencyElement(String groupId, String artifactId, String version) {
+        this(groupId, artifactId, version, new HashSet<>());
+    }
+
     public DependencyElement(String groupId, String artifactId, String version, Set<LicenseElement> licenses) {
+        Objects.requireNonNull(groupId, "groupId cannot be null");
+        Objects.requireNonNull(artifactId, "artifactId cannot be null");
+        Objects.requireNonNull(version, "version cannot be null");
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -52,7 +60,41 @@ public class DependencyElement {
         return version;
     }
 
-    public Set<LicenseElement> getLicenses() {
+    public Set<LicenseElement> getLicens() {
         return Collections.unmodifiableSet(licenses);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{groupId='%s', artifactId='%s', version='%s', licenses=%s}",
+                DependencyElement.class.getSimpleName(), groupId, artifactId, version, licenses);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        DependencyElement that = (DependencyElement) o;
+
+        if (!groupId.equals(that.groupId)) {
+            return false;
+        }
+        if (!artifactId.equals(that.artifactId)) {
+            return false;
+        }
+        return version.equals(that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = groupId.hashCode();
+        result = 31 * result + artifactId.hashCode();
+        result = 31 * result + version.hashCode();
+        return result;
     }
 }

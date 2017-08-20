@@ -16,16 +16,20 @@
 
 package org.snowdrop.licenses;
 
+import java.util.Objects;
+
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class LicenseElement {
+class LicenseElement {
 
     private final String name;
 
     private final String url;
 
     public LicenseElement(String name, String url) {
+        Objects.requireNonNull(name, "name cannot be null");
+        Objects.requireNonNull(url, "url cannot be null");
         this.name = name;
         this.url = url;
     }
@@ -36,5 +40,10 @@ public class LicenseElement {
 
     public String getUrl() {
         return url;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s{name='%s', url='%s'}", LicenseElement.class.getSimpleName(), name, url);
     }
 }
