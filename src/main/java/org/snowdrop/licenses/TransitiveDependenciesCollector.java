@@ -21,11 +21,14 @@ import org.apache.maven.project.MavenProject;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class TransitiveDependenciesCollector {
+class TransitiveDependenciesCollector {
+
+    private final Logger logger = Logger.getLogger(TransitiveDependenciesCollector.class.getSimpleName());
 
     private final MavenProjectFactory mavenProjectFactory;
 
@@ -34,6 +37,7 @@ public class TransitiveDependenciesCollector {
     }
 
     public Set<MavenProject> getTransitiveMavenProjects(MavenProject root) {
+        logger.info(String.format("Getting transitive dependencies for '%s'", root));
         Set<MavenProject> mavenProjects = new HashSet<>();
         mavenProjects.add(root);
 
@@ -52,6 +56,7 @@ public class TransitiveDependenciesCollector {
             }
 
             MavenProject project = mavenProjectFactory.getMavenProject(dependency);
+            logger.info(String.format("Adding transitive dependency '%s'", project));
 
             if (mavenProjects.add(project)) {
                 recursivelyGetTransitiveMavenProjects(project, mavenProjects);
