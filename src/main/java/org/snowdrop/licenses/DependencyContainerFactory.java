@@ -23,6 +23,7 @@ import org.apache.maven.project.ProjectBuildingRequest;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -59,8 +60,15 @@ public class DependencyContainerFactory {
 
             return dependencies.stream()
                     .map(mavenProjectFactory::getMavenProject)
-                    .flatMap(p -> transitiveDependenciesCollector.getTransitiveMavenProjects(p)
-                            .stream())
+                    .flatMap(p -> {
+                        try {
+                            return transitiveDependenciesCollector.getTransitiveMavenProjects(p)
+                                    .stream();
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                            return Stream.empty();
+                        }
+                    })
                     .collect(Collectors.toSet());
         } catch (Exception e) {
             throw new RuntimeException(e); // TODO throw normal exception
