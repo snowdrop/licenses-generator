@@ -31,6 +31,15 @@ public class DependencyFactory {
         return dependency;
     }
 
+    public Dependency getDependency(String groupId, String artifactId, String version, String type) {
+        Dependency dependency = new Dependency();
+        dependency.setGroupId(groupId);
+        dependency.setArtifactId(artifactId);
+        dependency.setVersion(version);
+        dependency.setType(type);
+        return dependency;
+    }
+
     public Dependency getDependency(String groupId, String artifactId, String version, String type, String scope,
             String classifier, boolean optional) {
         Dependency dependency = new Dependency();
