@@ -1,23 +1,16 @@
 package org.jboss.snowdrop.licenses.internal;
 
-import hudson.maven.MavenEmbedder;
-import hudson.maven.MavenRequest;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -30,9 +23,7 @@ public class MavenProjectFactoryTest {
     @Mock
     private ArtifactHandler mockArtifactHandler;
 
-    private MavenEmbedder mavenEmbedder;
-
-    private ProjectBuildingRequest projectBuildingRequest;
+    private ProjectBuildingRequestFactory projectBuildingRequestFactory;
 
     private PlexusContainer container;
 
@@ -40,17 +31,11 @@ public class MavenProjectFactoryTest {
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        mavenEmbedder = new MavenEmbedder(Thread.currentThread()
-                .getContextClassLoader(), new MavenRequest());
-
+        ApplicationProperties applicationProperties = new ApplicationProperties();
+        SnowdropMavenEmbedder mavenEmbedder =
+                new MavenEmbedderFactory(applicationProperties).getSnowdropMavenEmbedder();
         container = mavenEmbedder.getPlexusContainer();
-
-        projectBuildingRequest = new DefaultProjectBuildingRequest();
-        projectBuildingRequest.setLocalRepository(mavenEmbedder.getLocalRepository());
-        projectBuildingRequest.setRemoteRepositories(Collections.singletonList(
-                mavenEmbedder.createRepository("http://repo1.maven.org/maven2", "central")));
-        projectBuildingRequest.setResolveDependencies(true);
-        projectBuildingRequest.setInactiveProfileIds(Arrays.asList("restrict-doclint", "doclint-java8-disable"));
+        projectBuildingRequestFactory = new ProjectBuildingRequestFactory(applicationProperties, mavenEmbedder);
     }
 
     @Test
@@ -65,7 +50,7 @@ public class MavenProjectFactoryTest {
                 junitArtifact.getArtifactId(), junitArtifact.getVersion(), junitArtifact.getType(),
                 junitArtifact.getScope(), junitArtifact.getClassifier(), junitArtifact.isOptional());
 
-        MavenProjectFactory factory = new MavenProjectFactory(container, projectBuildingRequest);
+        MavenProjectFactory factory = new MavenProjectFactory(container, projectBuildingRequestFactory);
         MavenProject project = factory.getMavenProject(dependency);
 
         assertThat(project.getArtifact()).isEqualTo(junitArtifact);
@@ -83,7 +68,7 @@ public class MavenProjectFactoryTest {
         Artifact hamcrestArtifact =
                 new DefaultArtifact("org.hamcrest", "hamcrest-core", "1.3", null, "jar", null, mockArtifactHandler);
 
-        MavenProjectFactory factory = new MavenProjectFactory(container, projectBuildingRequest);
+        MavenProjectFactory factory = new MavenProjectFactory(container, projectBuildingRequestFactory);
         MavenProject project = factory.getMavenProject(junitArtifact);
 
         assertThat(project.getArtifact()).isEqualTo(junitArtifact);

@@ -2,7 +2,6 @@ package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,9 +22,9 @@ public class TransitiveDependenciesCollectorTest {
     public void before() throws Exception {
         ApplicationProperties applicationProperties = new ApplicationProperties();
         SnowdropMavenEmbedder embedder = new MavenEmbedderFactory(applicationProperties).getSnowdropMavenEmbedder();
-        ProjectBuildingRequest request = new ProjectBuildingRequestFactory(applicationProperties, embedder)
-                .getProjectBuildingRequest();
-        factory = new MavenProjectFactory(embedder.getPlexusContainer(), request);
+        ProjectBuildingRequestFactory projectBuildingRequestFactory =
+                new ProjectBuildingRequestFactory(applicationProperties, embedder);
+        factory = new MavenProjectFactory(embedder.getPlexusContainer(), projectBuildingRequestFactory);
         collector = new TransitiveDependenciesCollector(applicationProperties, factory);
     }
 
@@ -34,7 +33,7 @@ public class TransitiveDependenciesCollectorTest {
         Dependency dependency = new DependencyFactory().getDependency("junit", "junit", "4.12");
         MavenProject project = factory.getMavenProject(dependency);
         Set<MavenProject> transitiveMavenProjects = collector.getTransitiveMavenProjects(project);
-        assertThat(transitiveMavenProjects).hasSize(2);
+        assertThat(transitiveMavenProjects).hasSize(1);
     }
 
 }

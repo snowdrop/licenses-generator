@@ -34,18 +34,35 @@ public class MavenProjectFactory {
 
     private final PlexusContainer plexusContainer;
 
-    private final ProjectBuildingRequest projectBuildingRequest;
+    private final ProjectBuildingRequestFactory projectBuildingRequestFactory;
 
-    public MavenProjectFactory(PlexusContainer plexusContainer, ProjectBuildingRequest projectBuildingRequest) {
+    public MavenProjectFactory(PlexusContainer plexusContainer,
+            ProjectBuildingRequestFactory projectBuildingRequestFactory) {
         this.plexusContainer = plexusContainer;
-        this.projectBuildingRequest = projectBuildingRequest;
+        this.projectBuildingRequestFactory = projectBuildingRequestFactory;
     }
 
+    @Deprecated
     public MavenProject getMavenProject(Dependency dependency) throws MavenProjectFactoryException {
-        return getMavenProject(dependencyToArtifact(dependency));
+        return getMavenProject(dependency, true);
+    }
+
+    @Deprecated
+    public MavenProject getMavenProject(Dependency dependency, boolean resolveDependencies)
+            throws MavenProjectFactoryException {
+        ProjectBuildingRequest projectBuildingRequest = projectBuildingRequestFactory.getProjectBuildingRequest();
+        projectBuildingRequest.setResolveDependencies(resolveDependencies);
+        Artifact artifact = dependencyToArtifact(dependency);
+        return getMavenProject(artifact, projectBuildingRequest);
     }
 
     public MavenProject getMavenProject(Artifact artifact) throws MavenProjectFactoryException {
+        ProjectBuildingRequest projectBuildingRequest = projectBuildingRequestFactory.getProjectBuildingRequest();
+        return getMavenProject(artifact, projectBuildingRequest);
+    }
+
+    private MavenProject getMavenProject(Artifact artifact, ProjectBuildingRequest projectBuildingRequest)
+            throws MavenProjectFactoryException {
         try {
             return getProjectBuilder().build(artifact, projectBuildingRequest)
                     .getProject();

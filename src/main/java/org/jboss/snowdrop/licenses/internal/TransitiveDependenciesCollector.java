@@ -20,6 +20,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -40,38 +41,51 @@ public class TransitiveDependenciesCollector {
         this.mavenProjectFactory = mavenProjectFactory;
     }
 
-    public Set<MavenProject> getTransitiveMavenProjects(MavenProject root) {
-        logger.info(String.format("Getting transitive dependencies for '%s'", root));
+    public Set<MavenProject> getTransitiveMavenProjects(MavenProject rootProject) {
         Set<MavenProject> mavenProjects = new HashSet<>();
-        mavenProjects.add(root);
-
-        if (!root.getArtifact().isOptional() || applicationProperties.isIncludeOptional()) {
-            recursivelyGetTransitiveMavenProjects(root, mavenProjects);
+        Set<Dependency> rootDependencies = new HashSet<>();
+        rootDependencies.addAll(rootProject.getDependencies());
+        if (rootProject.getDependencyManagement() != null) {
+            rootDependencies.addAll(rootProject.getDependencyManagement()
+                    .getDependencies());
         }
+
+        rootDependencies.stream()
+                .map(d -> {
+                    try {
+                        return mavenProjectFactory.getMavenProject(d);
+                    } catch (MavenProjectFactoryException e) {
+                        logger.warning(e.getMessage());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .peek(mavenProjects::add)
+                .forEach(p -> this.recursivelyGetTransitiveMavenProjects(p, mavenProjects));
 
         return mavenProjects;
     }
 
     private void recursivelyGetTransitiveMavenProjects(MavenProject root, Set<MavenProject> mavenProjects) {
         for (Dependency dependency : root.getDependencies()) {
-            if (!shouldInclude(dependency)) {
+            if (!shouldInclude(dependency, mavenProjects)) {
                 continue;
             }
 
+            MavenProject project;
             try {
-                MavenProject project = mavenProjectFactory.getMavenProject(dependency);
-
-                if (mavenProjects.add(project)) {
-                    logger.fine(String.format("Added transitive dependency '%s'", project));
-                    recursivelyGetTransitiveMavenProjects(project, mavenProjects);
-                }
+                project = mavenProjectFactory.getMavenProject(dependency);
             } catch (MavenProjectFactoryException e) {
                 logger.warning(e.getMessage());
+                continue;
             }
+            mavenProjects.add(project);
+            logger.fine(String.format("Added transitive dependency '%s'", project));
+            recursivelyGetTransitiveMavenProjects(project, mavenProjects);
         }
     }
 
-    private boolean shouldInclude(Dependency dependency) {
+    private boolean shouldInclude(Dependency dependency, Set<MavenProject> mavenProjects) {
         if (dependency.isOptional() && !applicationProperties.isIncludeOptional()) {
             return false;
         }
@@ -83,8 +97,13 @@ public class TransitiveDependenciesCollector {
                 .contains(dependency.getClassifier())) {
             return false;
         }
-
-        return true;
+        try {
+            MavenProject project = mavenProjectFactory.getMavenProject(dependency, false);
+            return !mavenProjects.contains(project);
+        } catch (MavenProjectFactoryException e) {
+            logger.warning(e.getMessage());
+            return false;
+        }
     }
 
 }
