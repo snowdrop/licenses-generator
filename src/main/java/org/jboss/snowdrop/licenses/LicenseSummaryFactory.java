@@ -18,25 +18,48 @@ package org.jboss.snowdrop.licenses;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
+import org.jboss.snowdrop.licenses.internal.ApplicationProperties;
 import org.jboss.snowdrop.licenses.internal.DependencyFactory;
 import org.jboss.snowdrop.licenses.internal.MavenEmbedderFactory;
 import org.jboss.snowdrop.licenses.internal.MavenProjectFactory;
+import org.jboss.snowdrop.licenses.internal.MavenProjectFactoryException;
 import org.jboss.snowdrop.licenses.internal.ProjectBuildingRequestFactory;
 import org.jboss.snowdrop.licenses.internal.SnowdropMavenEmbedder;
 import org.jboss.snowdrop.licenses.internal.TransitiveDependenciesCollector;
 import org.jboss.snowdrop.licenses.xml.DependencyElement;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class LicenseSummaryFactory {
+
+    private final Logger logger = Logger.getLogger(LicenseSummaryFactory.class.getSimpleName());
+
+    private final ApplicationProperties applicationProperties;
+
+    private final MavenProjectFactory mavenProjectFactory;
+
+    private final TransitiveDependenciesCollector transitiveDependenciesCollector;
+
+    public LicenseSummaryFactory() {
+        this.applicationProperties = new ApplicationProperties();
+        MavenEmbedderFactory mavenEmbedderFactory = new MavenEmbedderFactory(applicationProperties);
+        SnowdropMavenEmbedder mavenEmbedder = mavenEmbedderFactory.getSnowdropMavenEmbedder();
+        ProjectBuildingRequestFactory projectBuildingRequestFactory =
+                new ProjectBuildingRequestFactory(applicationProperties, mavenEmbedder);
+        this.mavenProjectFactory = new MavenProjectFactory(mavenEmbedder.getPlexusContainer(),
+                projectBuildingRequestFactory.getProjectBuildingRequest());
+        this.transitiveDependenciesCollector =
+                new TransitiveDependenciesCollector(applicationProperties, mavenProjectFactory);
+    }
 
     public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version) {
         return getLicenseSummary(groupId, artifactId, version, "jar");
@@ -50,38 +73,36 @@ public class LicenseSummaryFactory {
         return new LicenseSummary(dependencyElements);
     }
 
-    // TODO refactor
     private Set<MavenProject> getMavenProjects(Dependency dependency) {
+        Set<Dependency> dependencies = new HashSet<>();
+        MavenProject root;
         try {
-            SnowdropMavenEmbedder mavenEmbedder = new MavenEmbedderFactory().getSnowdropMavenEmbedder();
-            ProjectBuildingRequest projectBuildingRequest = new ProjectBuildingRequestFactory(mavenEmbedder)
-                    .getProjectBuildingRequest();
-            MavenProjectFactory mavenProjectFactory =
-                    new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequest);
-            MavenProject root = mavenProjectFactory.getMavenProject(dependency);
-            Set<Dependency> dependencies = new HashSet<>();
-            dependencies.addAll(root.getDependencies());
-            if (root.getDependencyManagement() != null) {
-                dependencies.addAll(root.getDependencyManagement().getDependencies());
-            }
-            TransitiveDependenciesCollector transitiveDependenciesCollector =
-                    new TransitiveDependenciesCollector(mavenProjectFactory);
-
-            return dependencies.stream()
-                    .map(mavenProjectFactory::getMavenProject)
-                    .flatMap(p -> {
-                        try {
-                            return transitiveDependenciesCollector.getTransitiveMavenProjects(p)
-                                    .stream();
-                        } catch (Throwable t) {
-                            t.printStackTrace();
-                            return Stream.empty();
-                        }
-                    })
-                    .collect(Collectors.toSet());
-        } catch (Exception e) {
-            throw new RuntimeException(e); // TODO throw normal exception
+            root = mavenProjectFactory.getMavenProject(dependency);
+        } catch (MavenProjectFactoryException e) {
+            logger.warning(e.getMessage());
+            return Collections.emptySet();
         }
+
+        dependencies.addAll(root.getDependencies());
+
+        if (root.getDependencyManagement() != null) {
+            dependencies.addAll(root.getDependencyManagement()
+                    .getDependencies());
+        }
+
+        return dependencies.stream()
+                .map(d -> {
+                    try {
+                        return mavenProjectFactory.getMavenProject(d);
+                    } catch (MavenProjectFactoryException e) {
+                        logger.warning(e.getMessage());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .flatMap(p -> transitiveDependenciesCollector.getTransitiveMavenProjects(p)
+                        .stream())
+                .collect(Collectors.toSet());
     }
 
 }

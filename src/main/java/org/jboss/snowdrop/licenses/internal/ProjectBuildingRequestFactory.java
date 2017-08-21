@@ -16,39 +16,57 @@
 
 package org.jboss.snowdrop.licenses.internal;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class ProjectBuildingRequestFactory {
 
+    private final ApplicationProperties applicationProperties;
+
     private final SnowdropMavenEmbedder mavenEmbedder;
 
-    public ProjectBuildingRequestFactory(SnowdropMavenEmbedder mavenEmbedder) {
+    public ProjectBuildingRequestFactory(ApplicationProperties applicationProperties,
+            SnowdropMavenEmbedder mavenEmbedder) {
+        this.applicationProperties = applicationProperties;
         this.mavenEmbedder = mavenEmbedder;
     }
 
-    public ProjectBuildingRequest getProjectBuildingRequest() throws Exception {
-        DefaultProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest();
-        projectBuildingRequest.setLocalRepository(mavenEmbedder.getLocalRepository());
-        projectBuildingRequest.setRemoteRepositories(Collections.singletonList(
-                mavenEmbedder.createRepository(
-//                        "http://indy.cloud.pnc.engineering.redhat
-// .com/api/group/builds-untested+shared-imports+public",
-                        "http://repo1.maven.org/maven2",
-                        "indy")));
-        projectBuildingRequest.setResolveDependencies(true);
+    public ProjectBuildingRequest getProjectBuildingRequest() {
+        try {
+            DefaultProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest();
+            projectBuildingRequest.setLocalRepository(mavenEmbedder.getLocalRepository());
+            projectBuildingRequest.setRemoteRepositories(getRepositories());
+            projectBuildingRequest.setResolveDependencies(true);
+            projectBuildingRequest.setRepositorySession(mavenEmbedder.buildRepositorySystemSession());
+            projectBuildingRequest.setSystemProperties(System.getProperties());
+            projectBuildingRequest.setProcessPlugins(applicationProperties.isProcessPlugins());
 
-        projectBuildingRequest.setRepositorySession(mavenEmbedder.buildRepositorySystemSession());
-        projectBuildingRequest.setSystemProperties(System.getProperties());
+            return projectBuildingRequest;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create project building request", e);
+        }
+    }
 
-        projectBuildingRequest.setProcessPlugins(false);
-
-        return projectBuildingRequest;
+    private List<ArtifactRepository> getRepositories() {
+        return applicationProperties.getRepositories()
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    try {
+                        return mavenEmbedder.createRepository(entry.getValue(), entry.getKey());
+                    } catch (ComponentLookupException e) {
+                        throw new RuntimeException("Failed to initialise repository", e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
 }

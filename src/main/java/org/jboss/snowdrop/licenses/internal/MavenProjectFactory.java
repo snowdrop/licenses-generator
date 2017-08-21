@@ -41,16 +41,16 @@ public class MavenProjectFactory {
         this.projectBuildingRequest = projectBuildingRequest;
     }
 
-    public MavenProject getMavenProject(Dependency dependency) {
+    public MavenProject getMavenProject(Dependency dependency) throws MavenProjectFactoryException {
         return getMavenProject(dependencyToArtifact(dependency));
     }
 
-    public MavenProject getMavenProject(Artifact artifact) {
+    public MavenProject getMavenProject(Artifact artifact) throws MavenProjectFactoryException {
         try {
             return getProjectBuilder().build(artifact, projectBuildingRequest)
                     .getProject();
         } catch (ProjectBuildingException e) {
-            throw new RuntimeException(e); // TODO replace with normal exception
+            throw new MavenProjectFactoryException(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class MavenProjectFactory {
         try {
             return plexusContainer.lookup(ProjectBuilder.class);
         } catch (ComponentLookupException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to lookup ProjectBuilder", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class MavenProjectFactory {
         try {
             return plexusContainer.lookup(ArtifactFactory.class);
         } catch (ComponentLookupException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to lookup ArtifactFactory", e);
         }
     }
 

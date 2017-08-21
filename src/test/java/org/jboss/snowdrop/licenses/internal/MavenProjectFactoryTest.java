@@ -54,7 +54,7 @@ public class MavenProjectFactoryTest {
     }
 
     @Test
-    public void shouldGetMavenProjectForDependency() throws ComponentLookupException {
+    public void shouldGetMavenProjectForDependency() throws ComponentLookupException, MavenProjectFactoryException {
         when(mockArtifactHandler.getClassifier()).thenReturn(null);
 
         Artifact junitArtifact = new DefaultArtifact("junit", "junit", "4.12", null, "jar", null, mockArtifactHandler);
@@ -76,7 +76,7 @@ public class MavenProjectFactoryTest {
     }
 
     @Test
-    public void shouldGetMavenProjectForArtifact() {
+    public void shouldGetMavenProjectForArtifact() throws MavenProjectFactoryException {
         when(mockArtifactHandler.getClassifier()).thenReturn(null);
 
         Artifact junitArtifact = new DefaultArtifact("junit", "junit", "4.12", null, "jar", null, mockArtifactHandler);

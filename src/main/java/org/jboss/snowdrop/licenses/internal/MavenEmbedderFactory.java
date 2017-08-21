@@ -24,13 +24,30 @@ import hudson.maven.MavenRequest;
  */
 public class MavenEmbedderFactory {
 
-    public SnowdropMavenEmbedder getSnowdropMavenEmbedder() throws MavenEmbedderException {
+    private final ApplicationProperties applicationProperties;
+
+    public MavenEmbedderFactory(ApplicationProperties applicationProperties) {
+        this.applicationProperties = applicationProperties;
+    }
+
+    public SnowdropMavenEmbedder getSnowdropMavenEmbedder() {
+        MavenRequest mavenRequest = getMavenRequest();
+        ClassLoader classLoader = Thread.currentThread()
+                .getContextClassLoader();
+
+        try {
+            return new SnowdropMavenEmbedder(classLoader, mavenRequest);
+        } catch (MavenEmbedderException e) {
+            throw new RuntimeException("Failed to create Maven embedder", e);
+        }
+    }
+
+    private MavenRequest getMavenRequest() {
         MavenRequest mavenRequest = new MavenRequest();
         mavenRequest.setSystemProperties(System.getProperties());
-        mavenRequest.setProcessPlugins(false);
+        mavenRequest.setProcessPlugins(applicationProperties.isProcessPlugins());
 
-        return new SnowdropMavenEmbedder(Thread.currentThread()
-                .getContextClassLoader(), new MavenRequest());
+        return mavenRequest;
     }
 
 }

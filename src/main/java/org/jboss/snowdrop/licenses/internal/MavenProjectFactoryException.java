@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
-
-import org.jboss.snowdrop.licenses.xml.LicenseSummary;
+package org.jboss.snowdrop.licenses.internal;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class Generator {
+public class MavenProjectFactoryException extends Exception {
 
-    public static void main(String... args) throws Exception {
-        LicenseSummaryFactory factory = new LicenseSummaryFactory();
-//        LicenseSummary licenseSummary =
-//                factory.getLicenseSummary("org.springframework.boot", "spring-boot", "1.4.1.RELEASE");
-        LicenseSummary licenseSummary = factory.getLicenseSummary("junit", "junit", "4.12");
-        System.out.println(licenseSummary.toXmlString());
+    public MavenProjectFactoryException(Throwable cause) {
+        super(cause);
     }
-
 }

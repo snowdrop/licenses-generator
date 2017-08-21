@@ -30,9 +30,13 @@ public class TransitiveDependenciesCollector {
 
     private final Logger logger = Logger.getLogger(TransitiveDependenciesCollector.class.getSimpleName());
 
+    private final ApplicationProperties applicationProperties;
+
     private final MavenProjectFactory mavenProjectFactory;
 
-    public TransitiveDependenciesCollector(MavenProjectFactory mavenProjectFactory) {
+    public TransitiveDependenciesCollector(ApplicationProperties applicationProperties,
+            MavenProjectFactory mavenProjectFactory) {
+        this.applicationProperties = applicationProperties;
         this.mavenProjectFactory = mavenProjectFactory;
     }
 
@@ -41,8 +45,7 @@ public class TransitiveDependenciesCollector {
         Set<MavenProject> mavenProjects = new HashSet<>();
         mavenProjects.add(root);
 
-        if (!root.getArtifact()
-                .isOptional()) {
+        if (!root.getArtifact().isOptional() || applicationProperties.isIncludeOptional()) {
             recursivelyGetTransitiveMavenProjects(root, mavenProjects);
         }
 
@@ -55,20 +58,33 @@ public class TransitiveDependenciesCollector {
                 continue;
             }
 
-            MavenProject project = mavenProjectFactory.getMavenProject(dependency);
+            try {
+                MavenProject project = mavenProjectFactory.getMavenProject(dependency);
 
-            if (mavenProjects.add(project)) {
-                logger.fine(String.format("Added transitive dependency '%s'", project));
-                recursivelyGetTransitiveMavenProjects(project, mavenProjects);
+                if (mavenProjects.add(project)) {
+                    logger.fine(String.format("Added transitive dependency '%s'", project));
+                    recursivelyGetTransitiveMavenProjects(project, mavenProjects);
+                }
+            } catch (MavenProjectFactoryException e) {
+                logger.warning(e.getMessage());
             }
         }
     }
 
-    // TODO make configurable
     private boolean shouldInclude(Dependency dependency) {
-        return !dependency.isOptional() && !"test".equals(dependency.getScope()) && !"system".equals(
-                dependency.getScope())
-                && !"provided".equals(dependency.getScope()) && !"tests".equals(dependency.getClassifier());
+        if (dependency.isOptional() && !applicationProperties.isIncludeOptional()) {
+            return false;
+        }
+        if (applicationProperties.getExcludedScopes()
+                .contains(dependency.getScope())) {
+            return false;
+        }
+        if (applicationProperties.getExcludedClassifiers()
+                .contains(dependency.getClassifier())) {
+            return false;
+        }
+
+        return true;
     }
 
 }
