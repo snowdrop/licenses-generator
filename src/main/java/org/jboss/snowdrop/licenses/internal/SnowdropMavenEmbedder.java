@@ -23,25 +23,13 @@ import org.apache.maven.DefaultMaven;
 import org.apache.maven.Maven;
 import org.eclipse.aether.RepositorySystemSession;
 
-import java.io.File;
-
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class SnowdropMavenEmbedder extends MavenEmbedder {
 
-    public SnowdropMavenEmbedder(File mavenHome, MavenRequest mavenRequest) throws MavenEmbedderException {
-        super(mavenHome, mavenRequest);
-    }
-
-    public SnowdropMavenEmbedder(ClassLoader mavenClassLoader, ClassLoader parent, MavenRequest mavenRequest)
-            throws MavenEmbedderException {
-        super(mavenClassLoader, parent, mavenRequest);
-    }
-
-    public SnowdropMavenEmbedder(ClassLoader mavenClassLoader, MavenRequest mavenRequest)
-            throws MavenEmbedderException {
-        super(mavenClassLoader, mavenRequest);
+    public SnowdropMavenEmbedder(MavenRequest mavenRequest) throws MavenEmbedderException {
+        super(Thread.currentThread().getContextClassLoader(), mavenRequest);
     }
 
     public RepositorySystemSession buildRepositorySystemSession() throws Exception {

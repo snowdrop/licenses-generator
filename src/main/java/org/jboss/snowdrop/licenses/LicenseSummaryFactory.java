@@ -26,7 +26,7 @@ import org.jboss.snowdrop.licenses.internal.MavenProjectFactory;
 import org.jboss.snowdrop.licenses.internal.MavenProjectFactoryException;
 import org.jboss.snowdrop.licenses.internal.ProjectBuildingRequestFactory;
 import org.jboss.snowdrop.licenses.internal.SnowdropMavenEmbedder;
-import org.jboss.snowdrop.licenses.internal.TransitiveDependenciesCollector;
+import org.jboss.snowdrop.licenses.internal.TransitiveMavenProjectsCollector;
 import org.jboss.snowdrop.licenses.xml.DependencyElement;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
@@ -38,29 +38,29 @@ import java.util.stream.Collectors;
  */
 public class LicenseSummaryFactory {
 
-    private final MavenProjectFactory mavenProjectFactory;
+    private final MavenProjectFactory projectFactory;
 
-    private final TransitiveDependenciesCollector transitiveDependenciesCollector;
+    private final TransitiveMavenProjectsCollector projectsCollector;
 
     private final ArtifactFactory artifactFactory;
 
     public LicenseSummaryFactory() {
-        ApplicationProperties applicationProperties = new ApplicationProperties();
-        MavenEmbedderFactory mavenEmbedderFactory = new MavenEmbedderFactory(applicationProperties);
+        ApplicationProperties properties = new ApplicationProperties();
+        MavenEmbedderFactory mavenEmbedderFactory = new MavenEmbedderFactory(properties);
         SnowdropMavenEmbedder mavenEmbedder = mavenEmbedderFactory.getSnowdropMavenEmbedder();
         ProjectBuildingRequestFactory projectBuildingRequestFactory =
-                new ProjectBuildingRequestFactory(applicationProperties, mavenEmbedder);
+                new ProjectBuildingRequestFactory(properties, mavenEmbedder);
 
-        this.mavenProjectFactory =
-                new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequestFactory);
-        this.transitiveDependenciesCollector =
-                new TransitiveDependenciesCollector(applicationProperties, mavenProjectFactory);
         try {
             this.artifactFactory = mavenEmbedder.getPlexusContainer()
                     .lookup(ArtifactFactory.class);
         } catch (ComponentLookupException e) {
             throw new RuntimeException(e);
         }
+        this.projectFactory =
+                new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequestFactory);
+        this.projectsCollector =
+                new TransitiveMavenProjectsCollector(properties, projectFactory, artifactFactory);
     }
 
     public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version) {
@@ -71,12 +71,12 @@ public class LicenseSummaryFactory {
         Artifact artifact = artifactFactory.createArtifact(groupId, artifactId, version, "compile", type);
         MavenProject project;
         try {
-            project = mavenProjectFactory.getMavenProject(artifact);
+            project = projectFactory.getMavenProject(artifact);
         } catch (MavenProjectFactoryException e) {
             throw new RuntimeException(e);
         }
 
-        Set<DependencyElement> dependencyElements = transitiveDependenciesCollector.getTransitiveMavenProjects(project)
+        Set<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
                 .stream()
                 .map(DependencyElement::new)
                 .collect(Collectors.toSet());

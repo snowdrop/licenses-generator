@@ -17,13 +17,11 @@
 package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
@@ -32,40 +30,27 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  */
 public class MavenProjectFactory {
 
-    private final PlexusContainer plexusContainer;
+    private final PlexusContainer container;
 
-    private final ProjectBuildingRequestFactory projectBuildingRequestFactory;
+    private final ProjectBuildingRequestFactory requestFactory;
 
-    public MavenProjectFactory(PlexusContainer plexusContainer,
-            ProjectBuildingRequestFactory projectBuildingRequestFactory) {
-        this.plexusContainer = plexusContainer;
-        this.projectBuildingRequestFactory = projectBuildingRequestFactory;
-    }
-
-    @Deprecated
-    public MavenProject getMavenProject(Dependency dependency) throws MavenProjectFactoryException {
-        return getMavenProject(dependency, true);
-    }
-
-    @Deprecated
-    public MavenProject getMavenProject(Dependency dependency, boolean resolveDependencies)
-            throws MavenProjectFactoryException {
-        ProjectBuildingRequest projectBuildingRequest = projectBuildingRequestFactory.getProjectBuildingRequest();
-        projectBuildingRequest.setResolveDependencies(resolveDependencies);
-        Artifact artifact = dependencyToArtifact(dependency);
-        return getMavenProject(artifact, projectBuildingRequest);
+    public MavenProjectFactory(PlexusContainer container, ProjectBuildingRequestFactory requestFactory) {
+        this.container = container;
+        this.requestFactory = requestFactory;
     }
 
     public MavenProject getMavenProject(Artifact artifact) throws MavenProjectFactoryException {
-        ProjectBuildingRequest projectBuildingRequest = projectBuildingRequestFactory.getProjectBuildingRequest();
-        return getMavenProject(artifact, projectBuildingRequest);
+        return getMavenProject(artifact, true);
     }
 
-    private MavenProject getMavenProject(Artifact artifact, ProjectBuildingRequest projectBuildingRequest)
+    public MavenProject getMavenProject(Artifact artifact, boolean resolveDependencies)
             throws MavenProjectFactoryException {
+        ProjectBuildingRequest request = requestFactory.getProjectBuildingRequest();
+        request.setResolveDependencies(resolveDependencies);
+
         try {
-            return getProjectBuilder().build(artifact, projectBuildingRequest)
-                    .getProject();
+            ProjectBuildingResult result = getProjectBuilder().build(artifact, request);
+            return result.getProject();
         } catch (ProjectBuildingException e) {
             throw new MavenProjectFactoryException(e);
         }
@@ -73,24 +58,9 @@ public class MavenProjectFactory {
 
     private ProjectBuilder getProjectBuilder() {
         try {
-            return plexusContainer.lookup(ProjectBuilder.class);
+            return container.lookup(ProjectBuilder.class);
         } catch (ComponentLookupException e) {
             throw new RuntimeException("Failed to lookup ProjectBuilder", e);
         }
-    }
-
-    private ArtifactFactory getArtifactFactory() {
-        try {
-            return plexusContainer.lookup(ArtifactFactory.class);
-        } catch (ComponentLookupException e) {
-            throw new RuntimeException("Failed to lookup ArtifactFactory", e);
-        }
-    }
-
-    private Artifact dependencyToArtifact(Dependency dependency) {
-        VersionRange versionRange = VersionRange.createFromVersion(dependency.getVersion());
-        return getArtifactFactory().createDependencyArtifact(dependency.getGroupId(), dependency.getArtifactId(),
-                versionRange, dependency.getType(), dependency.getClassifier(), dependency.getScope(),
-                dependency.isOptional());
     }
 }

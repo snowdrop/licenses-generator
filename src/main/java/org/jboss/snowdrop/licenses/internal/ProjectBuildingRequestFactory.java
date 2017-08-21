@@ -29,39 +29,38 @@ import java.util.stream.Collectors;
  */
 public class ProjectBuildingRequestFactory {
 
-    private final ApplicationProperties applicationProperties;
+    private final ApplicationProperties properties;
 
-    private final SnowdropMavenEmbedder mavenEmbedder;
+    private final SnowdropMavenEmbedder maven;
 
-    public ProjectBuildingRequestFactory(ApplicationProperties applicationProperties,
-            SnowdropMavenEmbedder mavenEmbedder) {
-        this.applicationProperties = applicationProperties;
-        this.mavenEmbedder = mavenEmbedder;
+    public ProjectBuildingRequestFactory(ApplicationProperties properties, SnowdropMavenEmbedder maven) {
+        this.properties = properties;
+        this.maven = maven;
     }
 
     public ProjectBuildingRequest getProjectBuildingRequest() {
         try {
-            DefaultProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest();
-            projectBuildingRequest.setLocalRepository(mavenEmbedder.getLocalRepository());
-            projectBuildingRequest.setRemoteRepositories(getRepositories());
-            projectBuildingRequest.setResolveDependencies(true);
-            projectBuildingRequest.setRepositorySession(mavenEmbedder.buildRepositorySystemSession());
-            projectBuildingRequest.setSystemProperties(System.getProperties());
-            projectBuildingRequest.setProcessPlugins(applicationProperties.isProcessPlugins());
+            DefaultProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+            request.setLocalRepository(maven.getLocalRepository());
+            request.setRemoteRepositories(getRepositories());
+            request.setResolveDependencies(true);
+            request.setRepositorySession(maven.buildRepositorySystemSession());
+            request.setSystemProperties(System.getProperties());
+            request.setProcessPlugins(properties.isProcessPlugins());
 
-            return projectBuildingRequest;
+            return request;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create project building request", e);
         }
     }
 
     private List<ArtifactRepository> getRepositories() {
-        return applicationProperties.getRepositories()
+        return properties.getRepositories()
                 .entrySet()
                 .stream()
                 .map(entry -> {
                     try {
-                        return mavenEmbedder.createRepository(entry.getValue(), entry.getKey());
+                        return maven.createRepository(entry.getValue(), entry.getKey());
                     } catch (ComponentLookupException e) {
                         throw new RuntimeException("Failed to initialise repository", e);
                     }

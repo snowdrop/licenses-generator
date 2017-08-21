@@ -1,6 +1,7 @@
 package org.jboss.snowdrop.licenses.internal;
 
-import org.apache.maven.model.Dependency;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TransitiveDependenciesCollectorTest {
 
-    private MavenProjectFactory factory;
+    private MavenProjectFactory projectFactory;
 
-    private TransitiveDependenciesCollector collector;
+    private TransitiveMavenProjectsCollector projectsCollector;
+
+    private ArtifactFactory artifactFactory;
 
     @Before
     public void before() throws Exception {
@@ -24,15 +27,17 @@ public class TransitiveDependenciesCollectorTest {
         SnowdropMavenEmbedder embedder = new MavenEmbedderFactory(applicationProperties).getSnowdropMavenEmbedder();
         ProjectBuildingRequestFactory projectBuildingRequestFactory =
                 new ProjectBuildingRequestFactory(applicationProperties, embedder);
-        factory = new MavenProjectFactory(embedder.getPlexusContainer(), projectBuildingRequestFactory);
-        collector = new TransitiveDependenciesCollector(applicationProperties, factory);
+        artifactFactory = embedder.getPlexusContainer()
+                .lookup(ArtifactFactory.class);
+        projectFactory = new MavenProjectFactory(embedder.getPlexusContainer(), projectBuildingRequestFactory);
+        projectsCollector = new TransitiveMavenProjectsCollector(applicationProperties, projectFactory, artifactFactory);
     }
 
     @Test
     public void shouldGetAllRequiredArtifacts() throws MavenProjectFactoryException {
-        Dependency dependency = new DependencyFactory().getDependency("junit", "junit", "4.12");
-        MavenProject project = factory.getMavenProject(dependency);
-        Set<MavenProject> transitiveMavenProjects = collector.getTransitiveMavenProjects(project);
+        Artifact artifact = artifactFactory.createArtifact("junit", "junit", "4.12", "compile", "jar");
+        MavenProject project = projectFactory.getMavenProject(artifact);
+        Set<MavenProject> transitiveMavenProjects = projectsCollector.getTransitiveMavenProjects(project);
         assertThat(transitiveMavenProjects).hasSize(1);
     }
 
