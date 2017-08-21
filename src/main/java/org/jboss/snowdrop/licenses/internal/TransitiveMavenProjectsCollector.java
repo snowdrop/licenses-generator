@@ -22,7 +22,10 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -47,8 +50,9 @@ public class TransitiveMavenProjectsCollector {
         this.artifactFactory = artifactFactory;
     }
 
-    public Set<MavenProject> getTransitiveMavenProjects(MavenProject rootProject) {
-        Set<MavenProject> mavenProjects = new HashSet<>();
+    public Collection<MavenProject> getTransitiveMavenProjects(MavenProject rootProject) {
+        Map<Artifact, MavenProject> mavenProjects = new HashMap<>();
+        Set<Artifact> failedArtifacts = new HashSet<>();
         Set<Dependency> rootDependencies = new HashSet<>();
         rootDependencies.addAll(rootProject.getDependencies());
         if (rootProject.getDependencyManagement() != null) {
@@ -58,30 +62,33 @@ public class TransitiveMavenProjectsCollector {
 
         rootDependencies.stream()
                 .map(this::dependencyToArtifact)
-                .map(this::getMavenProjectOrNull)
+                .map(a -> getMavenProjectOrNull(a, failedArtifacts))
                 .filter(Objects::nonNull)
-                .peek(mavenProjects::add)
-                .forEach(p -> this.recursivelyGetTransitiveMavenProjects(p, mavenProjects));
+                .peek(p -> mavenProjects.put(p.getArtifact(), p))
+                .peek(p -> logger.info("Getting transitive dependencies for " + p))
+                .forEach(p -> this.recursivelyGetTransitiveMavenProjects(p, mavenProjects, failedArtifacts));
 
-        return mavenProjects;
+        return mavenProjects.values();
     }
 
-    private void recursivelyGetTransitiveMavenProjects(MavenProject root, Set<MavenProject> mavenProjects) {
+    private void recursivelyGetTransitiveMavenProjects(MavenProject root, Map<Artifact, MavenProject> mavenProjects,
+            Set<Artifact> failedArtifacts) {
         root.getDependencies()
                 .stream()
                 .map(this::dependencyToArtifact)
-                .filter(a -> this.shouldInclude(a, mavenProjects))
-                .map(this::getMavenProjectOrNull)
+                .filter(a -> this.shouldInclude(a, mavenProjects, failedArtifacts))
+                .map(a -> getMavenProjectOrNull(a, failedArtifacts))
                 .filter(Objects::nonNull)
-                .peek(mavenProjects::add)
-                .forEach(p -> recursivelyGetTransitiveMavenProjects(p, mavenProjects));
+                .peek(p -> mavenProjects.put(p.getArtifact(), p))
+                .forEach(p -> recursivelyGetTransitiveMavenProjects(p, mavenProjects, failedArtifacts));
     }
 
-    private MavenProject getMavenProjectOrNull(Artifact artifact) {
+    private MavenProject getMavenProjectOrNull(Artifact artifact, Set<Artifact> failedArtifacts) {
         try {
             return projectFactory.getMavenProject(artifact);
         } catch (MavenProjectFactoryException e) {
-            logger.warning(e.getMessage());
+            failedArtifacts.add(artifact);
+            logger.warning(String.format("Failed to resolve maven project: %s", e.getMessage()));
             return null;
         }
     }
@@ -93,7 +100,8 @@ public class TransitiveMavenProjectsCollector {
                 dependency.isOptional());
     }
 
-    private boolean shouldInclude(Artifact artifact, Set<MavenProject> mavenProjects) {
+    private boolean shouldInclude(Artifact artifact, Map<Artifact, MavenProject> mavenProjects,
+            Set<Artifact> failedArtifacts) {
         if (artifact.isOptional() && !properties.isIncludeOptional()) {
             return false;
         }
@@ -105,13 +113,7 @@ public class TransitiveMavenProjectsCollector {
                 .contains(artifact.getClassifier())) {
             return false;
         }
-        try {
-            MavenProject project = projectFactory.getMavenProject(artifact, false);
-            return !mavenProjects.contains(project);
-        } catch (MavenProjectFactoryException e) {
-            logger.warning(e.getMessage());
-            return false;
-        }
+        return !mavenProjects.containsKey(artifact) && !failedArtifacts.contains(artifact);
     }
 
 }

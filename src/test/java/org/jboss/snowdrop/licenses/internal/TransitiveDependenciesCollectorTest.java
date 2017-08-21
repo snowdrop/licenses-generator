@@ -6,7 +6,7 @@ import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Set;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,14 +30,15 @@ public class TransitiveDependenciesCollectorTest {
         artifactFactory = embedder.getPlexusContainer()
                 .lookup(ArtifactFactory.class);
         projectFactory = new MavenProjectFactory(embedder.getPlexusContainer(), projectBuildingRequestFactory);
-        projectsCollector = new TransitiveMavenProjectsCollector(applicationProperties, projectFactory, artifactFactory);
+        projectsCollector =
+                new TransitiveMavenProjectsCollector(applicationProperties, projectFactory, artifactFactory);
     }
 
     @Test
     public void shouldGetAllRequiredArtifacts() throws MavenProjectFactoryException {
         Artifact artifact = artifactFactory.createArtifact("junit", "junit", "4.12", "compile", "jar");
         MavenProject project = projectFactory.getMavenProject(artifact);
-        Set<MavenProject> transitiveMavenProjects = projectsCollector.getTransitiveMavenProjects(project);
+        Collection<MavenProject> transitiveMavenProjects = projectsCollector.getTransitiveMavenProjects(project);
         assertThat(transitiveMavenProjects).hasSize(1);
     }
 
