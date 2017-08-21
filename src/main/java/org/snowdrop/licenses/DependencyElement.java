@@ -18,6 +18,10 @@ package org.snowdrop.licenses;
 
 import org.apache.maven.project.MavenProject;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -27,15 +31,20 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
+@XmlRootElement(name = "dependency")
+@XmlType(propOrder = {"groupId", "artifactId", "version", "licenses"})
 class DependencyElement {
 
-    private final String groupId;
+    private String groupId;
 
-    private final String artifactId;
+    private String artifactId;
 
-    private final String version;
+    private String version;
 
-    private final Set<LicenseElement> licenses;
+    private Set<LicenseElement> licenses;
+
+    public DependencyElement() {
+    }
 
     public DependencyElement(MavenProject mavenProject) {
         this.groupId = mavenProject.getGroupId();
@@ -65,16 +74,37 @@ class DependencyElement {
         return groupId;
     }
 
+    @XmlElement
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
     public String getArtifactId() {
         return artifactId;
+    }
+
+    @XmlElement
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public Set<LicenseElement> getLicens() {
-        return Collections.unmodifiableSet(licenses);
+    @XmlElement
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Set<LicenseElement> getLicenses() {
+        return licenses;
+    }
+
+    @XmlElement(name = "license")
+    @XmlElementWrapper
+    public void setLicenses(Set<LicenseElement> licenses) {
+        this.licenses = Collections.unmodifiableSet(licenses);
     }
 
     @Override

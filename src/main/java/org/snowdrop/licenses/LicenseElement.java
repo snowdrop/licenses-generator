@@ -18,6 +18,7 @@ package org.snowdrop.licenses;
 
 import org.apache.maven.model.License;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.util.Objects;
 
 /**
@@ -25,9 +26,12 @@ import java.util.Objects;
  */
 class LicenseElement {
 
-    private final String name;
+    private String name;
 
-    private final String url;
+    private String url;
+
+    public LicenseElement() {
+    }
 
     public LicenseElement(License license) {
         this.name = license.getName();
@@ -45,8 +49,18 @@ class LicenseElement {
         return name;
     }
 
+    @XmlElement
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getUrl() {
         return url;
+    }
+
+    @XmlElement
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
