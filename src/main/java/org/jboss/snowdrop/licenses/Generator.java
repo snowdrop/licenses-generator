@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package org.snowdrop.licenses;
-
-import hudson.maven.MavenEmbedderException;
-import hudson.maven.MavenRequest;
+package org.jboss.snowdrop.licenses;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class MavenEmbedderFactory {
+public class Generator {
 
-    public SnowdropMavenEmbedder getSnowdropMavenEmbedder() throws MavenEmbedderException {
-        MavenRequest mavenRequest = new MavenRequest();
-        mavenRequest.setSystemProperties(System.getProperties());
-        mavenRequest.setProcessPlugins(false);
-
-        return new SnowdropMavenEmbedder(Thread.currentThread()
-                .getContextClassLoader(), new MavenRequest());
+    public static void main(String... args) throws Exception {
+        LicenseSummaryFactory factory = new LicenseSummaryFactory();
+        LicenseSummary licenseSummary =
+                factory.getLicenseSummary("org.springframework.boot", "spring-boot", "1.4.1.RELEASE");
+//        LicenseSummary licenseSummary = factory.getLicenseSummary("junit", "junit", "4.12");
+        System.out.println(licenseSummary.toXmlString());
     }
 
 }

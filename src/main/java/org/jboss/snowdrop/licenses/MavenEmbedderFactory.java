@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package org.snowdrop.licenses;
+package org.jboss.snowdrop.licenses;
+
+import hudson.maven.MavenEmbedderException;
+import hudson.maven.MavenRequest;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class Generator {
+class MavenEmbedderFactory {
 
-    public static void main(String... args) throws Exception {
-        DependencyContainerFactory factory = new DependencyContainerFactory();
-        DependencyContainer container = factory.getDependencyContainer("org.springframework.boot", "spring-boot",
-                "1.4.1.RELEASE");
-        container.getDependencies().forEach(System.out::println);
+    public SnowdropMavenEmbedder getSnowdropMavenEmbedder() throws MavenEmbedderException {
+        MavenRequest mavenRequest = new MavenRequest();
+        mavenRequest.setSystemProperties(System.getProperties());
+        mavenRequest.setProcessPlugins(false);
+
+        return new SnowdropMavenEmbedder(Thread.currentThread()
+                .getContextClassLoader(), new MavenRequest());
     }
 
 }

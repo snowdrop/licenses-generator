@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.snowdrop.licenses;
+package org.jboss.snowdrop.licenses;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
@@ -58,7 +58,7 @@ class TransitiveDependenciesCollector {
             MavenProject project = mavenProjectFactory.getMavenProject(dependency);
 
             if (mavenProjects.add(project)) {
-                logger.info(String.format("Added transitive dependency '%s'", project));
+                logger.fine(String.format("Added transitive dependency '%s'", project));
                 recursivelyGetTransitiveMavenProjects(project, mavenProjects);
             }
         }

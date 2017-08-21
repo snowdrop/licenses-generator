@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.snowdrop.licenses;
+package org.jboss.snowdrop.licenses;
 
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.snowdrop.licenses;
+package org.jboss.snowdrop.licenses;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

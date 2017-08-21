@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.snowdrop.licenses;
+package org.jboss.snowdrop.licenses;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
