@@ -56,9 +56,9 @@ class TransitiveDependenciesCollector {
             }
 
             MavenProject project = mavenProjectFactory.getMavenProject(dependency);
-            logger.info(String.format("Adding transitive dependency '%s'", project));
 
             if (mavenProjects.add(project)) {
+                logger.info(String.format("Added transitive dependency '%s'", project));
                 recursivelyGetTransitiveMavenProjects(project, mavenProjects);
             }
         }

@@ -22,7 +22,7 @@ import hudson.maven.MavenRequest;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class MavenEmbedderFactory {
+class MavenEmbedderFactory {
 
     public SnowdropMavenEmbedder getSnowdropMavenEmbedder() throws MavenEmbedderException {
         MavenRequest mavenRequest = new MavenRequest();

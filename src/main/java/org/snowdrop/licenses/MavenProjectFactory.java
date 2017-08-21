@@ -30,7 +30,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class MavenProjectFactory {
+class MavenProjectFactory {
 
     private final PlexusContainer plexusContainer;
 

@@ -21,7 +21,7 @@ import org.apache.maven.model.Dependency;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class DependencyFactory {
+class DependencyFactory {
 
     public Dependency getDependency(String groupId, String artifactId, String version) {
         Dependency dependency = new Dependency();

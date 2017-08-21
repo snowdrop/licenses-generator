@@ -28,7 +28,7 @@ import java.io.File;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class SnowdropMavenEmbedder extends MavenEmbedder {
+class SnowdropMavenEmbedder extends MavenEmbedder {
 
     public SnowdropMavenEmbedder(File mavenHome, MavenRequest mavenRequest) throws MavenEmbedderException {
         super(mavenHome, mavenRequest);

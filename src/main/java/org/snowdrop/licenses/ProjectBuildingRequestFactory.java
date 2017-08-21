@@ -24,7 +24,7 @@ import java.util.Collections;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class ProjectBuildingRequestFactory {
+class ProjectBuildingRequestFactory {
 
     private final SnowdropMavenEmbedder mavenEmbedder;
 
