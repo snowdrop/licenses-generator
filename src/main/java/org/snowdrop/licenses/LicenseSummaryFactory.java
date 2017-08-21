@@ -28,20 +28,21 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class DependencyContainerFactory {
+public class LicenseSummaryFactory {
 
-    public DependencyContainer getDependencyContainer(String groupId, String artifactId, String version) {
-        return getDependencyContainer(groupId, artifactId, version, "jar");
+    public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version) {
+        return getLicenseSummary(groupId, artifactId, version, "jar");
     }
 
-    public DependencyContainer getDependencyContainer(String groupId, String artifactId, String version, String type) {
+    public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version, String type) {
         Dependency dependency = new DependencyFactory().getDependency(groupId, artifactId, version, type);
         Set<DependencyElement> dependencyElements = getMavenProjects(dependency).stream()
                 .map(DependencyElement::new)
                 .collect(Collectors.toSet());
-        return new DependencyContainer(dependencyElements);
+        return new LicenseSummary(dependencyElements);
     }
 
+    // TODO refactor
     private Set<MavenProject> getMavenProjects(Dependency dependency) {
         try {
             SnowdropMavenEmbedder mavenEmbedder = new MavenEmbedderFactory().getSnowdropMavenEmbedder();
