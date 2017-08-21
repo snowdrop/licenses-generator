@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class TransitiveDependenciesCollector {
+public class TransitiveDependenciesCollector {
 
     private final Logger logger = Logger.getLogger(TransitiveDependenciesCollector.class.getSimpleName());
 

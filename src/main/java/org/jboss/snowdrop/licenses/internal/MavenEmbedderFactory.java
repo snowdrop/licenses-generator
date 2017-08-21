@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
@@ -22,7 +22,7 @@ import hudson.maven.MavenRequest;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class MavenEmbedderFactory {
+public class MavenEmbedderFactory {
 
     public SnowdropMavenEmbedder getSnowdropMavenEmbedder() throws MavenEmbedderException {
         MavenRequest mavenRequest = new MavenRequest();

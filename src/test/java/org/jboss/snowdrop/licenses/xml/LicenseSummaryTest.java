@@ -1,4 +1,4 @@
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.xml;
 
 import org.junit.Test;
 

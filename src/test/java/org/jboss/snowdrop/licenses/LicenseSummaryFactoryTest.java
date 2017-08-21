@@ -1,5 +1,7 @@
 package org.jboss.snowdrop.licenses;
 
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenEmbedderException;
@@ -28,7 +28,7 @@ import java.io.File;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class SnowdropMavenEmbedder extends MavenEmbedder {
+public class SnowdropMavenEmbedder extends MavenEmbedder {
 
     public SnowdropMavenEmbedder(File mavenHome, MavenRequest mavenRequest) throws MavenEmbedderException {
         super(mavenHome, mavenRequest);

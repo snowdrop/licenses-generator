@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.xml;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -30,7 +30,7 @@ import java.util.Set;
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 @XmlRootElement
-class LicenseSummary {
+public class LicenseSummary {
 
     private Set<DependencyElement> dependencies;
 

@@ -1,4 +1,4 @@
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import hudson.maven.MavenEmbedder;
 import hudson.maven.MavenRequest;

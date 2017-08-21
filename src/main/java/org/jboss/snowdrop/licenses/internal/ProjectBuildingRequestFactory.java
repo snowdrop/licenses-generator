@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -24,7 +24,7 @@ import java.util.Collections;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class ProjectBuildingRequestFactory {
+public class ProjectBuildingRequestFactory {
 
     private final SnowdropMavenEmbedder mavenEmbedder;
 

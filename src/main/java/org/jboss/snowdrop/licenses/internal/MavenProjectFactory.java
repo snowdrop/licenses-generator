@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -30,7 +30,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class MavenProjectFactory {
+public class MavenProjectFactory {
 
     private final PlexusContainer plexusContainer;
 

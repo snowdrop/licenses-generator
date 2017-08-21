@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.model.Dependency;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class DependencyFactory {
+public class DependencyFactory {
 
     public Dependency getDependency(String groupId, String artifactId, String version) {
         Dependency dependency = new Dependency();

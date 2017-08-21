@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.xml;
 
 import org.apache.maven.model.License;
 
@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-class LicenseElement {
+public class LicenseElement {
 
     private String name;
 

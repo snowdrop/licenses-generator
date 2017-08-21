@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.xml;
 
 import org.apache.maven.project.MavenProject;
 
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @XmlRootElement(name = "dependency")
 @XmlType(propOrder = {"groupId", "artifactId", "version", "licenses"})
-class DependencyElement {
+public class DependencyElement {
 
     private String groupId;
 

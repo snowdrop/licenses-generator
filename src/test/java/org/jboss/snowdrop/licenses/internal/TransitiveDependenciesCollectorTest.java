@@ -1,4 +1,4 @@
-package org.jboss.snowdrop.licenses;
+package org.jboss.snowdrop.licenses.internal;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;

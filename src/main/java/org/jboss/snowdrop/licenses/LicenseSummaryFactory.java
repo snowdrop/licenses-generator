@@ -19,6 +19,14 @@ package org.jboss.snowdrop.licenses;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.jboss.snowdrop.licenses.internal.DependencyFactory;
+import org.jboss.snowdrop.licenses.internal.MavenEmbedderFactory;
+import org.jboss.snowdrop.licenses.internal.MavenProjectFactory;
+import org.jboss.snowdrop.licenses.internal.ProjectBuildingRequestFactory;
+import org.jboss.snowdrop.licenses.internal.SnowdropMavenEmbedder;
+import org.jboss.snowdrop.licenses.internal.TransitiveDependenciesCollector;
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
 import java.util.HashSet;
 import java.util.Set;

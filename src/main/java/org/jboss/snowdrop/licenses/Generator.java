@@ -16,6 +16,8 @@
 
 package org.jboss.snowdrop.licenses;
 
+import org.jboss.snowdrop.licenses.xml.LicenseSummary;
+
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
