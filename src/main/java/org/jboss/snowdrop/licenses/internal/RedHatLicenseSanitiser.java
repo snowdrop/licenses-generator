@@ -20,9 +20,8 @@ import org.jboss.snowdrop.licenses.xml.LicenseElement;
 
 import javax.json.Json;
 import javax.json.JsonValue;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -35,22 +34,32 @@ public class RedHatLicenseSanitiser {
 
     private Set<RedHatLicense> redHatLicenses;
 
-    public RedHatLicenseSanitiser(File namesFile) {
-        this.redHatLicenses = loadRedHatLicenses(namesFile);
+    public RedHatLicenseSanitiser(String redHatLicensesFile) {
+        this.redHatLicenses = loadRedHatLicenses(redHatLicensesFile);
     }
 
     public LicenseElement fix(LicenseElement license) {
-        String url = license.getUrl().toLowerCase();
-        Optional<RedHatLicense> optional = findRedHatLicense(l -> l.getUrlAliases().contains(url));
-        if (optional.isPresent()) {
-            return optional.get().toLicenseElement();
+        if (license.getUrl() != null) {
+            String url = license.getUrl()
+                    .toLowerCase();
+            Optional<RedHatLicense> optional = findRedHatLicense(l -> l.getUrlAliases()
+                    .contains(url));
+            if (optional.isPresent()) {
+                return optional.get()
+                        .toLicenseElement();
+            }
         }
 
-        String name = license.getName().toLowerCase();
-        optional = findRedHatLicense(l -> l.getAliases().contains(name));
+        if (license.getName() != null) {
+            String name = license.getName()
+                    .toLowerCase();
+            Optional<RedHatLicense> optional = findRedHatLicense(l -> l.getAliases()
+                    .contains(name));
 
-        if (optional.isPresent()) {
-            return optional.get().toLicenseElement();
+            if (optional.isPresent()) {
+                return optional.get()
+                        .toLicenseElement();
+            }
         }
 
         return license;
@@ -62,9 +71,10 @@ public class RedHatLicenseSanitiser {
                 .findFirst();
     }
 
-    private Set<RedHatLicense> loadRedHatLicenses(File namesFile) {
-        try (FileReader fileReader = new FileReader(namesFile)) {
-            return Json.createReader(fileReader)
+    private Set<RedHatLicense> loadRedHatLicenses(String redHatLicensesFile) {
+        try (InputStream fileInputStream = getClass().getClassLoader()
+                .getResourceAsStream(redHatLicensesFile)) {
+            return Json.createReader(fileInputStream)
                     .readArray()
                     .stream()
                     .map(JsonValue::asJsonObject)

@@ -4,8 +4,6 @@ import org.jboss.snowdrop.licenses.xml.LicenseElement;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -17,7 +15,7 @@ public class RedHatLicenseSanitiserTest {
 
     @Before
     public void before() {
-        licenseSanitiser = new RedHatLicenseSanitiser(new File("./target/test-classes/rh-license-names.json"));
+        licenseSanitiser = new RedHatLicenseSanitiser("rh-license-names.json");
     }
 
     @Test
@@ -38,7 +36,7 @@ public class RedHatLicenseSanitiserTest {
 
     @Test
     public void shouldLeaveCorrectLicenseAsIs() {
-        LicenseElement license = new LicenseElement("Test License Name","http://test-license.com");
+        LicenseElement license = new LicenseElement("Test License Name", "http://test-license.com");
         LicenseElement fixedLicense = licenseSanitiser.fix(license);
         assertThat(fixedLicense.getName()).isEqualTo("Test License Name");
         assertThat(fixedLicense.getUrl()).isEqualTo("http://test-license.com");

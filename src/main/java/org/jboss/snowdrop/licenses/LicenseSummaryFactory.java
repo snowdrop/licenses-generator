@@ -25,9 +25,11 @@ import org.jboss.snowdrop.licenses.internal.MavenEmbedderFactory;
 import org.jboss.snowdrop.licenses.internal.MavenProjectFactory;
 import org.jboss.snowdrop.licenses.internal.MavenProjectFactoryException;
 import org.jboss.snowdrop.licenses.internal.ProjectBuildingRequestFactory;
+import org.jboss.snowdrop.licenses.internal.RedHatLicenseSanitiser;
 import org.jboss.snowdrop.licenses.internal.SnowdropMavenEmbedder;
 import org.jboss.snowdrop.licenses.internal.TransitiveMavenProjectsCollector;
 import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseElement;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
 import java.util.Set;
@@ -43,6 +45,8 @@ public class LicenseSummaryFactory {
     private final TransitiveMavenProjectsCollector projectsCollector;
 
     private final ArtifactFactory artifactFactory;
+
+    private final RedHatLicenseSanitiser licenseSanitiser;
 
     public LicenseSummaryFactory() {
         ApplicationProperties properties = new ApplicationProperties();
@@ -61,6 +65,7 @@ public class LicenseSummaryFactory {
                 new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequestFactory);
         this.projectsCollector =
                 new TransitiveMavenProjectsCollector(properties, projectFactory, artifactFactory);
+        this.licenseSanitiser = new RedHatLicenseSanitiser("rh-license-names.json");
     }
 
     public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version) {
@@ -79,8 +84,18 @@ public class LicenseSummaryFactory {
         Set<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
                 .stream()
                 .map(DependencyElement::new)
+                .map(this::findDependencyLicenses)
                 .collect(Collectors.toSet());
         return new LicenseSummary(dependencyElements);
+    }
+
+    private DependencyElement findDependencyLicenses(DependencyElement dependencyElement) {
+        Set<LicenseElement> fixedLicenses = dependencyElement.getLicenses()
+                .stream()
+                .map(licenseSanitiser::fix)
+                .collect(Collectors.toSet());
+        dependencyElement.setLicenses(fixedLicenses);
+        return dependencyElement;
     }
 
 }
