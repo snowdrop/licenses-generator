@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringWriter;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -32,24 +32,24 @@ import java.util.Set;
 @XmlRootElement
 public class LicenseSummary {
 
-    private Set<DependencyElement> dependencies;
+    private List<DependencyElement> dependencies;
 
     public LicenseSummary() {
-        dependencies = Collections.emptySet();
+        dependencies = Collections.emptyList();
     }
 
-    public LicenseSummary(Set<DependencyElement> dependencies) {
-        this.dependencies = Collections.unmodifiableSet(dependencies);
+    public LicenseSummary(List<DependencyElement> dependencies) {
+        this.dependencies = Collections.unmodifiableList(dependencies);
     }
 
-    public Set<DependencyElement> getDependencies() {
+    public List<DependencyElement> getDependencies() {
         return dependencies;
     }
 
     @XmlElement(name = "dependency")
     @XmlElementWrapper
-    public void setDependencies(Set<DependencyElement> dependencies) {
-        this.dependencies = Collections.unmodifiableSet(dependencies);
+    public void setDependencies(List<DependencyElement> dependencies) {
+        this.dependencies = Collections.unmodifiableList(dependencies);
     }
 
     public String toXmlString() throws JAXBException {

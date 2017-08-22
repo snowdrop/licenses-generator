@@ -32,6 +32,8 @@ import org.jboss.snowdrop.licenses.xml.DependencyElement;
 import org.jboss.snowdrop.licenses.xml.LicenseElement;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,11 +83,15 @@ public class LicenseSummaryFactory {
             throw new RuntimeException(e);
         }
 
-        Set<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
+        List<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
                 .stream()
                 .map(DependencyElement::new)
                 .map(this::findDependencyLicenses)
-                .collect(Collectors.toSet());
+                .sorted(Comparator.comparing(DependencyElement::getGroupId)
+                        .thenComparing(DependencyElement::getArtifactId)
+                        .thenComparing(DependencyElement::getVersion))
+                .collect(Collectors.toList());
+
         return new LicenseSummary(dependencyElements);
     }
 

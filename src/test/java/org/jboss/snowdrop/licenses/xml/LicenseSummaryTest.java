@@ -15,7 +15,7 @@ public class LicenseSummaryTest {
     @Test
     public void shouldGetDependencies() {
         DependencyElement dependency = new DependencyElement("testG", "testA", "testV", Collections.emptySet());
-        LicenseSummary summary = new LicenseSummary(Collections.singleton(dependency));
+        LicenseSummary summary = new LicenseSummary(Collections.singletonList(dependency));
         assertThat(summary.getDependencies()).containsOnly(dependency);
     }
 
@@ -25,14 +25,14 @@ public class LicenseSummaryTest {
         LicenseSummary summary = new LicenseSummary();
         assertThat(summary.getDependencies()).isEmpty();
 
-        summary.setDependencies(Collections.singleton(dependency));
+        summary.setDependencies(Collections.singletonList(dependency));
         assertThat(summary.getDependencies()).containsOnly(dependency);
     }
 
     @Test
     public void shouldGetXmlWithoutLicenses() throws JAXBException {
         DependencyElement dependency = new DependencyElement("testG", "testA", "testV", Collections.emptySet());
-        LicenseSummary summary = new LicenseSummary(Collections.singleton(dependency));
+        LicenseSummary summary = new LicenseSummary(Collections.singletonList(dependency));
         String xml = summary.toXmlString();
         assertThat(xml).isXmlEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
                 + "<licenseSummary>"
@@ -51,7 +51,7 @@ public class LicenseSummaryTest {
     public void shouldGetXmlWithLicense() throws JAXBException {
         LicenseElement license = new LicenseElement("licenseName", "licenseUrl");
         DependencyElement dependency = new DependencyElement("testG", "testA", "testV", Collections.singleton(license));
-        LicenseSummary summary = new LicenseSummary(Collections.singleton(dependency));
+        LicenseSummary summary = new LicenseSummary(Collections.singletonList(dependency));
         String xml = summary.toXmlString();
         assertThat(xml).isXmlEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
                 + "<licenseSummary>"
