@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Test License Name",
+    "url": "http://test-license.com",
+    "aliases": [
+      "Test License Alias"
+    ]
+  }
+]

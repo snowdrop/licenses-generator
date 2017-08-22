@@ -31,6 +31,18 @@
   </repositories>
 
   <dependencies>
+    <!-- JSON -->
+    <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <version>1.1</version>
+    </dependency>
+
     <!-- Maven Embedder -->
     <dependency>
       <groupId>org.jenkins-ci.lib</groupId>
@@ -75,6 +87,18 @@
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>1.9.3</version>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.25</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.25</version>
     </dependency>
 
     <!-- Test -->
