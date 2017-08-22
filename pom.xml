@@ -25,12 +25,23 @@
 
   <repositories>
     <repository>
+      <id>jcenter</id>
+      <url>https://jcenter.bintray.com/</url>
+    </repository>
+    <repository>
       <id>jenkins-ci-releases</id>
       <url>http://repo.jenkins-ci.org/releases/</url>
     </repository>
   </repositories>
 
   <dependencies>
+    <!-- Twig -->
+    <dependency>
+      <groupId>org.jtwig</groupId>
+      <artifactId>jtwig-core</artifactId>
+      <version>5.86.0.RELEASE</version>
+    </dependency>
+
     <!-- JSON -->
     <dependency>
       <groupId>javax.json</groupId>
