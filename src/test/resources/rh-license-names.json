@@ -4,6 +4,9 @@
     "url": "http://test-license.com",
     "aliases": [
       "Test License Alias"
+    ],
+    "urlAliases": [
+      "http://test-license-alias.com"
     ]
   }
 ]

@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -39,16 +40,26 @@ public class RedHatLicenseSanitiser {
     }
 
     public LicenseElement fix(LicenseElement license) {
-        String licenseAlias = license.getName()
-                .toLowerCase();
-        Optional<RedHatLicense> redHatLicenseOptional = redHatLicenses.stream()
-                .filter(redHatLicense -> redHatLicense.getAliases().contains(licenseAlias))
-                .findFirst();
-        if (!redHatLicenseOptional.isPresent()) {
-            return license;
+        String url = license.getUrl().toLowerCase();
+        Optional<RedHatLicense> optional = findRedHatLicense(l -> l.getUrlAliases().contains(url));
+        if (optional.isPresent()) {
+            return optional.get().toLicenseElement();
         }
-        return redHatLicenseOptional.get()
-                .toLicenseElement();
+
+        String name = license.getName().toLowerCase();
+        optional = findRedHatLicense(l -> l.getAliases().contains(name));
+
+        if (optional.isPresent()) {
+            return optional.get().toLicenseElement();
+        }
+
+        return license;
+    }
+
+    private Optional<RedHatLicense> findRedHatLicense(Predicate<RedHatLicense> predicate) {
+        return redHatLicenses.stream()
+                .filter(predicate)
+                .findFirst();
     }
 
     private Set<RedHatLicense> loadRedHatLicenses(File namesFile) {

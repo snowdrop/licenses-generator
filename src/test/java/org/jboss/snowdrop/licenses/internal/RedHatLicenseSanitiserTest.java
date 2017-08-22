@@ -21,8 +21,16 @@ public class RedHatLicenseSanitiserTest {
     }
 
     @Test
-    public void shouldFixWrongLicense() {
+    public void shouldFixWrongLicenseBaseOnAlias() {
         LicenseElement license = new LicenseElement("Test License Alias", "http://wrong-url.com");
+        LicenseElement fixedLicense = licenseSanitiser.fix(license);
+        assertThat(fixedLicense.getName()).isEqualTo("Test License Name");
+        assertThat(fixedLicense.getUrl()).isEqualTo("http://test-license.com");
+    }
+
+    @Test
+    public void shouldFixWrongLicenseBaseOnUrlAlias() {
+        LicenseElement license = new LicenseElement("Unknonw Test License", "http://test-license-alias.com");
         LicenseElement fixedLicense = licenseSanitiser.fix(license);
         assertThat(fixedLicense.getName()).isEqualTo("Test License Name");
         assertThat(fixedLicense.getUrl()).isEqualTo("http://test-license.com");

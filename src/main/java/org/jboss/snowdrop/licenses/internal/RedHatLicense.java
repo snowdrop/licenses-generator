@@ -34,10 +34,19 @@ public class RedHatLicense {
 
     private Set<String> aliases;
 
+    private Set<String> urlAliases;
+
     public RedHatLicense(JsonObject jsonObject) {
         this.name = jsonObject.getString("name");
         this.url = jsonObject.getString("url");
         this.aliases = jsonObject.getJsonArray("aliases")
+                .getValuesAs(JsonString.class)
+                .stream()
+                .map(JsonString::getString)
+                .map(String::toLowerCase)
+                .map(String::trim)
+                .collect(Collectors.toSet());
+        this.urlAliases = jsonObject.getJsonArray("urlAliases")
                 .getValuesAs(JsonString.class)
                 .stream()
                 .map(JsonString::getString)
@@ -56,6 +65,10 @@ public class RedHatLicense {
 
     public Set<String> getAliases() {
         return aliases;
+    }
+
+    public Set<String> getUrlAliases() {
+        return urlAliases;
     }
 
     public LicenseElement toLicenseElement() {
