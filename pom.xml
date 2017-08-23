@@ -23,6 +23,24 @@
   <artifactId>licenses-generator</artifactId>
   <version>1.0</version>
 
+  <properties>
+    <aether.version>1.1.0</aether.version>
+    <assertj.version>3.8.0</assertj.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
+    <commons-configuration2.version>2.1.1</commons-configuration2.version>
+    <commons-io.version>1.3.2</commons-io.version>
+    <guice.version>4.0</guice.version>
+    <jaxb.version>2.2.11</jaxb.version>
+    <json.version>1.1</json.version>
+    <junit.version>4.12</junit.version>
+    <maven-embedder.version>3.12.1</maven-embedder.version>
+    <mockito.version>2.8.47</mockito.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <twig.version>5.86.0.RELEASE</twig.version>
+
+    <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+  </properties>
+
   <repositories>
     <repository>
       <id>jcenter</id>
@@ -39,103 +57,103 @@
     <dependency>
       <groupId>org.jtwig</groupId>
       <artifactId>jtwig-core</artifactId>
-      <version>5.86.0.RELEASE</version>
+      <version>${twig.version}</version>
     </dependency>
 
     <!-- JSON -->
     <dependency>
       <groupId>javax.json</groupId>
       <artifactId>javax.json-api</artifactId>
-      <version>1.1</version>
+      <version>${json.version}</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
-      <version>1.1</version>
+      <version>${json.version}</version>
     </dependency>
 
     <!-- Maven Embedder -->
     <dependency>
       <groupId>org.jenkins-ci.lib</groupId>
       <artifactId>lib-jenkins-maven-embedder</artifactId>
-      <version>3.12.1</version>
+      <version>${maven-embedder.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>4.0</version>
+      <version>${guice.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-transport-http</artifactId>
-      <version>1.1.0</version>
+      <version>${aether.version}</version>
     </dependency>
 
     <!-- JAXB -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.2.11</version>
+      <version>${jaxb.version}</version>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.2.11</version>
+      <version>${jaxb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>2.2.11</version>
+      <version>${jaxb.version}</version>
     </dependency>
 
     <!-- Configuration -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-configuration2</artifactId>
-      <version>2.1.1</version>
+      <version>${commons-configuration2.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>1.9.3</version>
+      <version>${commons-beanutils.version}</version>
     </dependency>
 
     <!-- File management -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.3.2</version>
+      <version>${commons-io.version}</version>
     </dependency>
 
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.8.0</version>
+      <version>${assertj.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.8.47</version>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -145,6 +163,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
