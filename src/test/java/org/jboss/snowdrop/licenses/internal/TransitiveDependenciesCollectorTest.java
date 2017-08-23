@@ -3,6 +3,7 @@ package org.jboss.snowdrop.licenses.internal;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class TransitiveDependenciesCollectorTest {
 
     @Before
     public void before() throws Exception {
-        ApplicationProperties applicationProperties = new ApplicationProperties();
+        GeneratorProperties applicationProperties = new GeneratorProperties();
         SnowdropMavenEmbedder embedder = new MavenEmbedderFactory(applicationProperties).getSnowdropMavenEmbedder();
         ProjectBuildingRequestFactory projectBuildingRequestFactory =
                 new ProjectBuildingRequestFactory(applicationProperties, embedder);

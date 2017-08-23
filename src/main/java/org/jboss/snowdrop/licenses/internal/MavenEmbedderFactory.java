@@ -18,15 +18,16 @@ package org.jboss.snowdrop.licenses.internal;
 
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class MavenEmbedderFactory {
 
-    private final ApplicationProperties properties;
+    private final GeneratorProperties properties;
 
-    public MavenEmbedderFactory(ApplicationProperties properties) {
+    public MavenEmbedderFactory(GeneratorProperties properties) {
         this.properties = properties;
     }
 

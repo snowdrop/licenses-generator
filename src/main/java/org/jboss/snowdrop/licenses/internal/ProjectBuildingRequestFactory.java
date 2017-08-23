@@ -20,6 +20,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,11 +30,11 @@ import java.util.stream.Collectors;
  */
 public class ProjectBuildingRequestFactory {
 
-    private final ApplicationProperties properties;
+    private final GeneratorProperties properties;
 
     private final SnowdropMavenEmbedder maven;
 
-    public ProjectBuildingRequestFactory(ApplicationProperties properties, SnowdropMavenEmbedder maven) {
+    public ProjectBuildingRequestFactory(GeneratorProperties properties, SnowdropMavenEmbedder maven) {
         this.properties = properties;
         this.maven = maven;
     }

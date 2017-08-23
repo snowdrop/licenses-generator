@@ -4,6 +4,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class MavenProjectFactoryTest {
 
     @Before
     public void before() throws Exception {
-        ApplicationProperties applicationProperties = new ApplicationProperties();
+        GeneratorProperties applicationProperties = new GeneratorProperties();
         SnowdropMavenEmbedder mavenEmbedder =
                 new MavenEmbedderFactory(applicationProperties).getSnowdropMavenEmbedder();
         PlexusContainer container = mavenEmbedder.getPlexusContainer();

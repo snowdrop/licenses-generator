@@ -21,6 +21,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,13 +38,13 @@ public class TransitiveMavenProjectsCollector {
 
     private final Logger logger = Logger.getLogger(TransitiveMavenProjectsCollector.class.getSimpleName());
 
-    private final ApplicationProperties properties;
+    private final GeneratorProperties properties;
 
     private final MavenProjectFactory projectFactory;
 
     private final ArtifactFactory artifactFactory;
 
-    public TransitiveMavenProjectsCollector(ApplicationProperties properties, MavenProjectFactory projectFactory,
+    public TransitiveMavenProjectsCollector(GeneratorProperties properties, MavenProjectFactory projectFactory,
             ArtifactFactory artifactFactory) {
         this.properties = properties;
         this.projectFactory = projectFactory;

@@ -20,7 +20,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.jboss.snowdrop.licenses.internal.ApplicationProperties;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.jboss.snowdrop.licenses.internal.MavenEmbedderFactory;
 import org.jboss.snowdrop.licenses.internal.MavenProjectFactory;
 import org.jboss.snowdrop.licenses.internal.MavenProjectFactoryException;
@@ -56,7 +56,7 @@ public class LicenseSummaryFactory {
      * @throws RuntimeException if any of the initialisation steps fail.
      */
     public LicenseSummaryFactory() {
-        ApplicationProperties properties = new ApplicationProperties();
+        GeneratorProperties properties = new GeneratorProperties();
         MavenEmbedderFactory mavenEmbedderFactory = new MavenEmbedderFactory(properties);
         SnowdropMavenEmbedder mavenEmbedder = mavenEmbedderFactory.getSnowdropMavenEmbedder();
         ProjectBuildingRequestFactory projectBuildingRequestFactory =
