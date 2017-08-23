@@ -193,6 +193,7 @@
                   <resource>META-INF/sisu/javax.inject.Named</resource>
                 </transformer>
               </transformers>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
           </execution>
         </executions>
