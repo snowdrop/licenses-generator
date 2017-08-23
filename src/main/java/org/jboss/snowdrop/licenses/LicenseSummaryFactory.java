@@ -56,7 +56,13 @@ public class LicenseSummaryFactory {
      * @throws RuntimeException if any of the initialisation steps fail.
      */
     public LicenseSummaryFactory() {
-        GeneratorProperties properties = new GeneratorProperties();
+        this(new GeneratorProperties());
+    }
+
+    /**
+     * @throws RuntimeException if any of the initialisation steps fail.
+     */
+    public LicenseSummaryFactory(GeneratorProperties properties) {
         MavenEmbedderFactory mavenEmbedderFactory = new MavenEmbedderFactory(properties);
         SnowdropMavenEmbedder mavenEmbedder = mavenEmbedderFactory.getSnowdropMavenEmbedder();
         ProjectBuildingRequestFactory projectBuildingRequestFactory =

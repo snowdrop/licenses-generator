@@ -16,6 +16,7 @@
 
 package org.jboss.snowdrop.licenses;
 
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
 import java.util.Arrays;
@@ -28,16 +29,23 @@ import java.util.Properties;
 public class Generator {
 
     public static void main(String... args) throws Exception {
-        Properties properties = argsToProperties(args);
-        LicenseSummaryFactory licenseSummaryFactory = new LicenseSummaryFactory();
+        Properties executionProperties = argsToProperties(args);
+        GeneratorProperties generatorProperties;
+        if (executionProperties.getProperty("generatorProperties") == null) {
+            generatorProperties = new GeneratorProperties();
+        } else {
+            generatorProperties = new GeneratorProperties(executionProperties.getProperty("generatorProperties"));
+        }
+
+        LicenseSummaryFactory licenseSummaryFactory = new LicenseSummaryFactory(generatorProperties);
         LicenseFilesManager licenseFilesManager = new LicenseFilesManager();
 
-        LicenseSummary licenseSummary = licenseSummaryFactory.getLicenseSummary(properties.getProperty("groupId"),
-                properties.getProperty("artifactId"), properties.getProperty("version"),
-                properties.getProperty("type", "jar"));
+        LicenseSummary licenseSummary = licenseSummaryFactory.getLicenseSummary(executionProperties.getProperty("groupId"),
+                executionProperties.getProperty("artifactId"), executionProperties.getProperty("version"),
+                executionProperties.getProperty("type", "jar"));
 
-        licenseFilesManager.createLicensesXml(licenseSummary, properties.getProperty("destination"));
-        licenseFilesManager.createLicensesHtml(licenseSummary, properties.getProperty("destination"));
+        licenseFilesManager.createLicensesXml(licenseSummary, executionProperties.getProperty("destination"));
+        licenseFilesManager.createLicensesHtml(licenseSummary, executionProperties.getProperty("destination"));
     }
 
     private static Properties argsToProperties(String... args) {
