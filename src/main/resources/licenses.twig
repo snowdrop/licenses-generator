@@ -45,7 +45,12 @@
         {% endfor %}
       </td>
       <td>
-        Here be trouble
+        {% for license in dependency.getLicenses() %}
+        {% if licenseFiles.containsKey(license.getName()) %}
+          <a href="{{ licenseFiles.get(license.getName()) }}">{{ license.getName() }}</a>
+          <br/>
+        {% endif %}
+        {% endfor %}
       </td>
     </tr>
     {% endfor %}
