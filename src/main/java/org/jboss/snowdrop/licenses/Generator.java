@@ -24,11 +24,14 @@ import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 public class Generator {
 
     public static void main(String... args) throws Exception {
-        LicenseSummaryFactory factory = new LicenseSummaryFactory();
+        LicenseSummaryFactory licenseSummaryFactory = new LicenseSummaryFactory();
+        LicenseFilesManager licenseFilesManager = new LicenseFilesManager();
+        // To test with *-redhat dependencies you need to change repository in application.properties
 //        LicenseSummary licenseSummary =
-//                factory.getLicenseSummary("org.springframework.boot", "spring-boot", "1.4.1.RELEASE");
-        LicenseSummary licenseSummary = factory.getLicenseSummary("junit", "junit", "4.12");
-        System.out.println(licenseSummary.toXmlString());
+//                licenseSummaryFactory.getLicenseSummary("org.jboss.snowdrop", "spring-boot-1.4-bom", "2.0.0.redhat-28");
+        LicenseSummary licenseSummary = licenseSummaryFactory.getLicenseSummary("junit", "junit", "4.12");
+        licenseFilesManager.createLicensesXml(licenseSummary, "target/licenses");
+        licenseFilesManager.createLicensesHtml(licenseSummary, "target/licenses");
     }
 
 }
