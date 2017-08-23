@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses.internal;
+package org.jboss.snowdrop.licenses.sanitiser;
 
 import org.jboss.snowdrop.licenses.xml.LicenseElement;
 

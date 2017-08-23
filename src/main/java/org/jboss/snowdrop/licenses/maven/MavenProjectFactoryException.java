@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses.internal;
+package org.jboss.snowdrop.licenses.maven;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>

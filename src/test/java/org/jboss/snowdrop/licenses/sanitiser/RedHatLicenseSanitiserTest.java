@@ -1,4 +1,4 @@
-package org.jboss.snowdrop.licenses.internal;
+package org.jboss.snowdrop.licenses.sanitiser;
 
 import org.jboss.snowdrop.licenses.xml.LicenseElement;
 import org.junit.Before;

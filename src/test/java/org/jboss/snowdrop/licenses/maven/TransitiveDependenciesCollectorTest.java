@@ -1,4 +1,4 @@
-package org.jboss.snowdrop.licenses.internal;
+package org.jboss.snowdrop.licenses.maven;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
