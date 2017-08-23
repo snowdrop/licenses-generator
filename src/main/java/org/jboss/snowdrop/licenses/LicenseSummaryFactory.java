@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * Class responsible for retrieving licenses information based on a provided GAV.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class LicenseSummaryFactory {
@@ -50,6 +52,9 @@ public class LicenseSummaryFactory {
 
     private final RedHatLicenseSanitiser licenseSanitiser;
 
+    /**
+     * @throws RuntimeException if any of the initialisation steps fail.
+     */
     public LicenseSummaryFactory() {
         ApplicationProperties properties = new ApplicationProperties();
         MavenEmbedderFactory mavenEmbedderFactory = new MavenEmbedderFactory(properties);
@@ -70,10 +75,30 @@ public class LicenseSummaryFactory {
         this.licenseSanitiser = new RedHatLicenseSanitiser("rh-license-names.json");
     }
 
+    /**
+     * Get licenses based on groupId:artifactId:version.
+     *
+     * @param groupId Group id of a main dependency.
+     * @param artifactId Artifact id of a main dependency.
+     * @param version Version of a main dependency.
+     * @return license summary XML element containing all transitive dependencies and their licenses.
+     */
     public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version) {
         return getLicenseSummary(groupId, artifactId, version, "jar");
     }
 
+    /**
+     * Get licenses based on groupId:artifactId:type:version.
+     * {@link RuntimeException} is thrown if main dependency cannot be loaded. For any other failed dependency only a
+     * warning message is printed.
+     *
+     * @param groupId Group id of a main dependency.
+     * @param artifactId Artifact id of a main dependency.
+     * @param version Version of a main dependency.
+     * @param type Type of a main dependency.
+     * @return license summary XML element containing all transitive dependencies and their licenses.
+     * @throws RuntimeException if main dependency cannot be loaded.
+     */
     public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version, String type) {
         Artifact artifact = artifactFactory.createArtifact(groupId, artifactId, version, "compile", type);
         MavenProject project;

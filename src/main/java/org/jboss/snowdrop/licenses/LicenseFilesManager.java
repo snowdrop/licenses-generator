@@ -37,12 +37,21 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
+ * Class responsible for persisting licenses information to XML and HTML files.
+ *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class LicenseFilesManager {
 
     private final Logger logger = Logger.getLogger(LicenseFilesManager.class.getSimpleName());
 
+    /**
+     * Create a licenses.xml file.
+     *
+     * @param licenseSummary license summary XML element, which should be written to a licenses.xml file.
+     * @param directoryPath directory where new file should be stored.
+     * @throws LicensesGeneratorException
+     */
     public void createLicensesXml(LicenseSummary licenseSummary, String directoryPath)
             throws LicensesGeneratorException {
         File file = new File(directoryPath, "licenses.xml");
@@ -53,6 +62,13 @@ public class LicenseFilesManager {
         }
     }
 
+    /**
+     * Create a licenses.html file and download copy of each license for offline use.
+     *
+     * @param licenseSummary license summary XML element, which should be written to a licenses.xml file.
+     * @param directoryPath directory where new file should be stored.
+     * @throws LicensesGeneratorException
+     */
     public void createLicensesHtml(LicenseSummary licenseSummary, String directoryPath)
             throws LicensesGeneratorException {
         Map<String, String> licenseFiles = downloadLicenseFiles(licenseSummary.getDependencies(), directoryPath);
