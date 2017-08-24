@@ -38,6 +38,14 @@ public class GeneratorProperties {
 
     private static final String DEFAULT_REPOSITORY_URL = "http://repo1.maven.org/maven2";
 
+    private static final boolean DEFAULT_IS_PROCESS_PLUGINS = false;
+
+    private static final boolean DEFAULT_IS_INCLUDE_OPTIONAL = false;
+
+    private static final String DEFAULT_EXCLUDED_SCOPES = "test,system,provided";
+
+    private static final String DEFAULT_EXCLUDED_CLASSIFIERS = "tests";
+
     private final Configuration configuration;
 
     public GeneratorProperties() {
@@ -68,21 +76,22 @@ public class GeneratorProperties {
     }
 
     public boolean isProcessPlugins() {
-        return configuration.getBoolean(PropertyKeys.PROCESS_PLUGINS, false);
+        return configuration.getBoolean(PropertyKeys.PROCESS_PLUGINS, DEFAULT_IS_PROCESS_PLUGINS);
     }
 
     public List<String> getExcludedScopes() {
-        String joinedScopes = configuration.getString(PropertyKeys.EXCLUDED_SCOPES, "test,system,provided");
+        String joinedScopes = configuration.getString(PropertyKeys.EXCLUDED_SCOPES, DEFAULT_EXCLUDED_SCOPES);
         return Arrays.asList(joinedScopes.split(","));
     }
 
     public List<String> getExcludedClassifiers() {
-        String joinedClassifiers = configuration.getString(PropertyKeys.EXCLUDED_CLASSIFIERS, "tests");
+        String joinedClassifiers =
+                configuration.getString(PropertyKeys.EXCLUDED_CLASSIFIERS, DEFAULT_EXCLUDED_CLASSIFIERS);
         return Arrays.asList(joinedClassifiers.split(","));
     }
 
     public boolean isIncludeOptional() {
-        return configuration.getBoolean(PropertyKeys.INCLUDE_OPTIONAL, false);
+        return configuration.getBoolean(PropertyKeys.INCLUDE_OPTIONAL, DEFAULT_IS_INCLUDE_OPTIONAL);
     }
 
 }
