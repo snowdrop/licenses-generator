@@ -10,11 +10,15 @@
       "Apache 2.0",
       "Apache 2",
       "Apache License",
-      "Apache License 2.0"
+      "Apache License 2.0",
+      "ASL 2.0",
+      "ASL, version 2",
+      "Apache-2.0"
     ],
     "urlAliases": [
       "http://www.apache.org/licenses/LICENSE-2.0",
-      "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "http://www.apache.org/licenses/LICENSE-2.0.html"
     ]
   },
   {
@@ -22,35 +26,47 @@
     "url": "http://repository.jboss.org/licenses/lgpl-2.1.txt",
     "aliases": [
       "GNU Lesser General Public License, Version 2.1",
-      "LGPL 2.1"
+      "LGPL 2.1",
+      "LGPL, version 2.1"
     ],
     "urlAliases": [
       "http://repository.jboss.org/licenses/lgpl-2.1.txt",
+      "https://www.gnu.org/licenses/lgpl-2.1.html",
       "http://www.gnu.org/licenses/lgpl-2.1.html",
+      "https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
       "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html"
     ]
   },
   {
     "name": "GNU Lesser General Public License, Version 3",
-    "url": "http://www.gnu.org/licenses/lgpl-3.0-standalone.html",
+    "url": "https://www.gnu.org/licenses/lgpl-3.0-standalone.html",
     "aliases": [
-      "GNU Lesser General Public License, Version 3"
+      "GNU Lesser General Public License, Version 3",
+      "The GNU Lesser General Public License, version 3"
     ],
     "urlAliases": [
+      "https://www.gnu.org/licenses/lgpl-3.0-standalone.html",
       "http://www.gnu.org/licenses/lgpl-3.0-standalone.html",
-      "http://www.gnu.org/licenses/lgpl.html"
+      "https://www.gnu.org/licenses/lgpl.html",
+      "http://www.gnu.org/licenses/lgpl.html",
+      "https://www.gnu.org/licenses/lgpl-3.0.txt",
+      "http://www.gnu.org/licenses/lgpl-3.0.txt"
     ]
   },
   {
     "name": "GNU General Public License v2.0 only",
-    "url": "http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
+    "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
     "aliases": [
       "GNU General Public License v2.0 only",
       "The GNU General Public License, Version 2"
     ],
     "urlAliases": [
+      "https://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
       "http://www.gnu.org/licenses/old-licenses/gpl-2.0-standalone.html",
-      "http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+      "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "http://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "https://www.gnu.org/licenses/gpl-2.0.txt",
+      "http://www.gnu.org/licenses/gpl-2.0.txt"
     ]
   },
   {
@@ -62,6 +78,19 @@
     ],
     "urlAliases": [
       "http://repository.jboss.org/licenses/gpl-2.0-ce.txt"
+    ]
+  },
+  {
+    "name": "GNU General Public License v3.0 only",
+    "url": "https://www.gnu.org/licenses/gpl-3.0-standalone.html",
+    "aliases": [
+      "GNU General Public License v3.0 only",
+      "GPLv3",
+      "GPL 3"
+    ],
+    "urlAliases": [
+      "https://www.gnu.org/licenses/gpl-3.0-standalone.html",
+      "http://www.gnu.org/licenses/gpl-3.0-standalone.html"
     ]
   },
   {
@@ -168,6 +197,20 @@
     ]
   },
   {
+    "name": "BSD 3-clause \"New\" or \"Revised\" License",
+    "url": "https://opensource.org/licenses/BSD-3-Clause",
+    "aliases": [
+      "BSD 3-clause \"New\" or \"Revised\" License",
+      "BSD 3-Clause",
+      "BSD 3-Clause License"
+    ],
+    "urlAliases": [
+      "https://opensource.org/licenses/BSD-3-Clause",
+      "http://www.opensource.org/licenses/BSD-3-Clause",
+      "http://opensource.org/licenses/BSD-3-Clause"
+    ]
+  },
+  {
     "name": "The Asm BSD License",
     "url": "http://asm.ow2.org/license.html",
     "aliases": [
@@ -191,6 +234,19 @@
     ]
   },
   {
+    "name": "Mozilla Public License 2.0",
+    "url": "https://www.mozilla.org/en-US/MPL/2.0",
+    "aliases": [
+      "Mozilla Public License 2.0"
+    ],
+    "urlAliases": [
+      "https://www.mozilla.org/en-US/MPL/2.0",
+      "http://www.mozilla.org/MPL/2.0",
+      "https://www.mozilla.org/media/MPL/2.0/index.txt",
+      "http://www.mozilla.org/MPL/2.0/index.txt"
+    ]
+  },
+  {
     "name": "JSON License",
     "url": "http://www.json.org/license.html",
     "aliases": [
@@ -209,6 +265,19 @@
     ],
     "urlAliases": [
       "http://www.bouncycastle.org/licence.html"
+    ]
+  },
+  {
+    "name": "Common Public License, Version 1.0",
+    "url": "https://opensource.org/licenses/CPL-1.0",
+    "aliases": [
+      "Common Public License, Version 1.0",
+      "Common Public License Version 1.0"
+    ],
+    "urlAliases": [
+      "https://opensource.org/licenses/CPL-1.0",
+      "http://opensource.org/licenses/CPL-1.0",
+      "http://www.opensource.org/licenses/cpl1.0.txt"
     ]
   }
 ]
