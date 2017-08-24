@@ -117,7 +117,7 @@ public class LicenseSummaryFactory {
         List<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
                 .stream()
                 .map(DependencyElement::new)
-                .map(this::findDependencyLicenses)
+                .map(this::fixDependencyLicenses)
                 .sorted(Comparator.comparing(DependencyElement::getGroupId)
                         .thenComparing(DependencyElement::getArtifactId)
                         .thenComparing(DependencyElement::getVersion))
@@ -126,7 +126,7 @@ public class LicenseSummaryFactory {
         return new LicenseSummary(dependencyElements);
     }
 
-    private DependencyElement findDependencyLicenses(DependencyElement dependencyElement) {
+    private DependencyElement fixDependencyLicenses(DependencyElement dependencyElement) {
         Set<LicenseElement> fixedLicenses = dependencyElement.getLicenses()
                 .stream()
                 .map(licenseSanitiser::fix)
