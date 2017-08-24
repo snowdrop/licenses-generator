@@ -56,7 +56,7 @@ public class TransitiveMavenProjectsCollector {
         Set<Artifact> failedArtifacts = new HashSet<>();
         Set<Dependency> rootDependencies = new HashSet<>();
         rootDependencies.addAll(rootProject.getDependencies());
-        if (rootProject.getDependencyManagement() != null) {
+        if (properties.isIncludeDependencyManagement() && rootProject.getDependencyManagement() != null) {
             rootDependencies.addAll(rootProject.getDependencyManagement()
                     .getDependencies());
         }

@@ -38,6 +38,7 @@ Name|Description|Default value
 repository.names | Comma separated list of repository names. Must be the same lenght as repository.urls | Maven Central
 repository.urls | Comma separated list of repository URLs. Must be the same length as repository.names | http://repo1.maven.org/maven2
 processPlugins | Whether plugins should be processed when resolving dependencies | false
+includeDependencyManagement | Whether dependencies from dependencyManagement section should be included | true
 includeOptional | Wether optional dependnecies should be processed when gathering licenses | false
 excludedScopes | Comma separated list of dependency scopes which should be ignored | test,system,provided
 excludedClassifiers | Comma separated list of dependency classifiers which should be ignored | tests

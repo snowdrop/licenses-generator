@@ -27,6 +27,8 @@ public final class PropertyKeys {
 
     public static final String PROCESS_PLUGINS = "processPlugins";
 
+    public static final String INCLUDE_DEPENDENCY_MANAGEMENT = "includeDependencyManagement";
+
     public static final String INCLUDE_OPTIONAL = "includeOptional";
 
     public static final String EXCLUDED_SCOPES = "excludedScopes";

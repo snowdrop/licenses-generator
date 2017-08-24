@@ -7,6 +7,16 @@
   <artifactId>test</artifactId>
   <version>1.0</version>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

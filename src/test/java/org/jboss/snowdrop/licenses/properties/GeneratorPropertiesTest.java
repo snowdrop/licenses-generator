@@ -30,6 +30,7 @@ public class GeneratorPropertiesTest {
         GeneratorProperties properties = new GeneratorProperties("test_properties/empty.properties");
         assertThat(properties.getRepositories()).containsOnlyKeys("Maven Central")
                 .containsValues("http://repo1.maven.org/maven2");
+        assertThat(properties.isIncludeDependencyManagement()).isTrue();
         assertThat(properties.isProcessPlugins()).isFalse();
         assertThat(properties.isIncludeOptional()).isFalse();
         assertThat(properties.getExcludedClassifiers()).containsExactly("tests");
@@ -41,6 +42,7 @@ public class GeneratorPropertiesTest {
         GeneratorProperties properties = new GeneratorProperties("test_properties/modified.properties");
         assertThat(properties.getRepositories()).containsOnlyKeys("testRepositoryName1", "testRepositoryName2")
                 .containsValues("testRepositoryUrl1", "testRepositoryUrl2");
+        assertThat(properties.isIncludeDependencyManagement()).isFalse();
         assertThat(properties.isProcessPlugins()).isTrue();
         assertThat(properties.isIncludeOptional()).isTrue();
         assertThat(properties.getExcludedScopes()).containsExactly("testScope1", "testScope2");

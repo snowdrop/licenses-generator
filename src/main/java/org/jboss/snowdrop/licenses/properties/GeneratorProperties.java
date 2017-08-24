@@ -38,6 +38,8 @@ public class GeneratorProperties {
 
     private static final String DEFAULT_REPOSITORY_URL = "http://repo1.maven.org/maven2";
 
+    private static final boolean DEFAULT_IS_INCLUDE_DEPENDENCY_MANAGEMENT = true;
+
     private static final boolean DEFAULT_IS_PROCESS_PLUGINS = false;
 
     private static final boolean DEFAULT_IS_INCLUDE_OPTIONAL = false;
@@ -73,6 +75,10 @@ public class GeneratorProperties {
         return IntStream.range(0, names.length)
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(names[i], urls[i]))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public boolean isIncludeDependencyManagement() {
+        return configuration.getBoolean(PropertyKeys.INCLUDE_DEPENDENCY_MANAGEMENT, DEFAULT_IS_INCLUDE_DEPENDENCY_MANAGEMENT);
     }
 
     public boolean isProcessPlugins() {
