@@ -114,6 +114,30 @@ public class LicenseSummaryFactory {
             throw new RuntimeException(e);
         }
 
+        return getLicenseSummary(project);
+    }
+
+    /**
+     * Get licenses based on a provided pom.xml.
+     * {@link RuntimeException} is thrown if main dependency cannot be loaded. For any other failed dependency only a
+     * warning message is printed.
+     *
+     * @param pomFilePath Path to the pom.xml.
+     * @return license summary XML element containing all transitive dependencies and their licenses.
+     * @throws RuntimeException if main dependency cannot be loaded.
+     */
+    public LicenseSummary getLicenseSummary(String pomFilePath) {
+        MavenProject project;
+        try {
+            project = projectFactory.getMavenProject(pomFilePath);
+        } catch (MavenProjectFactoryException e) {
+            throw new RuntimeException(e);
+        }
+
+        return getLicenseSummary(project);
+    }
+
+    private LicenseSummary getLicenseSummary(MavenProject project) {
         List<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
                 .stream()
                 .map(DependencyElement::new)

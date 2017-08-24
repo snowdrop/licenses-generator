@@ -37,15 +37,24 @@ public class Generator {
             generatorProperties = new GeneratorProperties(executionProperties.getProperty("generatorProperties"));
         }
 
-        LicenseSummaryFactory licenseSummaryFactory = new LicenseSummaryFactory(generatorProperties);
+        LicenseSummary licenseSummary = getLicenseSummary(executionProperties, generatorProperties);
         LicenseFilesManager licenseFilesManager = new LicenseFilesManager();
-
-        LicenseSummary licenseSummary = licenseSummaryFactory.getLicenseSummary(executionProperties.getProperty("groupId"),
-                executionProperties.getProperty("artifactId"), executionProperties.getProperty("version"),
-                executionProperties.getProperty("type", "jar"));
 
         licenseFilesManager.createLicensesXml(licenseSummary, executionProperties.getProperty("destination"));
         licenseFilesManager.createLicensesHtml(licenseSummary, executionProperties.getProperty("destination"));
+    }
+
+    private static LicenseSummary getLicenseSummary(Properties executionProperties,
+            GeneratorProperties generatorProperties) {
+        LicenseSummaryFactory licenseSummaryFactory = new LicenseSummaryFactory(generatorProperties);
+
+        if (executionProperties.getProperty("pom") != null) {
+            return licenseSummaryFactory.getLicenseSummary(executionProperties.getProperty("pom"));
+        }
+
+        return licenseSummaryFactory.getLicenseSummary(executionProperties.getProperty("groupId"),
+                executionProperties.getProperty("artifactId"), executionProperties.getProperty("version"),
+                executionProperties.getProperty("type", "jar"));
     }
 
     private static Properties argsToProperties(String... args) {
@@ -57,10 +66,12 @@ public class Generator {
                 .filter(a -> a.length == 2)
                 .forEach(a -> properties.put(a[0], a[1]));
 
-        Objects.requireNonNull(properties.getProperty("groupId"), "'groupId' is required");
-        Objects.requireNonNull(properties.getProperty("artifactId"), "'artifactId' is required");
-        Objects.requireNonNull(properties.getProperty("version"), "'version' is required");
-        Objects.requireNonNull(properties.getProperty("destination"),  "'destination' is required");
+        if (properties.getProperty("pom") == null) {
+            Objects.requireNonNull(properties.getProperty("groupId"), "'groupId' is required");
+            Objects.requireNonNull(properties.getProperty("artifactId"), "'artifactId' is required");
+            Objects.requireNonNull(properties.getProperty("version"), "'version' is required");
+            Objects.requireNonNull(properties.getProperty("destination"), "'destination' is required");
+        }
 
         return properties;
     }

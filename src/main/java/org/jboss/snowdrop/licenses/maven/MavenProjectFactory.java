@@ -25,6 +25,8 @@ import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
+import java.io.File;
+
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
@@ -37,6 +39,17 @@ public class MavenProjectFactory {
     public MavenProjectFactory(PlexusContainer container, ProjectBuildingRequestFactory requestFactory) {
         this.container = container;
         this.requestFactory = requestFactory;
+    }
+
+    public MavenProject getMavenProject(String pomFilePath) throws MavenProjectFactoryException {
+        ProjectBuildingRequest request = requestFactory.getProjectBuildingRequest();
+
+        try {
+            ProjectBuildingResult result = getProjectBuilder().build(new File(pomFilePath), request);
+            return result.getProject();
+        } catch (ProjectBuildingException e) {
+            throw new MavenProjectFactoryException(e);
+        }
     }
 
     public MavenProject getMavenProject(Artifact artifact) throws MavenProjectFactoryException {
