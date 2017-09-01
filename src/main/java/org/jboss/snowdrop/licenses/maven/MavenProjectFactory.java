@@ -17,6 +17,7 @@
 package org.jboss.snowdrop.licenses.maven;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -36,9 +37,14 @@ public class MavenProjectFactory {
 
     private final ProjectBuildingRequestFactory requestFactory;
 
-    public MavenProjectFactory(PlexusContainer container, ProjectBuildingRequestFactory requestFactory) {
+    private final ArtifactFactory artifactFactory;
+
+    public MavenProjectFactory(PlexusContainer container,
+                               ProjectBuildingRequestFactory requestFactory,
+                               ArtifactFactory artifactFactory) {
         this.container = container;
         this.requestFactory = requestFactory;
+        this.artifactFactory = artifactFactory;
     }
 
     public MavenProject getMavenProject(String pomFilePath) throws MavenProjectFactoryException {
@@ -67,6 +73,18 @@ public class MavenProjectFactory {
         } catch (ProjectBuildingException e) {
             throw new MavenProjectFactoryException(e);
         }
+    }
+
+
+    public MavenProject getMavenProject(MavenArtifact mavenArtifact, boolean resolveDependencies)
+            throws MavenProjectFactoryException {
+        Artifact artifact = artifactFactory.createArtifact(
+                mavenArtifact.getGroupId(),
+                mavenArtifact.getArtifactId(),
+                mavenArtifact.getVersion(),
+                "compile",
+                mavenArtifact.getType());
+        return getMavenProject(artifact, resolveDependencies);
     }
 
     private ProjectBuilder getProjectBuilder() {

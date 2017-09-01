@@ -30,7 +30,8 @@ public class TransitiveDependenciesCollectorTest {
                 new ProjectBuildingRequestFactory(applicationProperties, embedder);
         artifactFactory = embedder.getPlexusContainer()
                 .lookup(ArtifactFactory.class);
-        projectFactory = new MavenProjectFactory(embedder.getPlexusContainer(), projectBuildingRequestFactory);
+        projectFactory =
+                new MavenProjectFactory(embedder.getPlexusContainer(), projectBuildingRequestFactory, artifactFactory);
         projectsCollector =
                 new TransitiveMavenProjectsCollector(applicationProperties, projectFactory, artifactFactory);
     }

@@ -16,6 +16,7 @@
 
 package org.jboss.snowdrop.licenses;
 
+import org.jboss.snowdrop.licenses.maven.MavenArtifact;
 import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
@@ -52,9 +53,10 @@ public class Generator {
             return licenseSummaryFactory.getLicenseSummary(executionProperties.getProperty("pom"));
         }
 
-        return licenseSummaryFactory.getLicenseSummary(executionProperties.getProperty("groupId"),
+        MavenArtifact mavenArtifact = new MavenArtifact(executionProperties.getProperty("groupId"),
                 executionProperties.getProperty("artifactId"), executionProperties.getProperty("version"),
                 executionProperties.getProperty("type", "jar"));
+        return licenseSummaryFactory.getLicenseSummary(mavenArtifact);
     }
 
     private static Properties argsToProperties(String... args) {

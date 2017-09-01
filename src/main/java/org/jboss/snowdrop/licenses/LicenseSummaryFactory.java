@@ -16,22 +16,23 @@
 
 package org.jboss.snowdrop.licenses;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
+import org.jboss.snowdrop.licenses.maven.MavenArtifact;
 import org.jboss.snowdrop.licenses.maven.MavenEmbedderFactory;
 import org.jboss.snowdrop.licenses.maven.MavenProjectFactory;
 import org.jboss.snowdrop.licenses.maven.MavenProjectFactoryException;
 import org.jboss.snowdrop.licenses.maven.ProjectBuildingRequestFactory;
 import org.jboss.snowdrop.licenses.maven.SnowdropMavenEmbedder;
 import org.jboss.snowdrop.licenses.maven.TransitiveMavenProjectsCollector;
+import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.jboss.snowdrop.licenses.sanitiser.RedHatLicenseSanitiser;
 import org.jboss.snowdrop.licenses.xml.DependencyElement;
 import org.jboss.snowdrop.licenses.xml.LicenseElement;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -75,22 +76,10 @@ public class LicenseSummaryFactory {
             throw new RuntimeException(e);
         }
         this.projectFactory =
-                new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequestFactory);
+                new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequestFactory, artifactFactory);
         this.projectsCollector =
                 new TransitiveMavenProjectsCollector(properties, projectFactory, artifactFactory);
         this.licenseSanitiser = new RedHatLicenseSanitiser("rh-license-names.json");
-    }
-
-    /**
-     * Get licenses based on groupId:artifactId:version.
-     *
-     * @param groupId Group id of a main dependency.
-     * @param artifactId Artifact id of a main dependency.
-     * @param version Version of a main dependency.
-     * @return license summary XML element containing all transitive dependencies and their licenses.
-     */
-    public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version) {
-        return getLicenseSummary(groupId, artifactId, version, "jar");
     }
 
     /**
@@ -98,23 +87,36 @@ public class LicenseSummaryFactory {
      * {@link RuntimeException} is thrown if main dependency cannot be loaded. For any other failed dependency only a
      * warning message is printed.
      *
-     * @param groupId Group id of a main dependency.
-     * @param artifactId Artifact id of a main dependency.
-     * @param version Version of a main dependency.
-     * @param type Type of a main dependency.
+     * @param mavenArtifact maven coordinates of the main maven artifact
      * @return license summary XML element containing all transitive dependencies and their licenses.
      * @throws RuntimeException if main dependency cannot be loaded.
      */
-    public LicenseSummary getLicenseSummary(String groupId, String artifactId, String version, String type) {
-        Artifact artifact = artifactFactory.createArtifact(groupId, artifactId, version, "compile", type);
-        MavenProject project;
+    public LicenseSummary getLicenseSummary(MavenArtifact mavenArtifact) {
+        MavenProject project = null;
         try {
-            project = projectFactory.getMavenProject(artifact);
+            project = projectFactory.getMavenProject(mavenArtifact, true);
         } catch (MavenProjectFactoryException e) {
             throw new RuntimeException(e);
         }
 
         return getLicenseSummary(project);
+    }
+
+    /**
+     * Get licenses for a list of artifacts, non transitively.
+     * @param artifacts list of artifacts to include in the license summary
+     * @return a license summary for the listed artifacts
+     * @throws RuntimeException if any of the artifacts in the list cannot be loaded.
+     */
+    public LicenseSummary getNonTransitiveLicenseSummary(Collection<MavenArtifact> artifacts) {
+        Collection<MavenProject> projects = artifacts.parallelStream().map(a -> {
+            try {
+                return projectFactory.getMavenProject(a, false);
+            } catch (MavenProjectFactoryException e) {
+                throw new RuntimeException("Unable to create a maven project for artifact: " + a, e);
+            }
+        }).collect(Collectors.toList());
+        return getLicenseSummary(projects);
     }
 
     /**
@@ -138,8 +140,13 @@ public class LicenseSummaryFactory {
     }
 
     private LicenseSummary getLicenseSummary(MavenProject project) {
-        List<DependencyElement> dependencyElements = projectsCollector.getTransitiveMavenProjects(project)
-                .stream()
+        Collection<MavenProject> mavenProjects = projectsCollector.getTransitiveMavenProjects(project);
+        return getLicenseSummary(mavenProjects);
+    }
+
+    private LicenseSummary getLicenseSummary(Collection<MavenProject> projects) {
+        List<DependencyElement> dependencyElements =
+                projects.parallelStream()
                 .map(DependencyElement::new)
                 .map(this::fixDependencyLicenses)
                 .sorted(Comparator.comparing(DependencyElement::getGroupId)

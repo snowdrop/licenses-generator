@@ -27,8 +27,8 @@ public class MavenProjectFactoryTest {
         PlexusContainer container = mavenEmbedder.getPlexusContainer();
         ProjectBuildingRequestFactory projectBuildingRequestFactory =
                 new ProjectBuildingRequestFactory(applicationProperties, mavenEmbedder);
-        projectFactory = new MavenProjectFactory(container, projectBuildingRequestFactory);
         artifactFactory = container.lookup(ArtifactFactory.class);
+        projectFactory = new MavenProjectFactory(container, projectBuildingRequestFactory, artifactFactory);
     }
 
     @Test
