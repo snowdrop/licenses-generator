@@ -36,7 +36,7 @@
     <maven-embedder.version>3.12.1</maven-embedder.version>
     <mockito.version>2.8.47</mockito.version>
     <slf4j.version>1.7.25</slf4j.version>
-    <twig.version>5.86.0.RELEASE</twig.version>
+    <twig.version>5.86.1.RELEASE</twig.version>
 
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
 
