@@ -35,6 +35,7 @@ import org.jboss.snowdrop.licenses.xml.LicenseSummary;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,7 +80,8 @@ public class LicenseSummaryFactory {
                 new MavenProjectFactory(mavenEmbedder.getPlexusContainer(), projectBuildingRequestFactory, artifactFactory);
         this.projectsCollector =
                 new TransitiveMavenProjectsCollector(properties, projectFactory, artifactFactory);
-        this.licenseSanitiser = new RedHatLicenseSanitiser("rh-license-names.json");
+        this.licenseSanitiser =
+                new RedHatLicenseSanitiser("rh-license-names.json", "rh-license-exceptions.json");
     }
 
     /**
@@ -158,12 +160,18 @@ public class LicenseSummaryFactory {
     }
 
     private DependencyElement fixDependencyLicenses(DependencyElement dependencyElement) {
+        resolveExceptionalLicenses(dependencyElement);
         Set<LicenseElement> fixedLicenses = dependencyElement.getLicenses()
                 .stream()
                 .map(licenseSanitiser::fix)
                 .collect(Collectors.toSet());
         dependencyElement.setLicenses(fixedLicenses);
         return dependencyElement;
+    }
+
+    private void resolveExceptionalLicenses(DependencyElement dependencyElement) {
+        Optional<Set<LicenseElement>> maybeLicenses = licenseSanitiser.getLicensesForArtifact(dependencyElement.toGav());
+        maybeLicenses.ifPresent(dependencyElement::setLicenses);
     }
 
 }
