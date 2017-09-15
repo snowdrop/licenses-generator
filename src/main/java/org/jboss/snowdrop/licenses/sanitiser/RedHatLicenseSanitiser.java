@@ -18,14 +18,13 @@ package org.jboss.snowdrop.licenses.sanitiser;
 
 import org.jboss.snowdrop.licenses.xml.LicenseElement;
 
-import javax.json.Json;
-import javax.json.JsonValue;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import static org.jboss.snowdrop.licenses.utils.JsonUtils.loadJsonToSet;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -33,9 +32,18 @@ import java.util.stream.Collectors;
 public class RedHatLicenseSanitiser {
 
     private Set<RedHatLicense> redHatLicenses;
+    private Map<String, Set<LicenseElement>> licensesForArtifact;
 
-    public RedHatLicenseSanitiser(String redHatLicensesFile) {
-        this.redHatLicenses = loadRedHatLicenses(redHatLicensesFile);
+    public RedHatLicenseSanitiser(String redHatLicensesFile, String licenseExceptionsFile) {
+        this.redHatLicenses = loadJsonToSet(redHatLicensesFile, RedHatLicense::new);
+        this.licensesForArtifact = new HashMap<>();
+
+        loadJsonToSet(licenseExceptionsFile, RedHatLicenseForArtifact::new)
+                .forEach(artifact -> licensesForArtifact.put(artifact.getGav(), artifact.getLicenses()));
+    }
+
+    public Optional<Set<LicenseElement>> getLicensesForArtifact(String gav) {
+        return Optional.ofNullable(licensesForArtifact.get(gav));
     }
 
     public LicenseElement fix(LicenseElement license) {
@@ -71,18 +79,5 @@ public class RedHatLicenseSanitiser {
                 .findFirst();
     }
 
-    private Set<RedHatLicense> loadRedHatLicenses(String redHatLicensesFile) {
-        try (InputStream fileInputStream = getClass().getClassLoader()
-                .getResourceAsStream(redHatLicensesFile)) {
-            return Json.createReader(fileInputStream)
-                    .readArray()
-                    .stream()
-                    .map(JsonValue::asJsonObject)
-                    .map(RedHatLicense::new)
-                    .collect(Collectors.toSet());
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read Red Hat licenses file", e);
-        }
-    }
 
 }

@@ -1,0 +1,15 @@
+[
+  {
+    "gav": "org.apache.tomcat:servlet-api:6.0.41",
+    "licenses": [
+      {
+        "name": "Apache License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      },
+      {
+        "name": "Common Development And Distribution License (CDDL) Version 1.0",
+        "url": "http://www.opensource.org/licenses/cddl1.txt"
+      }
+    ]
+  }
+]

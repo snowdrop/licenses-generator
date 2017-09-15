@@ -107,6 +107,10 @@ public class DependencyElement {
         this.licenses = Collections.unmodifiableSet(licenses);
     }
 
+    public String toGav() {
+        return String.format("%s:%s:%s", groupId, artifactId, version);
+    }
+
     @Override
     public String toString() {
         return String.format("%s{groupId='%s', artifactId='%s', version='%s', licenses=%s}",
