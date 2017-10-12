@@ -11,5 +11,23 @@
         "url": "http://www.opensource.org/licenses/cddl1.txt"
       }
     ]
+  },
+  {
+    "gav": "antlr:antlr:2.7.7",
+    "licenses": [
+      {
+        "name": "The Antlr 2.7.7 License",
+        "url": "http://www.antlr2.org/license.html"
+      }
+    ]
+  },
+  {
+    "gav": "dom4j:dom4j:1.6.1",
+    "licenses": [
+      {
+        "name": "Plexus Classworlds License",
+        "url": "https://raw.githubusercontent.com/dom4j/dom4j/dom4j_1_6_1/LICENSE.txt"
+      }
+    ]
   }
 ]
