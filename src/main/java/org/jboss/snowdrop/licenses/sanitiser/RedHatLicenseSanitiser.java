@@ -43,7 +43,15 @@ public class RedHatLicenseSanitiser {
     }
 
     public Optional<Set<LicenseElement>> getLicensesForArtifact(String gav) {
-        return Optional.ofNullable(licensesForArtifact.get(gav));
+        gav = stripRedhatSuffix(gav);
+        Optional<Set<LicenseElement>> result = Optional.ofNullable(licensesForArtifact.get(gav));
+        return result;
+    }
+
+    private String stripRedhatSuffix(String gav) {
+        return gav.contains("redhat") ?
+                gav.replaceFirst(".redhat.*$", "")
+                : gav;
     }
 
     public LicenseElement fix(LicenseElement license) {
