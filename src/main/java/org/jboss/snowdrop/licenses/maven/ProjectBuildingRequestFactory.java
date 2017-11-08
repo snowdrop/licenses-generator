@@ -16,14 +16,13 @@
 
 package org.jboss.snowdrop.licenses.maven;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -47,7 +46,7 @@ public class ProjectBuildingRequestFactory {
             request.setResolveDependencies(true);
             request.setRepositorySession(maven.buildRepositorySystemSession());
             request.setSystemProperties(System.getProperties());
-            request.setProcessPlugins(properties.isProcessPlugins());
+            request.setProcessPlugins(false);
 
             return request;
         } catch (Exception e) {

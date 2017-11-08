@@ -1,0 +1,80 @@
+package org.jboss.snowdrop.licenses.sanitiser;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Collection;
+import java.util.Collections;
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseElement;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+/**
+ * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
+ */
+public class ExceptionLicenseSanitiserTest {
+
+    @Mock
+    private LicenseSanitiser mockLicenseSanitiser;
+
+    private ExceptionLicenseSanitiser exceptionLicenseSanitiser;
+
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+
+        exceptionLicenseSanitiser = new ExceptionLicenseSanitiser("rh-license-exceptions.json", mockLicenseSanitiser);
+    }
+
+    @Test
+    public void shouldFixDependencyWithSingleLicense() {
+        DependencyElement dependencyElement =
+                new DependencyElement("testGroupId", "testArtifactId", "testVersion", Collections.emptySet());
+
+        DependencyElement fixedDependencyElement = exceptionLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(1);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name", "http://test-license.com"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
+    }
+
+    @Test
+    public void shouldFixDependencyWithTwoLicenses() {
+        DependencyElement dependencyElement =
+                new DependencyElement("testGroupId2", "testArtifactId2", "testVersion2", Collections.emptySet());
+
+        DependencyElement fixedDependencyElement = exceptionLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(2);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name", "http://test-license.com"),
+                new LicenseElement("Test License Name 2", "http://test-license-2.com"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
+    }
+
+    @Test
+    public void shouldDelegateUnknownLicense() {
+        DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.emptySet());
+
+        DependencyElement fixedDependencyElement = exceptionLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isNull();
+
+        verify(mockLicenseSanitiser).fix(dependencyElement);
+    }
+
+}

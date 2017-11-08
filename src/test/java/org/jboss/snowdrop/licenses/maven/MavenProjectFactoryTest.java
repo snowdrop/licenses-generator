@@ -1,59 +1,134 @@
 package org.jboss.snowdrop.licenses.maven;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.util.Optional;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusContainer;
-import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
+import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class MavenProjectFactoryTest {
 
-    private MavenProjectFactory projectFactory;
+    @Mock
+    private File mockFile;
 
-    private ArtifactFactory artifactFactory;
+    @Mock
+    private Artifact mockArtifact;
+
+    @Mock
+    private ProjectBuilder mockProjectBuilder;
+
+    @Mock
+    private ProjectBuildingRequestFactory mockProjectBuildingRequestFactory;
+
+    @Mock
+    private ProjectBuildingRequest mockProjectBuildingRequest;
+
+    @Mock
+    private ProjectBuildingResult mockProjectBuildingResult;
+
+    @Mock
+    private MavenProject mockMavenProject;
+
+    private MavenProjectFactory mavenProjectFactory;
 
     @Before
-    public void before() throws Exception {
-        GeneratorProperties applicationProperties = new GeneratorProperties();
-        SnowdropMavenEmbedder mavenEmbedder =
-                new MavenEmbedderFactory(applicationProperties).getSnowdropMavenEmbedder();
-        PlexusContainer container = mavenEmbedder.getPlexusContainer();
-        ProjectBuildingRequestFactory projectBuildingRequestFactory =
-                new ProjectBuildingRequestFactory(applicationProperties, mavenEmbedder);
-        artifactFactory = container.lookup(ArtifactFactory.class);
-        projectFactory = new MavenProjectFactory(container, projectBuildingRequestFactory, artifactFactory);
+    public void before() throws ProjectBuildingException {
+        MockitoAnnotations.initMocks(this);
+
+        when(mockProjectBuildingRequestFactory.getProjectBuildingRequest()).thenReturn(mockProjectBuildingRequest);
+        when(mockProjectBuilder.build(any(Artifact.class), eq(mockProjectBuildingRequest))).thenReturn(
+                mockProjectBuildingResult);
+        when(mockProjectBuilder.build(any(File.class), eq(mockProjectBuildingRequest))).thenReturn(
+                mockProjectBuildingResult);
+        when(mockProjectBuildingResult.getProject()).thenReturn(mockMavenProject);
+
+        mavenProjectFactory = new MavenProjectFactory(mockProjectBuilder, mockProjectBuildingRequestFactory);
     }
 
     @Test
-    public void shouldGetMavenProjectForArtifact() throws MavenProjectFactoryException {
-        Artifact junitArtifact = artifactFactory.createArtifact("junit", "junit", "4.12", null, "jar");
-        Artifact hamcrestArtifact = artifactFactory.createArtifact("org.hamcrest", "hamcrest-core", "1.3", null, "jar");
+    public void shouldGetMavenProjectFromArtifactWithoutDependencies() throws ProjectBuildingException {
+        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockArtifact, false);
 
-        MavenProject project = projectFactory.getMavenProject(junitArtifact);
+        assertThat(mavenProjectOptional.isPresent()).isTrue();
+        assertThat(mavenProjectOptional.get()).isEqualTo(mockMavenProject);
 
-        assertThat(project.getArtifact()).isEqualTo(junitArtifact);
-        assertThat(project.getArtifacts()).containsOnly(hamcrestArtifact);
-
-        assertThat(project.getLicenses()).hasSize(1);
+        verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
+        verify(mockProjectBuildingRequest).setResolveDependencies(false);
+        verify(mockProjectBuilder).build(mockArtifact, mockProjectBuildingRequest);
+        verify(mockProjectBuildingResult).getProject();
     }
 
     @Test
-    public void shouldGetMavenProjectForFile() throws MavenProjectFactoryException {
-        Artifact testArtifact = artifactFactory.createArtifact("test", "test","1.0", null, "jar");
-        Artifact junitArtifact = artifactFactory.createArtifact("junit", "junit", "4.12", null, "jar");
-        Artifact hamcrestArtifact = artifactFactory.createArtifact("org.hamcrest", "hamcrest-core", "1.3", null, "jar");
+    public void shouldGetMavenProjectFromArtifactWithDependencies() throws ProjectBuildingException {
+        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockArtifact, true);
 
-        MavenProject project = projectFactory.getMavenProject("target/test-classes/test-pom.xml");
+        assertThat(mavenProjectOptional.isPresent()).isTrue();
+        assertThat(mavenProjectOptional.get()).isEqualTo(mockMavenProject);
 
-        assertThat(project.getArtifact()).isEqualTo(testArtifact);
-        assertThat(project.getArtifacts()).containsOnly(junitArtifact, hamcrestArtifact);
+        verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
+        verify(mockProjectBuildingRequest).setResolveDependencies(true);
+        verify(mockProjectBuilder).build(mockArtifact, mockProjectBuildingRequest);
+        verify(mockProjectBuildingResult).getProject();
+    }
+
+    @Test
+    public void shouldNotGetProjectFromArtifactInCaseOfException() throws ProjectBuildingException {
+        when(mockProjectBuilder.build(any(Artifact.class), eq(mockProjectBuildingRequest))).thenThrow(
+                ProjectBuildingException.class);
+        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockArtifact, true);
+
+        assertThat(mavenProjectOptional.isPresent()).isFalse();
+    }
+
+    @Test
+    public void shouldGetMavenProjectFromPomWithoutDependencies() throws ProjectBuildingException {
+        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockFile, false);
+
+        assertThat(mavenProjectOptional.isPresent()).isTrue();
+        assertThat(mavenProjectOptional.get()).isEqualTo(mockMavenProject);
+
+        verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
+        verify(mockProjectBuildingRequest).setResolveDependencies(false);
+        verify(mockProjectBuilder).build(mockFile, mockProjectBuildingRequest);
+        verify(mockProjectBuildingResult).getProject();
+    }
+
+    @Test
+    public void shouldGetMavenProjectFromPomWithDependencies() throws ProjectBuildingException {
+        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockFile, true);
+
+        assertThat(mavenProjectOptional.isPresent()).isTrue();
+        assertThat(mavenProjectOptional.get()).isEqualTo(mockMavenProject);
+
+        verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
+        verify(mockProjectBuildingRequest).setResolveDependencies(true);
+        verify(mockProjectBuilder).build(mockFile, mockProjectBuildingRequest);
+        verify(mockProjectBuildingResult).getProject();
+    }
+
+    @Test
+    public void shouldNotGetProjectFromFileInCaseOfException() throws ProjectBuildingException {
+        when(mockProjectBuilder.build(any(File.class), eq(mockProjectBuildingRequest))).thenThrow(
+                ProjectBuildingException.class);
+        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockFile, false);
+
+        assertThat(mavenProjectOptional.isPresent()).isFalse();
     }
 
 }

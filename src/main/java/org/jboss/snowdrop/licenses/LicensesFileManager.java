@@ -16,14 +16,6 @@
 
 package org.jboss.snowdrop.licenses;
 
-import org.apache.commons.io.FileUtils;
-import org.jboss.snowdrop.licenses.xml.DependencyElement;
-import org.jboss.snowdrop.licenses.xml.LicenseElement;
-import org.jboss.snowdrop.licenses.xml.LicenseSummary;
-import org.jtwig.JtwigModel;
-import org.jtwig.JtwigTemplate;
-
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,21 +27,28 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.xml.bind.JAXBException;
+import org.apache.commons.io.FileUtils;
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseElement;
+import org.jboss.snowdrop.licenses.xml.LicenseSummary;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
 
 /**
  * Class responsible for persisting licenses information to XML and HTML files.
  *
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class LicenseFilesManager {
+public class LicensesFileManager {
 
-    private final Logger logger = Logger.getLogger(LicenseFilesManager.class.getSimpleName());
+    private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
 
     /**
      * Create a licenses.xml file.
      *
      * @param licenseSummary license summary XML element, which should be written to a licenses.xml file.
-     * @param directoryPath directory where new file should be stored.
+     * @param directoryPath  directory where new file should be stored.
      * @throws LicensesGeneratorException
      */
     public void createLicensesXml(LicenseSummary licenseSummary, String directoryPath)
@@ -66,7 +65,7 @@ public class LicenseFilesManager {
      * Create a licenses.html file and download copy of each license for offline use.
      *
      * @param licenseSummary license summary XML element, which should be written to a licenses.xml file.
-     * @param directoryPath directory where new file should be stored.
+     * @param directoryPath  directory where new file should be stored.
      * @throws LicensesGeneratorException
      */
     public void createLicensesHtml(LicenseSummary licenseSummary, String directoryPath)

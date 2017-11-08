@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.jboss.snowdrop.licenses.properties;
+package org.jboss.snowdrop.licenses.sanitiser;
+
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public interface PropertyKeys {
+public class NoopLicenseSanitiser implements LicenseSanitiser {
 
-    String REPOSITORY_NAMES = "repository.names";
-
-    String REPOSITORY_URLS = "repository.urls";
+    @Override
+    public DependencyElement fix(DependencyElement dependencyElement) {
+        return dependencyElement;
+    }
 
 }

@@ -18,18 +18,11 @@ package org.jboss.snowdrop.licenses.maven;
 
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
-import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class MavenEmbedderFactory {
-
-    private final GeneratorProperties properties;
-
-    public MavenEmbedderFactory(GeneratorProperties properties) {
-        this.properties = properties;
-    }
 
     public SnowdropMavenEmbedder getSnowdropMavenEmbedder() {
         try {
@@ -42,7 +35,7 @@ public class MavenEmbedderFactory {
     private MavenRequest getMavenRequest() {
         MavenRequest mavenRequest = new MavenRequest();
         mavenRequest.setSystemProperties(System.getProperties());
-        mavenRequest.setProcessPlugins(properties.isProcessPlugins());
+        mavenRequest.setProcessPlugins(false);
 
         return mavenRequest;
     }
