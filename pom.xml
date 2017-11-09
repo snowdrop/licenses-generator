@@ -14,14 +14,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.jboss.snowdrop</groupId>
   <artifactId>licenses-generator</artifactId>
-  <version>1.0.0.Alpha1-SNAPSHOT</version>
+  <version>1.0.0.Alpha1</version>
 
   <properties>
     <aether.version>1.1.0</aether.version>
@@ -52,7 +50,7 @@
     <url>https://gitlab.cee.redhat.com/middleware</url>
     <connection>scm:git:https://gitlab.cee.redhat.com/middleware/licenses-generator.git</connection>
     <developerConnection>scm:git:git:@gitlab.cee.redhat.com:middleware/licenses-generator.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>1.0.0.Alpha1</tag>
   </scm>
 
   <distributionManagement>
@@ -211,9 +209,9 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>org.jboss.snowdrop.licenses.Generator</mainClass>
                 </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer" >
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                   <resource>META-INF/sisu/javax.inject.Named</resource>
                 </transformer>
               </transformers>
