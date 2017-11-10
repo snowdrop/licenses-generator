@@ -29,7 +29,8 @@ import org.eclipse.aether.RepositorySystemSession;
 public class SnowdropMavenEmbedder extends MavenEmbedder {
 
     public SnowdropMavenEmbedder(MavenRequest mavenRequest) throws MavenEmbedderException {
-        super(Thread.currentThread().getContextClassLoader(), mavenRequest);
+        super(Thread.currentThread()
+                .getContextClassLoader(), mavenRequest);
     }
 
     public RepositorySystemSession buildRepositorySystemSession() throws Exception {

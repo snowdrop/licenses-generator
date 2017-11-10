@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.snowdrop.licenses.maven;
+
+package org.jboss.snowdrop.licenses.utils;
 
 /**
- * An object representing a maven artifact by it's coordinates: groupId, artifactId, version and type (packaging)
- *
- * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
- * <br>
- * Date: 8/28/17
+ * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
-public class MavenArtifact {
+public class Gav {
+
     private final String groupId;
+
     private final String artifactId;
+
     private final String version;
+
     private final String type;
 
-    /**
-     *
-     * @param groupId Group id of an artifact.
-     * @param artifactId Artifact id of an artifact.
-     * @param version Version of an artifact.
-     * @param type Type of an artifact.
-     */
-    public MavenArtifact(String groupId, String artifactId, String version, String type) {
+    public Gav(String groupId, String artifactId, String version, String type) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -56,15 +50,5 @@ public class MavenArtifact {
 
     public String getType() {
         return type;
-    }
-
-    @Override
-    public String toString() {
-        return "MavenArtifact{" +
-                "groupId='" + groupId + '\'' +
-                ", artifactId='" + artifactId + '\'' +
-                ", version='" + version + '\'' +
-                ", type='" + type + '\'' +
-                '}';
     }
 }

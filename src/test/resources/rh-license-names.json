@@ -10,25 +10,13 @@
     ]
   },
   {
-    "name": "Apache Software License, Version 2.0",
-    "url": "http://www.apache.org/licenses/LICENSE-2.0",
+    "name": "Test License Name 2",
+    "url": "http://test-license-2.com",
     "aliases": [
-      "Apache Software License, Version 2.0",
-      "The Apache Software License, Version 2.0",
-      "Apache License, version 2.0",
-      "Apache License Version 2.0 ",
-      "Apache 2.0",
-      "Apache 2",
-      "Apache License",
-      "Apache License 2.0",
-      "ASL 2.0",
-      "ASL, version 2",
-      "Apache-2.0"
+      "Test License Alias 2"
     ],
     "urlAliases": [
-      "http://www.apache.org/licenses/LICENSE-2.0",
-      "http://www.apache.org/licenses/LICENSE-2.0.txt",
-      "http://www.apache.org/licenses/LICENSE-2.0.html"
+      "http://test-license-alias-2.com"
     ]
   }
 ]

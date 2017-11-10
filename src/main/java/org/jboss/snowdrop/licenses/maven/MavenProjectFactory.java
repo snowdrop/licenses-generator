@@ -16,82 +16,54 @@
 
 package org.jboss.snowdrop.licenses.maven;
 
+import java.io.File;
+import java.util.Optional;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-
-import java.io.File;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class MavenProjectFactory {
 
-    private final PlexusContainer container;
+    private final ProjectBuilder projectBuilder;
 
-    private final ProjectBuildingRequestFactory requestFactory;
+    private final ProjectBuildingRequestFactory projectBuildingRequestFactory;
 
-    private final ArtifactFactory artifactFactory;
-
-    public MavenProjectFactory(PlexusContainer container,
-                               ProjectBuildingRequestFactory requestFactory,
-                               ArtifactFactory artifactFactory) {
-        this.container = container;
-        this.requestFactory = requestFactory;
-        this.artifactFactory = artifactFactory;
+    public MavenProjectFactory(ProjectBuilder projectBuilder,
+            ProjectBuildingRequestFactory projectBuildingRequestFactory) {
+        this.projectBuilder = projectBuilder;
+        this.projectBuildingRequestFactory = projectBuildingRequestFactory;
     }
 
-    public MavenProject getMavenProject(String pomFilePath) throws MavenProjectFactoryException {
-        ProjectBuildingRequest request = requestFactory.getProjectBuildingRequest();
-
-        try {
-            ProjectBuildingResult result = getProjectBuilder().build(new File(pomFilePath), request);
-            return result.getProject();
-        } catch (ProjectBuildingException e) {
-            throw new MavenProjectFactoryException(e);
-        }
-    }
-
-    public MavenProject getMavenProject(Artifact artifact) throws MavenProjectFactoryException {
-        return getMavenProject(artifact, true);
-    }
-
-    public MavenProject getMavenProject(Artifact artifact, boolean resolveDependencies)
-            throws MavenProjectFactoryException {
-        ProjectBuildingRequest request = requestFactory.getProjectBuildingRequest();
+    public Optional<MavenProject> getMavenProject(Artifact artifact, boolean resolveDependencies) {
+        ProjectBuildingRequest request = projectBuildingRequestFactory.getProjectBuildingRequest();
         request.setResolveDependencies(resolveDependencies);
 
         try {
-            ProjectBuildingResult result = getProjectBuilder().build(artifact, request);
-            return result.getProject();
+            ProjectBuildingResult result = projectBuilder.build(artifact, request);
+            return Optional.ofNullable(result.getProject());
         } catch (ProjectBuildingException e) {
-            throw new MavenProjectFactoryException(e);
+            e.printStackTrace(); // TODO add logging
+            return Optional.empty();
         }
     }
 
+    public Optional<MavenProject> getMavenProject(File pom, boolean resolveDependencies) {
+        ProjectBuildingRequest request = projectBuildingRequestFactory.getProjectBuildingRequest();
+        request.setResolveDependencies(resolveDependencies);
 
-    public MavenProject getMavenProject(MavenArtifact mavenArtifact, boolean resolveDependencies)
-            throws MavenProjectFactoryException {
-        Artifact artifact = artifactFactory.createArtifact(
-                mavenArtifact.getGroupId(),
-                mavenArtifact.getArtifactId(),
-                mavenArtifact.getVersion(),
-                "compile",
-                mavenArtifact.getType());
-        return getMavenProject(artifact, resolveDependencies);
-    }
-
-    private ProjectBuilder getProjectBuilder() {
         try {
-            return container.lookup(ProjectBuilder.class);
-        } catch (ComponentLookupException e) {
-            throw new RuntimeException("Failed to lookup ProjectBuilder", e);
+            ProjectBuildingResult result = projectBuilder.build(pom, request);
+            return Optional.ofNullable(result.getProject());
+        } catch (ProjectBuildingException e) {
+            e.printStackTrace(); // TODO add logging
+            return Optional.empty();
         }
     }
+
 }

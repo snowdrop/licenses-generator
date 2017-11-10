@@ -16,17 +16,17 @@
 
 package org.jboss.snowdrop.licenses.xml;
 
-import org.apache.maven.project.MavenProject;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.json.JsonObject;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -56,8 +56,26 @@ public class DependencyElement {
                 .collect(Collectors.toSet());
     }
 
-    public DependencyElement(String groupId, String artifactId, String version) {
-        this(groupId, artifactId, version, new HashSet<>());
+    public DependencyElement(DependencyElement dependencyElement) {
+        this(dependencyElement.getGroupId(), dependencyElement.getArtifactId(), dependencyElement.getVersion(),
+                dependencyElement.getLicenses());
+    }
+
+    public DependencyElement(JsonObject dependencyElementJson) {
+        this.groupId = dependencyElementJson.getString("groupId");
+        Objects.requireNonNull(this.groupId, "groupId cannot be null");
+
+        this.artifactId = dependencyElementJson.getString("artifactId");
+        Objects.requireNonNull(this.artifactId, "artifactId cannot be null");
+
+        this.version = dependencyElementJson.getString("version");
+        Objects.requireNonNull(this.version, "version cannot be null");
+
+        this.licenses = dependencyElementJson.getJsonArray("licenses")
+                .getValuesAs(JsonObject.class)
+                .stream()
+                .map(LicenseElement::new)
+                .collect(Collectors.toSet());
     }
 
     public DependencyElement(String groupId, String artifactId, String version, Set<LicenseElement> licenses) {
@@ -67,7 +85,10 @@ public class DependencyElement {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
-        this.licenses = new HashSet<>(licenses);
+        this.licenses = new HashSet<>(licenses.size());
+        licenses.parallelStream()
+                .map(LicenseElement::new)
+                .forEach(this.licenses::add);
     }
 
     public String getGroupId() {
@@ -105,10 +126,6 @@ public class DependencyElement {
     @XmlElementWrapper
     public void setLicenses(Set<LicenseElement> licenses) {
         this.licenses = Collections.unmodifiableSet(licenses);
-    }
-
-    public String toGav() {
-        return String.format("%s:%s:%s", groupId, artifactId, version);
     }
 
     @Override

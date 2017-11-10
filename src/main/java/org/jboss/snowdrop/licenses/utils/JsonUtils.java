@@ -15,23 +15,23 @@
  */
 package org.jboss.snowdrop.licenses.utils;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 /**
  * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
  * <br>
  * Date: 9/14/17
  */
-public class JsonUtils {
+public interface JsonUtils {
 
-    public static <T> Set<T> loadJsonToSet(String resourceLocation, Function<JsonObject, T> mapper) {
+    static <T> Set<T> loadJsonToSet(String resourceLocation, Function<JsonObject, T> mapper) {
         try (InputStream fileInputStream = JsonUtils.class.getClassLoader()
                 .getResourceAsStream(resourceLocation)) {
             return Json.createReader(fileInputStream)

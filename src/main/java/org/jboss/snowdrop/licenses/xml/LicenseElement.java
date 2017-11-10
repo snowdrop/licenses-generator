@@ -16,10 +16,10 @@
 
 package org.jboss.snowdrop.licenses.xml;
 
-import org.apache.maven.model.License;
-
-import javax.xml.bind.annotation.XmlElement;
 import java.util.Objects;
+import javax.json.JsonObject;
+import javax.xml.bind.annotation.XmlElement;
+import org.apache.maven.model.License;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -36,6 +36,15 @@ public class LicenseElement {
     public LicenseElement(License license) {
         this.name = license.getName();
         this.url = license.getUrl();
+    }
+
+    public LicenseElement(LicenseElement licenseElement) {
+        this.name = licenseElement.getName();
+        this.url = licenseElement.getUrl();
+    }
+
+    public LicenseElement(JsonObject licenseElementJson) {
+        this(licenseElementJson.getString("name"), licenseElementJson.getString("url"));
     }
 
     public LicenseElement(String name, String url) {
@@ -70,13 +79,21 @@ public class LicenseElement {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         LicenseElement that = (LicenseElement) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (url != null ? !url.equals(that.url) : that.url != null) {
+            return false;
+        }
 
         return true;
     }
