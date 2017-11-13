@@ -17,7 +17,10 @@
 package org.jboss.snowdrop.licenses.maven;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
@@ -53,15 +56,40 @@ public class MavenProjectFactory {
         }
     }
 
-    public Optional<MavenProject> getMavenProject(File pom, boolean resolveDependencies) {
+    public List<MavenProject> getMavenProjects(File pom, boolean resolveDependencies) {
         ProjectBuildingRequest request = projectBuildingRequestFactory.getProjectBuildingRequest();
         request.setResolveDependencies(resolveDependencies);
 
+        List<MavenProject> interimMavenProjects;
+
         try {
-            ProjectBuildingResult result = projectBuilder.build(pom, request);
-            return Optional.ofNullable(result.getProject());
+            interimMavenProjects = projectBuilder.build(Collections.singletonList(pom), true, request)
+                    .parallelStream()
+                    .map(ProjectBuildingResult::getProject)
+                    .collect(Collectors.toList());
         } catch (ProjectBuildingException e) {
             e.printStackTrace(); // TODO add logging
+            return Collections.emptyList();
+        }
+
+        if (resolveDependencies) {
+            // This is needed as the build above doesn't resolve dependencies
+            return interimMavenProjects.parallelStream()
+                    .map(p -> resolveMavenProject(p, request))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+
+        return interimMavenProjects;
+    }
+
+    private Optional<MavenProject> resolveMavenProject(MavenProject mavenProject, ProjectBuildingRequest request) {
+        try {
+            ProjectBuildingResult result = projectBuilder.build(mavenProject.getFile(), request);
+            return Optional.of(result.getProject());
+        } catch (ProjectBuildingException e) {
+            e.printStackTrace();
             return Optional.empty();
         }
     }

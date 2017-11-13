@@ -3,10 +3,14 @@ package org.jboss.snowdrop.licenses.maven;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -54,9 +58,12 @@ public class MavenProjectFactoryTest {
         when(mockProjectBuildingRequestFactory.getProjectBuildingRequest()).thenReturn(mockProjectBuildingRequest);
         when(mockProjectBuilder.build(any(Artifact.class), eq(mockProjectBuildingRequest))).thenReturn(
                 mockProjectBuildingResult);
-        when(mockProjectBuilder.build(any(File.class), eq(mockProjectBuildingRequest))).thenReturn(
+        when(mockProjectBuilder.build(eq(mockFile), eq(mockProjectBuildingRequest))).thenReturn(
                 mockProjectBuildingResult);
+        when(mockProjectBuilder.build(eq(Collections.singletonList(mockFile)), eq(true),
+                eq(mockProjectBuildingRequest))).thenReturn(Collections.singletonList(mockProjectBuildingResult));
         when(mockProjectBuildingResult.getProject()).thenReturn(mockMavenProject);
+        when(mockMavenProject.getFile()).thenReturn(mockFile);
 
         mavenProjectFactory = new MavenProjectFactory(mockProjectBuilder, mockProjectBuildingRequestFactory);
     }
@@ -98,37 +105,52 @@ public class MavenProjectFactoryTest {
 
     @Test
     public void shouldGetMavenProjectFromPomWithoutDependencies() throws ProjectBuildingException {
-        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockFile, false);
+        List<MavenProject> mavenProjects = mavenProjectFactory.getMavenProjects(mockFile, false);
 
-        assertThat(mavenProjectOptional.isPresent()).isTrue();
-        assertThat(mavenProjectOptional.get()).isEqualTo(mockMavenProject);
+        assertThat(mavenProjects).containsOnly(mockMavenProject);
 
         verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
         verify(mockProjectBuildingRequest).setResolveDependencies(false);
-        verify(mockProjectBuilder).build(mockFile, mockProjectBuildingRequest);
+        verify(mockProjectBuilder).build(Collections.singletonList(mockFile), true, mockProjectBuildingRequest);
         verify(mockProjectBuildingResult).getProject();
     }
 
     @Test
-    public void shouldGetMavenProjectFromPomWithDependencies() throws ProjectBuildingException {
-        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockFile, true);
+    public void shouldGetMavenProjectsFromPomWithDependencies() throws ProjectBuildingException {
+        List<MavenProject> mavenProjects = mavenProjectFactory.getMavenProjects(mockFile, true);
 
-        assertThat(mavenProjectOptional.isPresent()).isTrue();
-        assertThat(mavenProjectOptional.get()).isEqualTo(mockMavenProject);
+        assertThat(mavenProjects).containsOnly(mockMavenProject);
 
         verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
         verify(mockProjectBuildingRequest).setResolveDependencies(true);
-        verify(mockProjectBuilder).build(mockFile, mockProjectBuildingRequest);
-        verify(mockProjectBuildingResult).getProject();
+        verify(mockProjectBuilder).build(Collections.singletonList(mockFile), true, mockProjectBuildingRequest);
+        verify(mockProjectBuildingResult, times(2)).getProject();
     }
 
     @Test
-    public void shouldNotGetProjectFromFileInCaseOfException() throws ProjectBuildingException {
-        when(mockProjectBuilder.build(any(File.class), eq(mockProjectBuildingRequest))).thenThrow(
-                ProjectBuildingException.class);
-        Optional<MavenProject> mavenProjectOptional = mavenProjectFactory.getMavenProject(mockFile, false);
+    public void shouldGetMavenProjectsFromPomWithModules() throws ProjectBuildingException {
+        when(mockProjectBuilder.build(eq(Collections.singletonList(mockFile)), eq(true),
+                eq(mockProjectBuildingRequest))).thenReturn(
+                Arrays.asList(mockProjectBuildingResult, mockProjectBuildingResult));
 
-        assertThat(mavenProjectOptional.isPresent()).isFalse();
+        List<MavenProject> mavenProjects = mavenProjectFactory.getMavenProjects(mockFile, true);
+
+        assertThat(mavenProjects).hasSize(2);
+        assertThat(mavenProjects).containsOnly(mockMavenProject);
+
+        verify(mockProjectBuildingRequestFactory).getProjectBuildingRequest();
+        verify(mockProjectBuildingRequest).setResolveDependencies(true);
+        verify(mockProjectBuilder).build(Collections.singletonList(mockFile), true, mockProjectBuildingRequest);
+        verify(mockProjectBuildingResult, times(4)).getProject();
+    }
+
+    @Test
+    public void shouldNotGetProjectsFromPomInCaseOfException() throws ProjectBuildingException {
+        when(mockProjectBuilder.build(eq(Collections.singletonList(mockFile)), eq(true),
+                eq(mockProjectBuildingRequest))).thenThrow(ProjectBuildingException.class);
+        List<MavenProject> mavenProjects = mavenProjectFactory.getMavenProjects(mockFile, false);
+
+        assertThat(mavenProjects).isEmpty();
     }
 
 }

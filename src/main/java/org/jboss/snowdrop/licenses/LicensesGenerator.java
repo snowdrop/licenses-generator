@@ -18,6 +18,7 @@ package org.jboss.snowdrop.licenses;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,12 +85,13 @@ public class LicensesGenerator {
     }
 
     public void generateLicensesForPom(String pomPath, String resultPath) throws LicensesGeneratorException {
-        Optional<MavenProject> optional = mavenProjectFactory.getMavenProject(new File(pomPath), true);
+        List<MavenProject> mavenProjects = mavenProjectFactory.getMavenProjects(new File(pomPath), true);
+        Set<Artifact> artifacts = mavenProjects.stream()
+                .map(MavenProject::getArtifacts)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
 
-        if (optional.isPresent()) {
-            MavenProject mavenProject = optional.get();
-            generateLicensesForArtifacts(mavenProject.getArtifacts(), resultPath);
-        }
+        generateLicensesForArtifacts(artifacts, resultPath);
     }
 
     public void generateLicensesForGavs(Collection<Gav> gavs, String resultPath) throws LicensesGeneratorException {
