@@ -72,5 +72,20 @@
         "url": "https://raw.githubusercontent.com/dom4j/dom4j/dom4j_1_6_1/LICENSE.txt"
       }
     ]
+  },
+  {
+    "groupId": "com.h2database",
+    "artifactId": "h2",
+    "version": "1.4.196",
+    "licenses": [
+      {
+        "name": "Eclipse Public License, Version 1.0",
+        "url": "http://repository.jboss.org/licenses/epl-1.0.txt"
+      },
+      {
+        "name": "Mozilla Public License v2.0",
+        "url": "http://www.mozilla.org/MPL/2.0"
+      }
+    ]
   }
 ]
