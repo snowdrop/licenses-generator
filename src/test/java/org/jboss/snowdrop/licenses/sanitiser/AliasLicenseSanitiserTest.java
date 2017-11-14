@@ -53,8 +53,42 @@ public class AliasLicenseSanitiserTest {
     }
 
     @Test
+    public void shouldFixLicenseNameWithAliasAndNullUrl() {
+        LicenseElement licenseElement = new LicenseElement("Test License Alias", null);
+        DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.singleton(licenseElement));
+
+        DependencyElement fixedDependencyElement = aliasLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(1);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name", "http://test-license.com"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
+    }
+
+    @Test
     public void shouldFixLicenseUrlWithAlias() {
         LicenseElement licenseElement = new LicenseElement("Test License Name", "http://test-license-alias.com");
+        DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.singleton(licenseElement));
+
+        DependencyElement fixedDependencyElement = aliasLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(1);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name", "http://test-license.com"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
+    }
+
+    @Test
+    public void shouldFixLicenseUrlWithAliasAndNullName() {
+        LicenseElement licenseElement = new LicenseElement(null, "http://test-license-alias.com");
         DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.singleton(licenseElement));
 
         DependencyElement fixedDependencyElement = aliasLicenseSanitiser.fix(dependencyElement);

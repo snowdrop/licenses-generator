@@ -16,7 +16,6 @@
 
 package org.jboss.snowdrop.licenses.xml;
 
-import java.util.Objects;
 import javax.json.JsonObject;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.maven.model.License;
@@ -48,8 +47,6 @@ public class LicenseElement {
     }
 
     public LicenseElement(String name, String url) {
-        Objects.requireNonNull(name, "name cannot be null");
-        Objects.requireNonNull(url, "url cannot be null");
         this.name = name;
         this.url = url;
     }

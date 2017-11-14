@@ -64,6 +64,9 @@ public class AliasLicenseSanitiser implements LicenseSanitiser {
     }
 
     private Optional<RedHatLicense> getRedHatLicenseByUrl(String url) {
+        if (url == null) {
+            return Optional.empty();
+        }
         return redHatLicenses.stream()
                 .filter(l -> l.getUrlAliases()
                         .contains(url.toLowerCase()))
@@ -71,6 +74,9 @@ public class AliasLicenseSanitiser implements LicenseSanitiser {
     }
 
     private Optional<RedHatLicense> getRedHatLicenseByName(String name) {
+        if (name == null) {
+            return Optional.empty();
+        }
         return redHatLicenses.stream()
                 .filter(l -> l.getAliases()
                         .contains(name.toLowerCase()))
