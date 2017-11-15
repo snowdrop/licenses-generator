@@ -1,5 +1,15 @@
 [
   {
+    "name": "The Antlr 2.7.7 License",
+    "url": "http://www.antlr2.org/license.html",
+    "aliases": [
+      "The Antlr 2.7.7 License"
+    ],
+    "urlAliases": [
+      "http://www.antlr2.org/license.html"
+    ]
+  },
+  {
     "name": "Apache Software License, Version 2.0",
     "url": "http://www.apache.org/licenses/LICENSE-2.0",
     "aliases": [

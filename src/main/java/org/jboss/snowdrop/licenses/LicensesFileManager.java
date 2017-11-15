@@ -16,6 +16,14 @@
 
 package org.jboss.snowdrop.licenses;
 
+import org.apache.commons.io.FileUtils;
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseElement;
+import org.jboss.snowdrop.licenses.xml.LicenseSummary;
+import org.jtwig.JtwigModel;
+import org.jtwig.JtwigTemplate;
+
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,13 +35,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXBException;
-import org.apache.commons.io.FileUtils;
-import org.jboss.snowdrop.licenses.xml.DependencyElement;
-import org.jboss.snowdrop.licenses.xml.LicenseElement;
-import org.jboss.snowdrop.licenses.xml.LicenseSummary;
-import org.jtwig.JtwigModel;
-import org.jtwig.JtwigTemplate;
 
 /**
  * Class responsible for persisting licenses information to XML and HTML files.
@@ -101,13 +102,13 @@ public class LicensesFileManager {
             String fileName = getLocalLicenseFileName(license);
             File file = new File(directoryPath, fileName);
             if (!file.exists()) {
-                URL url = new URL(license.getUrl());
+                URL url = new URL(license.getTextUrl());
                 FileUtils.copyURLToFile(url, file);
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
         } catch (IOException e) {
             logger.warning(String.format("Failed to download license '%s' from '%s': %s", license.getName(),
-                    license.getUrl(), e.getMessage()));
+                    license.getTextUrl(), e.getMessage()));
             return Optional.empty();
         }
     }

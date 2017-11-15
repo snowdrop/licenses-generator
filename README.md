@@ -35,4 +35,5 @@ Name|Description|Default value
 ---|---|---
 repository.names | Comma separated list of repository names. Must be the same lenght as repository.urls | Maven Central
 repository.urls | Comma separated list of repository URLs. Must be the same length as repository.names | http://repo1.maven.org/maven2
+licenseServiceUrl | An optional URL of a license service. <br> If not provided, the license data will be collected from the the rh-license-exceptions.json file or artifacts' pom.xml | *null*
 

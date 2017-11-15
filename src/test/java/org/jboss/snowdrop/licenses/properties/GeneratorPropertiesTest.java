@@ -30,6 +30,7 @@ public class GeneratorPropertiesTest {
         GeneratorProperties properties = new GeneratorProperties("test_properties/empty.properties");
         assertThat(properties.getRepositories()).containsOnlyKeys("Maven Central")
                 .containsValues("http://repo1.maven.org/maven2");
+        assertThat(properties.getLicenseServiceUrl()).isEmpty();
     }
 
     @Test
@@ -37,6 +38,7 @@ public class GeneratorPropertiesTest {
         GeneratorProperties properties = new GeneratorProperties("test_properties/modified.properties");
         assertThat(properties.getRepositories()).containsOnlyKeys("testRepositoryName1", "testRepositoryName2")
                 .containsValues("testRepositoryUrl1", "testRepositoryUrl2");
+        assertThat(properties.getLicenseServiceUrl()).contains("http://10.10.10.10/find-license-check-record");
     }
 
     @Test(expected = GeneratorPropertiesException.class)

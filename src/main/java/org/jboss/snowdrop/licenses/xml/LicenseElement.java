@@ -16,9 +16,11 @@
 
 package org.jboss.snowdrop.licenses.xml;
 
+import org.apache.maven.model.License;
+
 import javax.json.JsonObject;
 import javax.xml.bind.annotation.XmlElement;
-import org.apache.maven.model.License;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -29,17 +31,19 @@ public class LicenseElement {
 
     private String url;
 
+    private String textUrl;
+
     public LicenseElement() {
     }
 
     public LicenseElement(License license) {
-        this.name = license.getName();
-        this.url = license.getUrl();
+        this(license.getName(), license.getUrl(), license.getUrl());
     }
 
     public LicenseElement(LicenseElement licenseElement) {
         this.name = licenseElement.getName();
         this.url = licenseElement.getUrl();
+        this.textUrl = licenseElement.getTextUrl();
     }
 
     public LicenseElement(JsonObject licenseElementJson) {
@@ -47,8 +51,13 @@ public class LicenseElement {
     }
 
     public LicenseElement(String name, String url) {
+        this(name, url, url);
+    }
+
+    public LicenseElement(String name, String url, String textUrl) {
         this.name = name;
         this.url = url;
+        this.textUrl = textUrl;
     }
 
     public String getName() {
@@ -69,28 +78,32 @@ public class LicenseElement {
         this.url = url;
     }
 
+    @XmlTransient
+    public void setTextUrl(String textUrl) {
+        this.textUrl = textUrl;
+    }
+
+    public String getTextUrl() {
+        return textUrl;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s{name='%s', url='%s'}", LicenseElement.class.getSimpleName(), name, url);
+        return String.format("%s{name='%s', url='%s', textUrl=%s}",
+                LicenseElement.class.getSimpleName(), name, url, textUrl);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         LicenseElement that = (LicenseElement) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) {
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (textUrl != null ? !textUrl.equals(that.textUrl) : that.textUrl != null)
             return false;
-        }
-        if (url != null ? !url.equals(that.url) : that.url != null) {
-            return false;
-        }
 
         return true;
     }
@@ -99,6 +112,7 @@ public class LicenseElement {
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (textUrl != null ? textUrl.hashCode() : 0);
         return result;
     }
 }

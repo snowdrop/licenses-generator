@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jboss.snowdrop.licenses.sanitiser.provider;
 
-package org.jboss.snowdrop.licenses.properties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.Set;
 
 /**
- * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
- */
-public interface PropertyKeys {
+ * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
+ * <br>
+ * Date: 10/20/17
+ * <p>
+*/
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ExternalLicensesDto {
+    private Set<ExternalLicenseDto> licenses;
 
-    String REPOSITORY_NAMES = "repository.names";
+    public Set<ExternalLicenseDto> getLicenses() {
+        return licenses;
+    }
 
-    String REPOSITORY_URLS = "repository.urls";
-
-    String LICENSE_SERVICE_URL = "licenseServiceUrl";
-
+    public void setLicenses(Set<ExternalLicenseDto> licenses) {
+        this.licenses = licenses;
+    }
 }

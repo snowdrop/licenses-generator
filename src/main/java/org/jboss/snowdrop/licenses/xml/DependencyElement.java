@@ -91,6 +91,10 @@ public class DependencyElement {
                 .forEach(this.licenses::add);
     }
 
+    public DependencyElement(DependencyElement dependencyElement, Set<LicenseElement> licenses) {
+        this(dependencyElement.groupId, dependencyElement.artifactId, dependencyElement.version, licenses);
+    }
+
     public String getGroupId() {
         return groupId;
     }
@@ -160,5 +164,9 @@ public class DependencyElement {
         result = 31 * result + artifactId.hashCode();
         result = 31 * result + version.hashCode();
         return result;
+    }
+
+    public String toGavString() {
+        return String.format("%s:%s:%s", groupId, artifactId, version);
     }
 }
