@@ -56,12 +56,14 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>nexus-internal-snapshots</id>
-      <url>http://nexus-infra.ose.spring-boot.osepool.centralci.eng.rdu2.redhat.com/nexus/content/repositories/snapshots/</url>
+      <id>jboss-snapshots-repository</id>
+      <name>JBoss Snapshots Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
     <repository>
-      <id>nexus-internal-releases</id>
-      <url>http://nexus-infra.ose.spring-boot.osepool.centralci.eng.rdu2.redhat.com/nexus/content/repositories/releases/</url>
+      <id>jboss-releases-repository</id>
+      <name>JBoss Releases Repository</name>
+      <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
 
