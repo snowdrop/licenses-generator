@@ -48,9 +48,9 @@
   </properties>
 
   <scm>
-    <url>https://gitlab.cee.redhat.com/middleware</url>
-    <connection>scm:git:https://gitlab.cee.redhat.com/middleware/licenses-generator.git</connection>
-    <developerConnection>scm:git:git:@gitlab.cee.redhat.com:middleware/licenses-generator.git</developerConnection>
+    <url>https://github.com/snowdrop</url>
+    <connection>scm:git:https://github.com/snowdrop/licenses-generator.git</connection>
+    <developerConnection>scm:git:git:@github.com:snowdrop/licenses-generator.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
