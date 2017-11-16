@@ -16,15 +16,15 @@
 
 package org.jboss.snowdrop.licenses.properties;
 
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -64,6 +64,11 @@ public class GeneratorProperties {
         return IntStream.range(0, names.length)
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(names[i], urls[i]))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public Optional<String> getLicenseServiceUrl() {
+        String url = configuration.getString(PropertyKeys.LICENSE_SERVICE_URL, null);
+        return Optional.ofNullable(url);
     }
 
 }

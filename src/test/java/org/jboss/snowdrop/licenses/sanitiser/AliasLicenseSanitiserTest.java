@@ -1,22 +1,21 @@
 package org.jboss.snowdrop.licenses.sanitiser;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import org.jboss.snowdrop.licenses.xml.DependencyElement;
 import org.jboss.snowdrop.licenses.xml.LicenseElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -71,7 +70,8 @@ public class AliasLicenseSanitiserTest {
 
     @Test
     public void shouldFixLicenseUrlWithAlias() {
-        LicenseElement licenseElement = new LicenseElement("Test License Name", "http://test-license-alias.com");
+        LicenseElement licenseElement =
+                new LicenseElement("Test License Name", "http://test-license-alias.com", "http://text-url.example.com");
         DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.singleton(licenseElement));
 
         DependencyElement fixedDependencyElement = aliasLicenseSanitiser.fix(dependencyElement);
@@ -81,14 +81,14 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://text-url.example.com"));
 
         verify(mockLicenseSanitiser, times(0)).fix(any());
     }
 
     @Test
     public void shouldFixLicenseUrlWithAliasAndNullName() {
-        LicenseElement licenseElement = new LicenseElement(null, "http://test-license-alias.com");
+        LicenseElement licenseElement = new LicenseElement(null, "http://test-license-alias.com", "http://text-url.com");
         DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.singleton(licenseElement));
 
         DependencyElement fixedDependencyElement = aliasLicenseSanitiser.fix(dependencyElement);
@@ -98,7 +98,7 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://text-url.com"));
 
         verify(mockLicenseSanitiser, times(0)).fix(any());
     }
@@ -106,8 +106,8 @@ public class AliasLicenseSanitiserTest {
     @Test
     public void shouldFixTwoLicenses() {
         List<LicenseElement> licenseElements = Arrays.asList(
-                new LicenseElement("Test License Alias", "http://test-license-alias.com"),
-                new LicenseElement("Test License Alias 2", "http://test-license-alias-2.com")
+                new LicenseElement("Test License Alias", "http://test-license-alias.com", "http://text-url.com"),
+                new LicenseElement("Test License Alias 2", "http://test-license-alias-2.com","http://text-url.com")
         );
 
         DependencyElement dependencyElement = new DependencyElement("", "", "", new HashSet<>(licenseElements));
@@ -118,8 +118,8 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com"),
-                new LicenseElement("Test License Name 2", "http://test-license-2.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://text-url.com"),
+                new LicenseElement("Test License Name 2", "http://test-license-2.com", "http://text-url.com"));
 
         verify(mockLicenseSanitiser, times(0)).fix(any());
     }
@@ -141,8 +141,8 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com"),
-                new LicenseElement("Unknown name", "http://unknown.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://test-license-alias.com"),
+                new LicenseElement("Unknown name", "http://unknown.com", "http://unknown.com"));
 
         verify(mockLicenseSanitiser, times(1)).fix(any());
     }

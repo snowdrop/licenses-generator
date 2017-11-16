@@ -16,12 +16,6 @@
 
 package org.jboss.snowdrop.licenses;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
@@ -36,9 +30,17 @@ import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.jboss.snowdrop.licenses.sanitiser.AliasLicenseSanitiser;
 import org.jboss.snowdrop.licenses.sanitiser.ExceptionLicenseSanitiser;
 import org.jboss.snowdrop.licenses.sanitiser.LicenseSanitiser;
+import org.jboss.snowdrop.licenses.sanitiser.LicenseServiceSanitiser;
 import org.jboss.snowdrop.licenses.sanitiser.NoopLicenseSanitiser;
 import org.jboss.snowdrop.licenses.utils.Gav;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -75,12 +77,7 @@ public class LicensesGenerator {
             throw new LicensesGeneratorException(e.getMessage(), e);
         }
 
-        LicenseSanitiser noopLicenseSanitiser = new NoopLicenseSanitiser();
-        LicenseSanitiser aliasLicenseSanitiser = new AliasLicenseSanitiser(LICENSE_NAMES_FILE, noopLicenseSanitiser);
-        LicenseSanitiser exceptionLicenseSanitiser =
-                new ExceptionLicenseSanitiser(LICENSE_EXCEPTIONS_FILE, aliasLicenseSanitiser);
-
-        this.licenseSummaryFactory = new LicenseSummaryFactory(exceptionLicenseSanitiser);
+        this.licenseSummaryFactory = createLicenseSummaryFactory(generatorProperties);
         this.licensesFileManager = new LicensesFileManager();
     }
 
@@ -120,4 +117,21 @@ public class LicensesGenerator {
                 gav.getType());
     }
 
+
+    protected static LicenseSummaryFactory createLicenseSummaryFactory(GeneratorProperties generatorProperties) {
+        LicenseSanitiser noopLicenseSanitiser = new NoopLicenseSanitiser();
+        LicenseSanitiser aliasLicenseSanitiser = new AliasLicenseSanitiser(LICENSE_NAMES_FILE, noopLicenseSanitiser);
+
+        Optional<LicenseSanitiser> maybeExternalLicenseSanitiser =
+                generatorProperties.getLicenseServiceUrl().<LicenseSanitiser>map(
+                        url -> new LicenseServiceSanitiser(url, aliasLicenseSanitiser)
+                );
+
+        LicenseSanitiser secondSanitiser = maybeExternalLicenseSanitiser.orElse(aliasLicenseSanitiser);
+
+        LicenseSanitiser exceptionLicenseSanitiser =
+                new ExceptionLicenseSanitiser(LICENSE_EXCEPTIONS_FILE, secondSanitiser);
+
+        return new LicenseSummaryFactory(exceptionLicenseSanitiser);
+    }
 }

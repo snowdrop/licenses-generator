@@ -24,5 +24,27 @@
         "url": "http://test-license-2.com"
       }
     ]
+  },
+  {
+    "groupId": "eap-unknown",
+    "artifactId": "artifact",
+    "version": "2.0.0-redhat-1",
+    "licenses": [
+      {
+        "name": "Test License A",
+        "url": "http://test-license-a.com"
+      }
+    ]
+  },
+  {
+    "groupId": "eap-unknown",
+    "artifactId": "artifact",
+    "version": "1.0",
+    "licenses": [
+      {
+        "name": "Test License B",
+        "url": "http://test-license-b.com"
+      }
+    ]
   }
 ]

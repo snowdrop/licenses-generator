@@ -16,12 +16,13 @@
 
 package org.jboss.snowdrop.licenses.sanitiser;
 
-import static org.jboss.snowdrop.licenses.utils.JsonUtils.loadJsonToSet;
+import org.jboss.snowdrop.licenses.xml.DependencyElement;
+import org.jboss.snowdrop.licenses.xml.LicenseElement;
 
 import java.util.Optional;
 import java.util.Set;
-import org.jboss.snowdrop.licenses.xml.DependencyElement;
-import org.jboss.snowdrop.licenses.xml.LicenseElement;
+
+import static org.jboss.snowdrop.licenses.utils.JsonUtils.loadJsonToSet;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -53,6 +54,10 @@ public class AliasLicenseSanitiser implements LicenseSanitiser {
                 licenseElement.setUrl(redHatLicense.getUrl());
             } else {
                 shouldCallNext = true;
+            }
+
+            if (licenseElement.getTextUrl() == null) {
+                licenseElement.setTextUrl(licenseElement.getUrl());
             }
         }
 

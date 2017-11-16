@@ -34,8 +34,10 @@
     <junit.version>4.12</junit.version>
     <maven-embedder.version>3.12.1</maven-embedder.version>
     <mockito.version>2.8.47</mockito.version>
+    <resteasy.version>3.1.4.Final</resteasy.version>
     <slf4j.version>1.7.25</slf4j.version>
     <twig.version>5.86.1.RELEASE</twig.version>
+    <undertow.version>1.4.19.Final</undertow.version>
 
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
@@ -189,6 +191,23 @@
       <version>${jaxb.version}</version>
     </dependency>
 
+    <!--JAX-RS-->
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <version>${resteasy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client</artifactId>
+      <version>${resteasy.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jackson2-provider</artifactId>
+      <version>${resteasy.version}</version>
+    </dependency>
+
     <!-- Configuration -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -237,6 +256,12 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-servlet</artifactId>
+      <version>${undertow.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
