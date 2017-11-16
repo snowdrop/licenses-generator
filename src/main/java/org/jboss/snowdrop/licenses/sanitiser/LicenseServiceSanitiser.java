@@ -26,12 +26,12 @@ import java.util.Set;
  * <br>
  * Date: 11/15/17
  */
-public class LicenseSerivceSanitiser implements LicenseSanitiser {
+public class LicenseServiceSanitiser implements LicenseSanitiser {
 
     private final LicenseSanitiser next;
     private final ExternalLicenseProvider provider;
 
-    public LicenseSerivceSanitiser(String licenseServiceUrl, LicenseSanitiser next) {
+    public LicenseServiceSanitiser(String licenseServiceUrl, LicenseSanitiser next) {
         this.next = next;
         this.provider = new ExternalLicenseProvider(licenseServiceUrl);
     }

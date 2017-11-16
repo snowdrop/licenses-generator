@@ -30,7 +30,7 @@ import org.jboss.snowdrop.licenses.properties.GeneratorProperties;
 import org.jboss.snowdrop.licenses.sanitiser.AliasLicenseSanitiser;
 import org.jboss.snowdrop.licenses.sanitiser.ExceptionLicenseSanitiser;
 import org.jboss.snowdrop.licenses.sanitiser.LicenseSanitiser;
-import org.jboss.snowdrop.licenses.sanitiser.LicenseSerivceSanitiser;
+import org.jboss.snowdrop.licenses.sanitiser.LicenseServiceSanitiser;
 import org.jboss.snowdrop.licenses.sanitiser.NoopLicenseSanitiser;
 import org.jboss.snowdrop.licenses.utils.Gav;
 import org.jboss.snowdrop.licenses.xml.LicenseSummary;
@@ -124,7 +124,7 @@ public class LicensesGenerator {
 
         Optional<LicenseSanitiser> maybeExternalLicenseSanitiser =
                 generatorProperties.getLicenseServiceUrl().<LicenseSanitiser>map(
-                        url -> new LicenseSerivceSanitiser(url, aliasLicenseSanitiser)
+                        url -> new LicenseServiceSanitiser(url, aliasLicenseSanitiser)
                 );
 
         LicenseSanitiser secondSanitiser = maybeExternalLicenseSanitiser.orElse(aliasLicenseSanitiser);
