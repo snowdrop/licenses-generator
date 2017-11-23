@@ -18,18 +18,18 @@ java -jar target/licenses-generator-shaded.jar -Dpom={path to pom.xml} -Ddestina
 You can add this project as a dependency and generate license files by using its API directly. Add the following dependency to your project's `pom.xml`:
 ```
 <dependency>
-  <groupId>org.jboss.snowdrop</groupId>
+  <groupId>me.snowdrop</groupId>
   <artifactId>licenses-generator</artifactId>
   <version>${project.version}</version>
 </dependency>
 ```
 
-Create an instance of `org.jboss.snowdrop.licenses.LicensesGenerator` and use `generateLicensesForPom` or `generateLicensesForGavs`. The latter method is only exposed to use directly and will not resolve transitive dependencies.
+Create an instance of `LicensesGenerator` and use `generateLicensesForPom` or `generateLicensesForGavs`. The latter method is only exposed to use directly and will not resolve transitive dependencies.
 
 # Configuration
-Project can be configured with a `src/main/resources/generator.properties` file. However, it can be oveerriden when running in standalone mode by providing `-DgeneratorProperties={path to a properties file}` as an application argument. When using generator via API, you can provide `org.jboss.snowdrop.licenses.properties.GeneratorProperties` when creating an instance of `org.jboss.snowdrop.licenses.LicensesGenerator`.
+Project can be configured with a `src/main/resources/generator.properties` file. However, it can be oveerriden when running in standalone mode by providing `-DgeneratorProperties={path to a properties file}` as an application argument. When using generator via API, you can provide `GeneratorProperties` when creating an instance of `LicensesGenerator`.
 
-These are the available properties (you can also see them in `org.jboss.snowdrop.licenses.properties.PropertyKeys`):
+These are the available properties (you can also see them in `PropertyKeys`):
 
 Name|Description|Default value
 ---|---|---

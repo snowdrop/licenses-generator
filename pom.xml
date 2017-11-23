@@ -18,7 +18,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.jboss.snowdrop</groupId>
+  <groupId>me.snowdrop</groupId>
   <artifactId>licenses-generator</artifactId>
   <version>1.0.0.Alpha2-SNAPSHOT</version>
 
@@ -292,7 +292,7 @@
               <finalName>licenses-generator-shaded</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.jboss.snowdrop.licenses.LicensesGeneratorApplication</mainClass>
+                  <mainClass>me.snowdrop.licenses.LicensesGeneratorApplication</mainClass>
                 </transformer>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
