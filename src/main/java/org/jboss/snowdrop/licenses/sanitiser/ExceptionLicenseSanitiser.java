@@ -37,7 +37,7 @@ public class ExceptionLicenseSanitiser implements LicenseSanitiser {
 
     @Override
     public DependencyElement fix(DependencyElement dependencyElement) {
-        return exceptions.parallelStream()
+        return exceptions.stream()
                 .filter(dependencyElement::equals)
                 .findFirst()
                 .map(DependencyElement::new)
