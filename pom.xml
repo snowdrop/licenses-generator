@@ -22,6 +22,28 @@
   <artifactId>licenses-generator</artifactId>
   <version>1.0.0.Alpha2-SNAPSHOT</version>
 
+  <name>Snowdrop Licenses Generator</name>
+  <description>Licenses Generator to gather dependency licenses and generate licenses.xml|html files</description>
+  <url>https://github.com/snowdrop/licenses-generator</url>
+
+  <developers>
+    <developer>
+      <id>gytis</id>
+      <name>Gytis Trikleris</name>
+      <email>gytis@redhat.com</email>
+      <url>https://github.com/gytis</url>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
   <properties>
     <aether.version>0.9.0.M4</aether.version>
     <assertj.version>3.8.0</assertj.version>
