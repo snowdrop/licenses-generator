@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import me.snowdrop.licenses.LicensesGeneratorException;
 import me.snowdrop.licenses.xml.LicenseElement;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Collections;
@@ -38,22 +38,27 @@ import java.util.stream.Collectors;
  */
 public class ExternalLicenseProvider {
 
-    private final Logger logger = Logger.getLogger(ExternalLicenseProvider.class.getSimpleName());
-
-    private final WebTarget webTarget;
+    private static final Logger logger = Logger.getLogger(ExternalLicenseProvider.class.getSimpleName());
+    private final ResteasyClient client;
+    private final String licenseServiceUrl;
 
     public ExternalLicenseProvider(String licenseServiceUrl) {
-        webTarget = ClientBuilder.newClient().target(licenseServiceUrl);
+        this.licenseServiceUrl = licenseServiceUrl;
+
+        ResteasyClientBuilder clientBuilder = new ResteasyClientBuilder();
+        clientBuilder = clientBuilder.connectionPoolSize(20);
+        client = clientBuilder.build();
     }
 
     public Set<LicenseElement> getLicenses(String gav) {
-        Response response =
-                webTarget.queryParam("gav", gav)
-                        .request()
-                        .get();
+        Response response = client
+                .target(licenseServiceUrl)
+                .queryParam("gav", gav)
+                .request()
+                .get();
         try {
             if (response.getStatus() != 200) {
-                logger.warning("Unable to get license information for " + gav);
+                logger.info("Unable to get license information for " + gav);
             } else {
                 String content = response.readEntity(String.class);
 
@@ -69,7 +74,9 @@ public class ExternalLicenseProvider {
         } catch (LicensesGeneratorException e) {
             throw new RuntimeException("Error getting license for gav: " + gav, e);
         } finally {
-            response.close();
+            try {
+                response.close();
+            } catch (Exception ignored) {}
         }
         return Collections.emptySet();
     }
