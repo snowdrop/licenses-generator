@@ -18,5 +18,16 @@
     "urlAliases": [
       "http://test-license-alias-2.com"
     ]
+  },
+  {
+    "name": "Test License Name 3",
+    "url": "http://test-license-3.com/licens.html",
+    "textUrl": "http://internal-host/license3.txt",
+    "aliases": [
+      "Test License Name 3"
+    ],
+    "urlAliases": [
+      "http://test-license-3.com/licens.html"
+    ]
   }
 ]

@@ -10,7 +10,7 @@
     ]
   },
   {
-    "name": "Apache Software License, Version 2.0",
+    "name": "Apache License 2.0",
     "url": "http://www.apache.org/licenses/LICENSE-2.0",
     "aliases": [
       "Apache Software License, Version 2.0",
@@ -33,10 +33,13 @@
     ]
   },
   {
-    "name": "GNU Lesser General Public License, Version 2.1",
-    "url": "http://repository.jboss.org/licenses/lgpl-2.1.txt",
+    "name": "GNU Lesser General Public License v2.1 only",
+    "textUrl": "http://repository.jboss.org/licenses/lgpl-2.1.txt",
+    "url": "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html",
     "aliases": [
+      "GNU Lesser General Public License (LGPL), Version 2.1",
       "GNU Lesser General Public License, Version 2.1",
+      "lgpl",
       "LGPL 2.1",
       "LGPL, version 2.1"
     ],
@@ -50,7 +53,7 @@
   },
   {
     "name": "GNU Lesser General Public License, Version 3",
-    "url": "https://www.gnu.org/licenses/lgpl-3.0-standalone.html",
+    "url": "http://www.gnu.org/licenses/lgpl-3.0-standalone.html",
     "aliases": [
       "GNU Lesser General Public License, Version 3",
       "The GNU Lesser General Public License, version 3"
@@ -106,7 +109,7 @@
   },
   {
     "name": "MIT License",
-    "url": "https://opensource.org/licenses/MIT",
+    "url": "http://www.opensource.org/licenses/MIT",
     "aliases": [
       "MIT License",
       "The MIT License"
@@ -149,7 +152,8 @@
     "url": "https://netbeans.org/cddl-gplv2.html",
     "aliases": [
       "Common Development and Distribution License (CDDL) and GNU Public License v.2 w/Classpath Exception",
-      "CDDL + GPLv2 with classpath exception"
+      "CDDL + GPLv2 with classpath exception",
+      "CDDL or GPLv2 with exceptions"
     ],
     "urlAliases": [
       "https://netbeans.org/cddl-gplv2.html",
