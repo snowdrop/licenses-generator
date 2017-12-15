@@ -32,6 +32,8 @@ public class RedHatLicense {
 
     private String url;
 
+    private String textUrl;
+
     private Set<String> aliases;
 
     private Set<String> urlAliases;
@@ -39,6 +41,7 @@ public class RedHatLicense {
     public RedHatLicense(JsonObject jsonObject) {
         this.name = jsonObject.getString("name");
         this.url = jsonObject.getString("url");
+        this.textUrl = jsonObject.getString("textUrl", null);
         this.aliases = jsonObject.getJsonArray("aliases")
                 .getValuesAs(JsonString.class)
                 .stream()
@@ -72,6 +75,10 @@ public class RedHatLicense {
     }
 
     public LicenseElement toLicenseElement() {
-        return new LicenseElement(name, url);
+        return new LicenseElement(name, url, textUrl);
+    }
+
+    public String getTextUrl() {
+        return textUrl;
     }
 }
