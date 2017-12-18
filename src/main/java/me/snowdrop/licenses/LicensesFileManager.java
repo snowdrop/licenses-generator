@@ -16,10 +16,10 @@
 
 package me.snowdrop.licenses;
 
-import org.apache.commons.io.FileUtils;
 import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseElement;
 import me.snowdrop.licenses.xml.LicenseSummary;
+import org.apache.commons.io.FileUtils;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -44,6 +44,8 @@ import java.util.stream.Collectors;
 public class LicensesFileManager {
 
     private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
+    private static final int DOWNLOAD_TIMEOUT = 60_000;
+    private static final int CONNECTION_TIMEOUT = 20_000;
 
     /**
      * Create a licenses.xml file.
@@ -103,7 +105,7 @@ public class LicensesFileManager {
             File file = new File(directoryPath, fileName);
             if (!file.exists()) {
                 URL url = new URL(license.getTextUrl());
-                FileUtils.copyURLToFile(url, file);
+                FileUtils.copyURLToFile(url, file, CONNECTION_TIMEOUT, DOWNLOAD_TIMEOUT);
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
         } catch (IOException e) {
