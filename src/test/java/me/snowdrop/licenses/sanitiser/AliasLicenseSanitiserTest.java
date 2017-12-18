@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -107,7 +108,7 @@ public class AliasLicenseSanitiserTest {
     public void shouldFixTwoLicenses() {
         List<LicenseElement> licenseElements = Arrays.asList(
                 new LicenseElement("Test License Alias", "http://test-license-alias.com", "http://text-url.com"),
-                new LicenseElement("Test License Alias 2", "http://test-license-alias-2.com","http://text-url.com")
+                new LicenseElement("Test License Alias 2", "http://test-license-alias-2.com", "http://text-url.com")
         );
 
         DependencyElement dependencyElement = new DependencyElement("", "", "", new HashSet<>(licenseElements));
@@ -157,6 +158,25 @@ public class AliasLicenseSanitiserTest {
         assertThat(fixedDependencyElement).isNull();
 
         verify(mockLicenseSanitiser).fix(dependencyElement);
+    }
+
+    @Test
+    public void shouldUseTextUrl() {
+        Set<LicenseElement> licenseElements = Collections.singleton(
+                new LicenseElement("Test License Name 3", "wrong-url")
+        );
+
+        DependencyElement dependencyElement = new DependencyElement("", "", "", licenseElements);
+        DependencyElement fixedDependencyElement = aliasLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(1);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name 3", "http://test-license-3.com/licens.html", "http://internal-host/license3.txt"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
     }
 
 }
