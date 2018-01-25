@@ -16,17 +16,19 @@
 
 package me.snowdrop.licenses.xml;
 
+import org.apache.maven.artifact.Artifact;
+
+import javax.json.JsonObject;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.json.JsonObject;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -42,18 +44,20 @@ public class DependencyElement {
     private String version;
 
     private Set<LicenseElement> licenses;
+    
+    private Artifact artifact;
 
     public DependencyElement() {
     }
 
-    public DependencyElement(MavenProject mavenProject) {
-        this.groupId = mavenProject.getGroupId();
-        this.artifactId = mavenProject.getArtifactId();
-        this.version = mavenProject.getVersion();
-        this.licenses = mavenProject.getLicenses()
-                .stream()
-                .map(LicenseElement::new)
-                .collect(Collectors.toSet());
+
+
+    public DependencyElement(Artifact artifact) {
+        this.groupId = artifact.getGroupId();
+        this.artifactId = artifact.getArtifactId();
+        this.version = artifact.getVersion();
+
+        this.artifact = artifact;
     }
 
     public DependencyElement(DependencyElement dependencyElement) {
@@ -168,5 +172,10 @@ public class DependencyElement {
 
     public String toGavString() {
         return String.format("%s:%s:%s", groupId, artifactId, version);
+    }
+
+    @XmlTransient
+    public Artifact getArtifact() {
+        return artifact;
     }
 }
