@@ -51,7 +51,7 @@ public class ExternalLicenseDto {
         return textUrl;
     }
 
-    @JsonProperty("text_url")
+    @JsonProperty("license_text_url")
     public void setTextUrl(String textUrl) {
         this.textUrl = textUrl;
     }
