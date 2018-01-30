@@ -20,6 +20,13 @@ import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseElement;
 import me.snowdrop.licenses.xml.LicenseSummary;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -27,7 +34,7 @@ import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -104,14 +111,29 @@ public class LicensesFileManager {
             String fileName = getLocalLicenseFileName(license);
             File file = new File(directoryPath, fileName);
             if (!file.exists()) {
-                URL url = new URL(license.getTextUrl());
-                FileUtils.copyURLToFile(url, file, CONNECTION_TIMEOUT, DOWNLOAD_TIMEOUT);
+                downloadTo(license, file);
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
         } catch (IOException e) {
             logger.warning(String.format("Failed to download license '%s' from '%s': %s", license.getName(),
                     license.getTextUrl(), e.getMessage()));
             return Optional.empty();
+        }
+    }
+
+    private void downloadTo(LicenseElement license, File file) throws IOException {
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpParams params = httpClient.getParams();
+        HttpConnectionParams.setConnectionTimeout(params, 30000);
+        HttpConnectionParams.setSoTimeout(params, 30000);
+
+        HttpGet httpget = new HttpGet(license.getTextUrl());
+        HttpResponse response = httpClient.execute(httpget);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            try (OutputStream stream = new FileOutputStream(file)) {
+                entity.writeTo(stream);
+            }
         }
     }
 
