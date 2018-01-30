@@ -96,30 +96,33 @@ public class LicensesFileManager {
     }
 
     private Map<String, String> downloadLicenseFiles(List<DependencyElement> dependencies, String directoryPath) {
+        final File licenseContentsDirectory = new File(directoryPath, "contents");
+        licenseContentsDirectory.mkdirs();
         return dependencies.stream()
                 .map(DependencyElement::getLicenses)
                 .flatMap(Set::stream)
-                .map(l -> downloadLicenseFile(l, directoryPath))
+                .map(l -> downloadLicenseFile(l, licenseContentsDirectory))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .distinct()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Optional<Map.Entry<String, String>> downloadLicenseFile(LicenseElement license, String directoryPath) {
+    private Optional<Map.Entry<String, String>> downloadLicenseFile(LicenseElement license,
+                                                                    File licenseContentsDirectory) {
         try {
             String fileName = getLocalLicenseFileName(license);
-            File file = new File(directoryPath, fileName);
+            File file = new File(licenseContentsDirectory, fileName);
             if (!file.exists()) {
                 file.createNewFile();
                 downloadTo(license, file);
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
         } catch (Exception any) {
-            logger.warning(String.format("Failed to download license '%s' from '%s': %s",
+            logger.warning(String.format("Failed to download license '%s' from '%s':",
                     license.getName(),
-                    license.getTextUrl(),
-                    any.getMessage()));
+                    license.getTextUrl()));
+            any.printStackTrace();
             return Optional.empty();
         }
     }
@@ -144,7 +147,7 @@ public class LicensesFileManager {
     private String getLocalLicenseFileName(LicenseElement licenseElement) {
         String fileName = licenseElement.getName()
                 .replaceAll("[^A-Za-z0-9 ]", "");
-        return "content/" + fileName.replace(" ", "+");
+        return fileName.replace(" ", "+");
     }
 
 }
