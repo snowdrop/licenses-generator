@@ -18,6 +18,7 @@ package me.snowdrop.licenses.sanitiser.provider;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import me.snowdrop.licenses.xml.LicenseElement;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
@@ -57,6 +58,6 @@ public class ExternalLicenseDto {
     }
 
     public LicenseElement toLicenseElement() {
-        return new LicenseElement(name, url, textUrl == null ? url : textUrl);
+        return new LicenseElement(name, url, StringUtils.isBlank(textUrl) ? url : textUrl);
     }
 }
