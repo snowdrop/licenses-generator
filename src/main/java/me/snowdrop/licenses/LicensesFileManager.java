@@ -111,16 +111,20 @@ public class LicensesFileManager {
             String fileName = getLocalLicenseFileName(license);
             File file = new File(directoryPath, fileName);
             if (!file.exists()) {
+                file.createNewFile();
                 downloadTo(license, file);
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
-        } catch (IOException e) {
-            logger.warning(String.format("Failed to download license '%s' from '%s': %s", license.getName(),
-                    license.getTextUrl(), e.getMessage()));
+        } catch (Exception any) {
+            logger.warning(String.format("Failed to download license '%s' from '%s': %s",
+                    license.getName(),
+                    license.getTextUrl(),
+                    any.getMessage()));
             return Optional.empty();
         }
     }
 
+    // TODO: optimize!
     private void downloadTo(LicenseElement license, File file) throws IOException {
         HttpClient httpClient = new DefaultHttpClient();
         HttpParams params = httpClient.getParams();
