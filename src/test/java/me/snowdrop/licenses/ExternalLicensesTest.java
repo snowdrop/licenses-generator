@@ -36,7 +36,7 @@ public class ExternalLicensesTest {
     public static final String APACHE_SOFTWARE_LICENSE_VERSION_2_0_JSON = "{ \n" +
             "  \"name\": \"" + APACHE_SOFTWARE_LICENSE_VERSION_2_0_NAME + "\",\n" +
             "  \"url\": \"http://example.com/apache-license-url\",\n" +
-            "  \"text_url\": \"http://example.com/apache-license/content.txt\"\n" +
+            "  \"license_text_url\": \"http://example.com/apache-license/content.txt\"\n" +
             "}";
     public static final String ECLIPSE_LICENSE_NAME = "Eclipse Public License 1.0";
     public static final String ECLIPSE_LICENSE_LINK = "http://www.eclipse.org/legal/epl-v10.html";

@@ -39,9 +39,9 @@ public class LicenseSummaryFactory {
         this.licenseSanitiser = licenseSanitiser;
     }
 
-    public LicenseSummary getLicenseSummary(Collection<Artifact> mavenProjects) {
+    public LicenseSummary getLicenseSummary(Collection<Artifact> artifacts) {
         List<DependencyElement> dependencyElements =
-                mavenProjects.parallelStream()
+                artifacts.parallelStream()
                         .map(DependencyElement::new)
                         .map(licenseSanitiser::fix)
                         .sorted(Comparator.comparing(DependencyElement::getGroupId)

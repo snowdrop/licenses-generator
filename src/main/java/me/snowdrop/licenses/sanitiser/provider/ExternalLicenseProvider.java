@@ -25,6 +25,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -69,7 +70,10 @@ public class ExternalLicenseProvider {
                                 .map(ExternalLicenseDto::toLicenseElement)
                                 .collect(Collectors.toSet());
 
-                return licenses;
+                if (areValid(licenses)) {
+                    return licenses;
+                }
+
             }
         } catch (LicensesGeneratorException e) {
             throw new RuntimeException("Error getting license for gav: " + gav, e);
@@ -79,6 +83,12 @@ public class ExternalLicenseProvider {
             } catch (Exception ignored) {}
         }
         return Collections.emptySet();
+    }
+
+    private boolean areValid(Collection<LicenseElement> licenses) {
+        return licenses.stream().allMatch(
+                LicenseElement::isValid
+        );
     }
 
     private List<ExternalLicensesDto> parseLicenses(String content) throws LicensesGeneratorException {

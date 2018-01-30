@@ -16,6 +16,7 @@
 
 package me.snowdrop.licenses.xml;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
 
 import javax.json.JsonObject;
@@ -114,5 +115,9 @@ public class LicenseElement {
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (textUrl != null ? textUrl.hashCode() : 0);
         return result;
+    }
+
+    public boolean isValid() {
+        return StringUtils.isNotBlank(url) && StringUtils.isNotBlank(name);
     }
 }
