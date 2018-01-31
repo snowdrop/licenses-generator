@@ -110,31 +110,40 @@ public class LicensesFileManager {
 
     private Optional<Map.Entry<String, String>> downloadLicenseFile(LicenseElement license,
                                                                     File licenseContentsDirectory) {
+        String textUrl = license.getTextUrl();
         try {
             String fileName = getLocalLicenseFileName(license);
             File file = new File(licenseContentsDirectory, fileName);
+            boolean download = false;
             if (!file.exists()) {
-                file.createNewFile();
-                downloadTo(license, file);
+                synchronized (this) {
+                    if (!file.exists()) {
+                        file.createNewFile();
+                        download = true;
+                    }
+                }
+            }
+            if (download) {
+                downloadTo(textUrl, file);
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
         } catch (Exception any) {
             logger.warning(String.format("Failed to download license '%s' from '%s':",
                     license.getName(),
-                    license.getTextUrl()));
+                    textUrl));
             any.printStackTrace();
             return Optional.empty();
         }
     }
 
     // TODO: optimize!
-    private void downloadTo(LicenseElement license, File file) throws IOException {
+    private void downloadTo(String url, File file) throws IOException {
         HttpClient httpClient = new DefaultHttpClient();
         HttpParams params = httpClient.getParams();
-        HttpConnectionParams.setConnectionTimeout(params, 30000);
-        HttpConnectionParams.setSoTimeout(params, 30000);
+        HttpConnectionParams.setConnectionTimeout(params, 60_000);
+        HttpConnectionParams.setSoTimeout(params, 60_000);
 
-        HttpGet httpget = new HttpGet(license.getTextUrl());
+        HttpGet httpget = new HttpGet(url);
         HttpResponse response = httpClient.execute(httpget);
         HttpEntity entity = response.getEntity();
         if (entity != null) {
