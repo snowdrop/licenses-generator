@@ -52,7 +52,6 @@ public class LicensesFileManager {
 
     private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
     private static final int DOWNLOAD_TIMEOUT = 60_000;
-    private static final int CONNECTION_TIMEOUT = 20_000;
 
     /**
      * Create a licenses.xml file.
@@ -124,7 +123,15 @@ public class LicensesFileManager {
                 }
             }
             if (download) {
-                downloadTo(textUrl, file);
+                try {
+                    downloadTo(textUrl, file);
+                } catch (IOException any) {
+                    if (!textUrl.startsWith("https")) {
+                        downloadTo(textUrl.replace("http", "https"), file);
+                    } else {
+                        throw any;
+                    }
+                }
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
         } catch (Exception any) {
@@ -140,8 +147,8 @@ public class LicensesFileManager {
     private void downloadTo(String url, File file) throws IOException {
         HttpClient httpClient = new DefaultHttpClient();
         HttpParams params = httpClient.getParams();
-        HttpConnectionParams.setConnectionTimeout(params, 60_000);
-        HttpConnectionParams.setSoTimeout(params, 60_000);
+        HttpConnectionParams.setConnectionTimeout(params, DOWNLOAD_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(params, DOWNLOAD_TIMEOUT);
 
         HttpGet httpget = new HttpGet(url);
         HttpResponse response = httpClient.execute(httpget);
