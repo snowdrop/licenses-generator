@@ -109,13 +109,14 @@
   },
   {
     "name": "MIT License",
-    "url": "http://www.opensource.org/licenses/MIT",
+    "url": "https://www.opensource.org/licenses/MIT",
     "aliases": [
       "MIT License",
       "The MIT License"
     ],
     "urlAliases": [
       "http://www.opensource.org/licenses/MIT",
+      "http://opensource.org/licenses/MIT",
       "https://opensource.org/licenses/MIT",
       "http://www.opensource.org/licenses/mit-license.php"
     ]
