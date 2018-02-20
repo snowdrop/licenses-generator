@@ -41,7 +41,7 @@ public class RedHatLicense {
     public RedHatLicense(JsonObject jsonObject) {
         this.name = jsonObject.getString("name");
         this.url = jsonObject.getString("url");
-        this.textUrl = jsonObject.getString("textUrl", null);
+        this.textUrl = jsonObject.getString("textUrl", this.url);
         this.aliases = jsonObject.getJsonArray("aliases")
                 .getValuesAs(JsonString.class)
                 .stream()

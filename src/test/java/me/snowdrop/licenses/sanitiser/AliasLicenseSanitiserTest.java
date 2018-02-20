@@ -82,7 +82,7 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com", "http://text-url.example.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://test-license.com"));
 
         verify(mockLicenseSanitiser, times(0)).fix(any());
     }
@@ -99,7 +99,7 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com", "http://text-url.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://test-license.com"));
 
         verify(mockLicenseSanitiser, times(0)).fix(any());
     }
@@ -119,8 +119,8 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com", "http://text-url.com"),
-                new LicenseElement("Test License Name 2", "http://test-license-2.com", "http://text-url.com"));
+                new LicenseElement("Test License Name", "http://test-license.com", "http://test-license.com"),
+                new LicenseElement("Test License Name 2", "http://test-license-2.com", "http://test-license-2.com"));
 
         verify(mockLicenseSanitiser, times(0)).fix(any());
     }
@@ -142,7 +142,7 @@ public class AliasLicenseSanitiserTest {
 
         Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
         assertThat(fixedLicenseElements).containsOnly(
-                new LicenseElement("Test License Name", "http://test-license.com", "http://test-license-alias.com"),
+                new LicenseElement("Test License Name", "http://test-license.com", "http://test-license.com"),
                 new LicenseElement("Unknown name", "http://unknown.com", "http://unknown.com"));
 
         verify(mockLicenseSanitiser, times(1)).fix(any());

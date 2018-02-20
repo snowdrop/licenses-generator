@@ -52,14 +52,9 @@ public class AliasLicenseSanitiser implements LicenseSanitiser {
                 RedHatLicense redHatLicense = redHatLicenseOptional.get();
                 licenseElement.setName(redHatLicense.getName());
                 licenseElement.setUrl(redHatLicense.getUrl());
-                String textUrl = redHatLicense.getTextUrl();
-                if (textUrl != null) licenseElement.setTextUrl(textUrl);
+                licenseElement.setTextUrl(redHatLicense.getTextUrl());
             } else {
                 shouldCallNext = true;
-            }
-
-            if (licenseElement.getTextUrl() == null) {
-                licenseElement.setTextUrl(licenseElement.getUrl());
             }
         }
 
