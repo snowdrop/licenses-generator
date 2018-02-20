@@ -109,7 +109,7 @@
   },
   {
     "name": "MIT License",
-    "url": "https://www.opensource.org/licenses/MIT",
+    "url": "https://opensource.org/licenses/MIT/",
     "aliases": [
       "MIT License",
       "The MIT License"
@@ -202,7 +202,7 @@
   },
   {
     "name": "BSD 2-clause \"Simplified\" License",
-    "url": "https://opensource.org/licenses/BSD-2-Clause",
+    "url": "https://opensource.org/licenses/BSD-2-Clause/",
     "aliases": [
       "BSD 2-clause \"Simplified\" License"
     ],
@@ -214,7 +214,7 @@
   },
   {
     "name": "BSD 3-clause \"New\" or \"Revised\" License",
-    "url": "https://opensource.org/licenses/BSD-3-Clause",
+    "url": "https://opensource.org/licenses/BSD-3-Clause/",
     "aliases": [
       "BSD 3-clause \"New\" or \"Revised\" License",
       "BSD 3-Clause",
@@ -253,7 +253,7 @@
   },
   {
     "name": "Mozilla Public License 2.0",
-    "url": "https://www.mozilla.org/en-US/MPL/2.0",
+    "url": "https://www.mozilla.org/en-US/MPL/2.0/",
     "aliases": [
       "Mozilla Public License 2.0"
     ],
