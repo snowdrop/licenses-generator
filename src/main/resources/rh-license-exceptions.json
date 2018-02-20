@@ -5,12 +5,12 @@
     "version": "6.0.41",
     "licenses": [
       {
-        "name": "Apache License, Version 2.0",
+        "name": "Apache License 2.0",
         "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
       },
       {
-        "name": "Common Development And Distribution License (CDDL) Version 1.0",
-        "url": "http://www.opensource.org/licenses/cddl1.txt"
+        "name": "Common Development and Distribution License 1.0",
+        "url": "http://repository.jboss.org/licenses/cddl.txt"
       }
     ]
   },
@@ -20,12 +20,12 @@
     "version": "6.0.41-redhat",
     "licenses": [
       {
-        "name": "Apache License, Version 2.0",
+        "name": "Apache License 2.0",
         "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
       },
       {
-        "name": "Common Development And Distribution License (CDDL) Version 1.0",
-        "url": "http://www.opensource.org/licenses/cddl1.txt"
+        "name": "Common Development and Distribution License 1.0",
+        "url": "http://repository.jboss.org/licenses/cddl.txt"
       }
     ]
   },
@@ -83,8 +83,8 @@
         "url": "http://repository.jboss.org/licenses/epl-1.0.txt"
       },
       {
-        "name": "Mozilla Public License v2.0",
-        "url": "http://www.mozilla.org/MPL/2.0"
+        "name": "Mozilla Public License 2.0",
+        "url": "https://www.mozilla.org/en-US/MPL/2.0/"
       }
     ]
   }
