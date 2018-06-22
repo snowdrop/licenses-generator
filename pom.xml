@@ -313,7 +313,7 @@
               <finalName>licenses-generator-shaded</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>me.snowdrop.licenses.DownloadTest</mainClass>
+                  <mainClass>me.snowdrop.licenses.LicensesGeneratorApplication</mainClass>
                 </transformer>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
