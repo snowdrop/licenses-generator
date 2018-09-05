@@ -5,15 +5,16 @@ import me.snowdrop.licenses.properties.GeneratorProperties;
 import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseElement;
 import me.snowdrop.licenses.xml.LicenseSummary;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.License;
-import org.apache.maven.project.MavenProject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class ExternalLicensesTest {
     public static final String APACHE_SOFTWARE_LICENSE_VERSION_2_0_JSON = "{ \n" +
             "  \"name\": \"" + APACHE_SOFTWARE_LICENSE_VERSION_2_0_NAME + "\",\n" +
             "  \"url\": \"http://example.com/apache-license-url\",\n" +
-            "  \"text_url\": \"http://example.com/apache-license/content.txt\"\n" +
+            "  \"license_text_url\": \"http://example.com/apache-license/content.txt\"\n" +
             "}";
     public static final String ECLIPSE_LICENSE_NAME = "Eclipse Public License 1.0";
     public static final String ECLIPSE_LICENSE_LINK = "http://www.eclipse.org/legal/epl-v10.html";
@@ -57,7 +58,10 @@ public class ExternalLicensesTest {
         GeneratorProperties properties = mock(GeneratorProperties.class);
 
         when(properties.getLicenseServiceUrl()).thenReturn(Optional.of(licenseServiceUrl));
-        summaryFactory = LicensesGenerator.createLicenseSummaryFactory(properties);
+
+        LicensesGenerator generator = new LicensesGenerator(properties);
+
+        summaryFactory = generator.createLicenseSummaryFactory();
     }
 
     @AfterClass
@@ -103,24 +107,17 @@ public class ExternalLicensesTest {
     }
 
     private Set<LicenseElement> getLicensesForGav(String gav) throws MavenProjectFactoryException {
-        LicenseSummary licenseSummary = summaryFactory.getLicenseSummary(singleton(mavenProject(gav)));
+        LicenseSummary licenseSummary = summaryFactory.getLicenseSummary(singleton(artifact(gav)));
         assertThat(licenseSummary.getDependencies()).hasSize(1);
 
         DependencyElement element = licenseSummary.getDependencies().get(0);
         return element.getLicenses();
     }
 
-    private MavenProject mavenProject(String gavAsString) throws MavenProjectFactoryException {
+    private Artifact artifact(String gavAsString) throws MavenProjectFactoryException {
         String gav[] = gavAsString.split(":");
-        MavenProject mavenProject = new MavenProject();
-        mavenProject.setGroupId(gav[0]);
-        mavenProject.setArtifactId(gav[1]);
-        mavenProject.setVersion(gav[2]);
-
-        License license = mavenLicense(ECLIPSE_LICENSE_NAME, ECLIPSE_LICENSE_LINK);
-
-        mavenProject.setLicenses(Collections.singletonList(license));
-        return mavenProject;
+        return new DefaultArtifact(gav[0], gav[1], gav[2],
+                "compile", "jar", "", new DefaultArtifactHandler());
     }
 
     private License mavenLicense(String name, String url) {

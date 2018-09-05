@@ -16,14 +16,15 @@
 
 package me.snowdrop.licenses;
 
+import me.snowdrop.licenses.sanitiser.LicenseSanitiser;
+import me.snowdrop.licenses.xml.DependencyElement;
+import me.snowdrop.licenses.xml.LicenseSummary;
+import org.apache.maven.artifact.Artifact;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.maven.project.MavenProject;
-import me.snowdrop.licenses.sanitiser.LicenseSanitiser;
-import me.snowdrop.licenses.xml.DependencyElement;
-import me.snowdrop.licenses.xml.LicenseSummary;
 
 /**
  * Class responsible for retrieving licenses information based on a provided GAV.
@@ -38,9 +39,9 @@ public class LicenseSummaryFactory {
         this.licenseSanitiser = licenseSanitiser;
     }
 
-    public LicenseSummary getLicenseSummary(Collection<MavenProject> mavenProjects) {
+    public LicenseSummary getLicenseSummary(Collection<Artifact> artifacts) {
         List<DependencyElement> dependencyElements =
-                mavenProjects.parallelStream()
+                artifacts.parallelStream()
                         .map(DependencyElement::new)
                         .map(licenseSanitiser::fix)
                         .sorted(Comparator.comparing(DependencyElement::getGroupId)

@@ -20,6 +20,13 @@ import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseElement;
 import me.snowdrop.licenses.xml.LicenseSummary;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -27,7 +34,7 @@ import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.OutputStream;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +52,6 @@ public class LicensesFileManager {
 
     private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
     private static final int DOWNLOAD_TIMEOUT = 60_000;
-    private static final int CONNECTION_TIMEOUT = 20_000;
 
     /**
      * Create a licenses.xml file.
@@ -89,36 +95,75 @@ public class LicensesFileManager {
     }
 
     private Map<String, String> downloadLicenseFiles(List<DependencyElement> dependencies, String directoryPath) {
+        final File licenseContentsDirectory = new File(directoryPath, "contents");
+        licenseContentsDirectory.mkdirs();
         return dependencies.stream()
                 .map(DependencyElement::getLicenses)
                 .flatMap(Set::stream)
-                .map(l -> downloadLicenseFile(l, directoryPath))
+                .map(l -> downloadLicenseFile(l, licenseContentsDirectory))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .distinct()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Optional<Map.Entry<String, String>> downloadLicenseFile(LicenseElement license, String directoryPath) {
+    private Optional<Map.Entry<String, String>> downloadLicenseFile(LicenseElement license,
+                                                                    File licenseContentsDirectory) {
+        String textUrl = license.getTextUrl();
         try {
             String fileName = getLocalLicenseFileName(license);
-            File file = new File(directoryPath, fileName);
+            File file = new File(licenseContentsDirectory, fileName);
+            boolean download = false;
             if (!file.exists()) {
-                URL url = new URL(license.getTextUrl());
-                FileUtils.copyURLToFile(url, file, CONNECTION_TIMEOUT, DOWNLOAD_TIMEOUT);
+                synchronized (this) {
+                    if (!file.exists()) {
+                        file.createNewFile();
+                        download = true;
+                    }
+                }
+            }
+            if (download) {
+                try {
+                    downloadTo(textUrl, file);
+                } catch (IOException any) {
+                    if (!textUrl.startsWith("https")) {
+                        downloadTo(textUrl.replace("http", "https"), file);
+                    } else {
+                        throw any;
+                    }
+                }
             }
             return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
-        } catch (IOException e) {
-            logger.warning(String.format("Failed to download license '%s' from '%s': %s", license.getName(),
-                    license.getTextUrl(), e.getMessage()));
+        } catch (Exception any) {
+            logger.warning(String.format("Failed to download license '%s' from '%s':",
+                    license.getName(),
+                    textUrl));
+            any.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    // TODO: optimize!
+    private void downloadTo(String url, File file) throws IOException {
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpParams params = httpClient.getParams();
+        HttpConnectionParams.setConnectionTimeout(params, DOWNLOAD_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(params, DOWNLOAD_TIMEOUT);
+
+        HttpGet httpget = new HttpGet(url);
+        HttpResponse response = httpClient.execute(httpget);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            try (OutputStream stream = new FileOutputStream(file)) {
+                entity.writeTo(stream);
+            }
         }
     }
 
     private String getLocalLicenseFileName(LicenseElement licenseElement) {
         String fileName = licenseElement.getName()
                 .replaceAll("[^A-Za-z0-9 ]", "");
-        return "content/" + fileName.replace(" ", "+");
+        return fileName.replace(" ", "+");
     }
 
 }
