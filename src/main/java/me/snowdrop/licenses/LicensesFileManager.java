@@ -50,8 +50,11 @@ import java.util.stream.Collectors;
  */
 public class LicensesFileManager {
 
-    private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
     private static final int DOWNLOAD_TIMEOUT = 60_000;
+
+    private static final String CONTENTS_DIR = "contents";
+
+    private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
 
     /**
      * Create a licenses.xml file.
@@ -95,7 +98,7 @@ public class LicensesFileManager {
     }
 
     private Map<String, String> downloadLicenseFiles(List<DependencyElement> dependencies, String directoryPath) {
-        final File licenseContentsDirectory = new File(directoryPath, "contents");
+        final File licenseContentsDirectory = new File(directoryPath, CONTENTS_DIR);
         licenseContentsDirectory.mkdirs();
         return dependencies.stream()
                 .map(DependencyElement::getLicenses)
@@ -108,7 +111,7 @@ public class LicensesFileManager {
     }
 
     private Optional<Map.Entry<String, String>> downloadLicenseFile(LicenseElement license,
-                                                                    File licenseContentsDirectory) {
+            File licenseContentsDirectory) {
         String textUrl = license.getTextUrl();
         try {
             String fileName = getLocalLicenseFileName(license);
@@ -133,7 +136,8 @@ public class LicensesFileManager {
                     }
                 }
             }
-            return Optional.of(new AbstractMap.SimpleEntry<>(license.getName(), fileName));
+            return Optional.of(
+                    new AbstractMap.SimpleEntry<>(license.getName(), String.format("%s/%s", CONTENTS_DIR, fileName)));
         } catch (Exception any) {
             logger.warning(String.format("Failed to download license '%s' from '%s':",
                     license.getName(),
