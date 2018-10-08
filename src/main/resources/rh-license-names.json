@@ -300,5 +300,14 @@
       "http://opensource.org/licenses/CPL-1.0",
       "http://www.opensource.org/licenses/cpl1.0.txt"
     ]
+  },
+  {
+    "name": "The W3C License",
+    "url": "https://www.w3.org/Consortium/Legal/2002/copyright-software-20021231.html",
+    "aliases": [],
+    "urlAliases": [
+      "http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/java-binding.zip"
+      "https://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/java-binding.zip"
+    ]
   }
 ]
