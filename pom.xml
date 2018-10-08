@@ -19,7 +19,7 @@
 
   <groupId>me.snowdrop</groupId>
   <artifactId>licenses-generator</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
 
   <name>Snowdrop Licenses Generator</name>
   <description>Licenses Generator to gather dependency licenses and generate licenses.xml|html files</description>
@@ -74,7 +74,7 @@
     <url>https://github.com/snowdrop</url>
     <connection>scm:git:https://github.com/snowdrop/licenses-generator.git</connection>
     <developerConnection>scm:git:git:@github.com:snowdrop/licenses-generator.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>1.0.2</tag>
   </scm>
 
   <distributionManagement>
