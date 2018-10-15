@@ -11,7 +11,7 @@ mvn clean package
 
 Then generate `licenses.(xml|html)`:
 ```
-java -jar target/licenses-generator-shaded.jar -Dpom={path to pom.xml} -Ddestination={destination directory} [-DgeneratorProperties={path to a properties file}]
+java -jar target/licenses-generator-shaded.jar -Dpom={path to pom.xml} -Ddestination={destination directory} [-DgeneratorProperties={path to a properties file}] [-DaliasesFile={path to aliases file}] [-DexceptionsFile={path to exceptions file}]
 ```
 
 # Usage in an application
@@ -33,9 +33,11 @@ These are the available properties (you can also see them in `PropertyKeys`):
 
 Name|Description|Default value
 ---|---|---
-repository.names | Comma separated list of repository names. Must be the same lenght as repository.urls | Maven Central
+repository.names | Comma separated list of repository names. Must be the same length as repository.urls | Maven Central
 repository.urls | Comma separated list of repository URLs. Must be the same length as repository.names | http://repo1.maven.org/maven2
 licenseServiceUrl | An optional URL of a license service. <br> If not provided, the license data will be collected from the the rh-license-exceptions.json file or artifacts' pom.xml | *null*
+aliasesFile | An absolute path to the license aliases file (can be overwritten by -DaliasesFile) | rh-license-names.json from this project
+exceptionsFile | An absolute path to the license exceptions file (can be overwritten by -DexceptionsFile)   | rh-license-exceptions.json from this project 
 
 # Releasing
 
