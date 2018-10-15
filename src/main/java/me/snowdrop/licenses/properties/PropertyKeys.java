@@ -27,4 +27,8 @@ public interface PropertyKeys {
 
     String LICENSE_SERVICE_URL = "licenseServiceUrl";
 
+    String ALIASES_FILE = "aliasesFile";
+
+    String EXCEPTIONS_FILE = "exceptionsFile";
+
 }

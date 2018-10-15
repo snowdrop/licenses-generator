@@ -37,6 +37,10 @@ public class GeneratorProperties {
 
     private static final String DEFAULT_REPOSITORY_URL = "http://repo1.maven.org/maven2";
 
+    private static final String DEFAULT_ALIASES_FILE_PATH = "rh-license-names.json";
+
+    private static final String DEFAULT_EXCEPTIONS_FILE_PATH = "rh-license-exceptions.json";
+
     private final Configuration configuration;
 
     public GeneratorProperties() {
@@ -69,6 +73,22 @@ public class GeneratorProperties {
     public Optional<String> getLicenseServiceUrl() {
         String url = configuration.getString(PropertyKeys.LICENSE_SERVICE_URL, null);
         return Optional.ofNullable(url);
+    }
+
+    public String getAliasesFilePath() {
+        return configuration.getString(PropertyKeys.ALIASES_FILE, DEFAULT_ALIASES_FILE_PATH);
+    }
+
+    public void setAliasesFilePath(String aliasesFilePath) {
+        configuration.setProperty(PropertyKeys.ALIASES_FILE, aliasesFilePath);
+    }
+
+    public String getExceptionsFilePath() {
+        return configuration.getString(PropertyKeys.EXCEPTIONS_FILE, DEFAULT_EXCEPTIONS_FILE_PATH);
+    }
+
+    public void setExceptionsFilePath(String exceptionsFilePath) {
+        configuration.setProperty(PropertyKeys.EXCEPTIONS_FILE, exceptionsFilePath);
     }
 
 }

@@ -47,4 +47,22 @@ public class GeneratorPropertiesTest {
         properties.getRepositories();
     }
 
+    @Test
+    public void shouldGetAliasesFilePath() {
+        GeneratorProperties properties = new GeneratorProperties();
+        assertThat(properties.getAliasesFilePath()).isEqualTo("rh-license-names.json");
+
+        properties.setAliasesFilePath("another-license-names.json");
+        assertThat(properties.getAliasesFilePath()).isEqualTo("another-license-names.json");
+    }
+
+    @Test
+    public void shouldGetExceptionsFilePath() {
+        GeneratorProperties properties = new GeneratorProperties();
+        assertThat(properties.getExceptionsFilePath()).isEqualTo("rh-license-exceptions.json");
+
+        properties.setExceptionsFilePath("another-license-exceptions.json");
+        assertThat(properties.getExceptionsFilePath()).isEqualTo("another-license-exceptions.json");
+    }
+
 }
