@@ -58,6 +58,8 @@ public class ExternalLicensesTest {
         GeneratorProperties properties = mock(GeneratorProperties.class);
 
         when(properties.getLicenseServiceUrl()).thenReturn(Optional.of(licenseServiceUrl));
+        when(properties.getAliasesFilePath()).thenReturn("rh-license-names.json");
+        when(properties.getExceptionsFilePath()).thenReturn("rh-license-exceptions.json");
 
         LicensesGenerator generator = new LicensesGenerator(properties);
 

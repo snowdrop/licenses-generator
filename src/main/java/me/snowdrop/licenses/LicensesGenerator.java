@@ -16,6 +16,13 @@
 
 package me.snowdrop.licenses;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import me.snowdrop.licenses.maven.MavenEmbedderFactory;
 import me.snowdrop.licenses.maven.MavenProjectFactory;
 import me.snowdrop.licenses.maven.ProjectBuildingRequestFactory;
@@ -36,21 +43,10 @@ import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class LicensesGenerator {
-
-    private static final String LICENSE_NAMES_FILE = "rh-license-names.json";
-
-    private static final String LICENSE_EXCEPTIONS_FILE = "rh-license-exceptions.json";
 
     private final ArtifactFactory artifactFactory;
 
@@ -59,6 +55,10 @@ public class LicensesGenerator {
     private final LicenseSummaryFactory licenseSummaryFactory;
 
     private final LicensesFileManager licensesFileManager;
+
+    private final String aliasesFilePath;
+
+    private final String exceptionsFilePath;
 
     private final Optional<String> licenseServiceUrl;
 
@@ -81,6 +81,8 @@ public class LicensesGenerator {
         }
 
         this.licenseServiceUrl = generatorProperties.getLicenseServiceUrl();
+        this.aliasesFilePath = generatorProperties.getAliasesFilePath();
+        this.exceptionsFilePath = generatorProperties.getExceptionsFilePath();
         this.licenseSummaryFactory = createLicenseSummaryFactory();
         this.licensesFileManager = new LicensesFileManager();
     }
@@ -118,18 +120,18 @@ public class LicensesGenerator {
 
     protected LicenseSummaryFactory createLicenseSummaryFactory() {
         LicenseSanitiser noopLicenseSanitiser = new NoopLicenseSanitiser();
-        LicenseSanitiser aliasLicenseSanitiser = new AliasLicenseSanitiser(LICENSE_NAMES_FILE, noopLicenseSanitiser);
+        LicenseSanitiser aliasLicenseSanitiser = new AliasLicenseSanitiser(aliasesFilePath, noopLicenseSanitiser);
         LicenseSanitiser mavenSanitiser = new MavenSanitiser(mavenProjectFactory, aliasLicenseSanitiser);
 
         Optional<LicenseSanitiser> maybeExternalLicenseSanitiser =
-                licenseServiceUrl.<LicenseSanitiser>map(
+                licenseServiceUrl.map(
                         url -> new LicenseServiceSanitiser(url, mavenSanitiser)
                 );
 
         LicenseSanitiser secondSanitiser = maybeExternalLicenseSanitiser.orElse(mavenSanitiser);
 
         LicenseSanitiser exceptionLicenseSanitiser =
-                new ExceptionLicenseSanitiser(LICENSE_EXCEPTIONS_FILE, secondSanitiser);
+                new ExceptionLicenseSanitiser(exceptionsFilePath, secondSanitiser);
 
         return new LicenseSummaryFactory(exceptionLicenseSanitiser);
     }

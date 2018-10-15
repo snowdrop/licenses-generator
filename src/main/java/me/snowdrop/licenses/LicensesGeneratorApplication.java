@@ -19,7 +19,9 @@ package me.snowdrop.licenses;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
+
 import me.snowdrop.licenses.properties.GeneratorProperties;
+import me.snowdrop.licenses.properties.PropertyKeys;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -28,7 +30,8 @@ public class LicensesGeneratorApplication {
 
     public static void main(String... args) throws Exception {
         Properties properties = argsToProperties(args);
-        LicensesGenerator licensesGenerator = getLicensesGenerator(properties);
+        GeneratorProperties generatorProperties = getGeneratorProperties(properties);
+        LicensesGenerator licensesGenerator = new LicensesGenerator(generatorProperties);
 
         String pomPath = properties.getProperty("pom");
         String resultPath = properties.getProperty("destination");
@@ -36,14 +39,25 @@ public class LicensesGeneratorApplication {
         licensesGenerator.generateLicensesForPom(pomPath, resultPath);
     }
 
-    private static LicensesGenerator getLicensesGenerator(Properties properties) throws LicensesGeneratorException {
+    private static GeneratorProperties getGeneratorProperties(Properties properties) {
+        GeneratorProperties generatorProperties;
+
         if (properties.getProperty("generatorProperties") != null) {
-            GeneratorProperties generatorProperties =
-                    new GeneratorProperties(properties.getProperty("generatorProperties"));
-            return new LicensesGenerator(generatorProperties);
+            generatorProperties = new GeneratorProperties(properties.getProperty("generatorProperties"));
+        } else {
+            generatorProperties = new GeneratorProperties();
         }
 
-        return new LicensesGenerator();
+        // Override properties if explicitly provided
+        if (properties.contains(PropertyKeys.ALIASES_FILE)) {
+            generatorProperties.setAliasesFilePath(properties.getProperty(PropertyKeys.ALIASES_FILE));
+        }
+
+        if (properties.contains(PropertyKeys.EXCEPTIONS_FILE)) {
+            generatorProperties.setExceptionsFilePath(properties.getProperty(PropertyKeys.EXCEPTIONS_FILE));
+        }
+
+        return generatorProperties;
     }
 
     private static Properties argsToProperties(String... args) {
