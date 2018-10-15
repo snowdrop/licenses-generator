@@ -45,7 +45,7 @@
       <td>
         {% for license in dependency.getLicenses() %}
         {% if licenseFiles.containsKey(license.getName()) %}
-          <a href="{{ licenseFiles.get(license.getName()) }}">{{ license.getName() }}</a>
+          <a href="contents/{{ licenseFiles.get(license.getName()) }}">{{ license.getName() }}</a>
           <br/>
         {% endif %}
         {% endfor %}
