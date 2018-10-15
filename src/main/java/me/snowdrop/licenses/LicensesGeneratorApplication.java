@@ -42,18 +42,18 @@ public class LicensesGeneratorApplication {
     private static GeneratorProperties getGeneratorProperties(Properties properties) {
         GeneratorProperties generatorProperties;
 
-        if (properties.getProperty("generatorProperties") != null) {
+        if (properties.containsKey("generatorProperties")) {
             generatorProperties = new GeneratorProperties(properties.getProperty("generatorProperties"));
         } else {
             generatorProperties = new GeneratorProperties();
         }
 
         // Override properties if explicitly provided
-        if (properties.contains(PropertyKeys.ALIASES_FILE)) {
+        if (properties.containsKey(PropertyKeys.ALIASES_FILE)) {
             generatorProperties.setAliasesFilePath(properties.getProperty(PropertyKeys.ALIASES_FILE));
         }
 
-        if (properties.contains(PropertyKeys.EXCEPTIONS_FILE)) {
+        if (properties.containsKey(PropertyKeys.EXCEPTIONS_FILE)) {
             generatorProperties.setExceptionsFilePath(properties.getProperty(PropertyKeys.EXCEPTIONS_FILE));
         }
 

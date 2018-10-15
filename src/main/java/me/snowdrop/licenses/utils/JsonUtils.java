@@ -17,6 +17,9 @@ package me.snowdrop.licenses.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,8 +35,7 @@ import javax.json.JsonValue;
 public interface JsonUtils {
 
     static <T> Set<T> loadJsonToSet(String resourceLocation, Function<JsonObject, T> mapper) {
-        try (InputStream fileInputStream = JsonUtils.class.getClassLoader()
-                .getResourceAsStream(resourceLocation)) {
+        try (InputStream fileInputStream = getInputStream(resourceLocation)) {
             return Json.createReader(fileInputStream)
                     .readArray()
                     .stream()
@@ -43,5 +45,15 @@ public interface JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Failed to read the resource: " + resourceLocation, e);
         }
+    }
+
+    static InputStream getInputStream(String resourceLocation) throws IOException {
+        Path path = Paths.get(resourceLocation);
+
+        if (Files.exists(path)) {
+            return Files.newInputStream(path);
+        }
+
+        return JsonUtils.class.getClassLoader().getResourceAsStream(resourceLocation);
     }
 }
