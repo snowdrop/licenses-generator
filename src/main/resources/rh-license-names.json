@@ -309,5 +309,15 @@
       "http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/java-binding.zip",
       "https://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/java-binding.zip"
     ]
+  },
+  {
+    "name": "Creative Commons Zero 1.0 Universal",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/legalcode",
+    "aliases": [
+      "CC0"
+    ],
+    "urlAliases": [
+      "http://creativecommons.org/publicdomain/zero/1.0"
+    ]
   }
 ]
