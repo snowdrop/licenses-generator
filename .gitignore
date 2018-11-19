@@ -4,3 +4,8 @@
 *-maven-repository
 build.metadata
 target
+
+# Eclipse
+.project
+.classpath
+.settings/
