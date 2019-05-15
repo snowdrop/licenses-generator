@@ -87,7 +87,7 @@ public class MavenProjectFactory {
     private Optional<MavenProject> resolveMavenProject(MavenProject mavenProject, ProjectBuildingRequest request) {
         try {
             ProjectBuildingResult result = projectBuilder.build(mavenProject.getFile(), request);
-            return Optional.of(result.getProject());
+            return Optional.ofNullable(result.getProject());
         } catch (ProjectBuildingException e) {
             e.printStackTrace();
             return Optional.empty();
