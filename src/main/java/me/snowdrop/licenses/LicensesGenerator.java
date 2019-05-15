@@ -17,6 +17,7 @@
 package me.snowdrop.licenses;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,8 @@ public class LicensesGenerator {
 
     private final Optional<String> licenseServiceUrl;
 
+    private final GavFinder gavFinder;
+
     public LicensesGenerator() throws LicensesGeneratorException {
         this(new GeneratorProperties());
     }
@@ -85,15 +88,16 @@ public class LicensesGenerator {
         this.exceptionsFilePath = generatorProperties.getExceptionsFilePath();
         this.licenseSummaryFactory = createLicenseSummaryFactory();
         this.licensesFileManager = new LicensesFileManager();
+        this.gavFinder = new GavFinder(mavenProjectFactory);
+    }
+
+    public GavFinder findGavs() {
+        return gavFinder;
     }
 
     public void generateLicensesForPom(String pomPath, String resultPath) throws LicensesGeneratorException {
-        List<MavenProject> mavenProjects = mavenProjectFactory.getMavenProjects(new File(pomPath), true);
-        Set<Artifact> artifacts = mavenProjects.stream()
-                .map(MavenProject::getArtifacts)
-                .flatMap(Set::stream)
+        Collection<Artifact> artifacts = gavFinder.getArtifactsForMavenProject(Paths.get(pomPath))
                 .collect(Collectors.toSet());
-
         generateLicensesForArtifacts(artifacts, resultPath);
     }
 
