@@ -16,6 +16,8 @@
 
 package me.snowdrop.licenses.utils;
 
+import java.util.Objects;
+
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
@@ -50,5 +52,26 @@ public class Gav {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return groupId + ":" + artifactId + ":" + version + ":" + type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Gav)) return false;
+        Gav gav = (Gav) o;
+        return Objects.equals(groupId, gav.groupId) &&
+                Objects.equals(artifactId, gav.artifactId) &&
+                Objects.equals(version, gav.version) &&
+                Objects.equals(type, gav.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupId, artifactId, version, type);
     }
 }
