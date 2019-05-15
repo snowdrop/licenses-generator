@@ -45,6 +45,7 @@ public class ExternalLicenseProvider {
 
     public ExternalLicenseProvider(String licenseServiceUrl) {
         this.licenseServiceUrl = licenseServiceUrl;
+        logger.info("Using license service " + licenseServiceUrl);
 
         ResteasyClientBuilder clientBuilder = new ResteasyClientBuilder();
         clientBuilder = clientBuilder.connectionPoolSize(20);
@@ -59,16 +60,17 @@ public class ExternalLicenseProvider {
                 .get();
         try {
             if (response.getStatus() != 200) {
-                logger.info("Unable to get license information for " + gav);
+                logger.info("Unable to get license information for " + gav + " from license service: error "
+                        + response.getStatus());
             } else {
+                logger.info("Got license information for " + gav + " from license service");
                 String content = response.readEntity(String.class);
 
-                Set<LicenseElement> licenses =
-                        parseLicenses(content)
-                                .stream()
-                                .flatMap(dto -> dto.getLicenses().stream())
-                                .map(ExternalLicenseDto::toLicenseElement)
-                                .collect(Collectors.toSet());
+                Set<LicenseElement> licenses = parseLicenses(content)
+                        .stream()
+                        .flatMap(dto -> dto.getLicenses().stream())
+                        .map(ExternalLicenseDto::toLicenseElement)
+                        .collect(Collectors.toSet());
 
                 if (areValid(licenses)) {
                     return licenses;
