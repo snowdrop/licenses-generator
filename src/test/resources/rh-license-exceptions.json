@@ -26,6 +26,28 @@
     ]
   },
   {
+    "groupId": "testGroupId3",
+    "artifactId": "testArtifactId3",
+    "version-range": "[1.0.0,2.0.0]",
+    "licenses": [
+      {
+        "name": "Test License Name",
+        "url": "http://test-license.com"
+      }
+    ]
+  },
+  {
+    "groupId": "testGroupId4",
+    "artifactId": "testArtifactId4",
+    "version-regexp": "1.0.0(-redhat-\\d+)?",
+    "licenses": [
+      {
+        "name": "Test License Name",
+        "url": "http://test-license.com"
+      }
+    ]
+  },
+  {
     "groupId": "eap-unknown",
     "artifactId": "artifact",
     "version": "2.0.0-redhat-1",
