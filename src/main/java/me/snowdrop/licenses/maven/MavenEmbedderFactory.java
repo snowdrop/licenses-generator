@@ -18,6 +18,7 @@ package me.snowdrop.licenses.maven;
 
 import hudson.maven.MavenEmbedderException;
 import hudson.maven.MavenRequest;
+import org.apache.maven.model.building.ModelBuildingRequest;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -36,6 +37,7 @@ public class MavenEmbedderFactory {
         MavenRequest mavenRequest = new MavenRequest();
         mavenRequest.setSystemProperties(System.getProperties());
         mavenRequest.setProcessPlugins(false);
+        mavenRequest.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
 
         return mavenRequest;
     }
