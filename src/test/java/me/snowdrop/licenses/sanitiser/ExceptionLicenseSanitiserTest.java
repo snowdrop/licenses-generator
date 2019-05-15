@@ -67,6 +67,40 @@ public class ExceptionLicenseSanitiserTest {
     }
 
     @Test
+    public void shouldFixDependencyFallingIntoVersionRange() {
+        DependencyElement dependencyElement =
+                new DependencyElement("testGroupId3", "testArtifactId3", "1.5.0", Collections.emptySet());
+
+        DependencyElement fixedDependencyElement = exceptionLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(1);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name", "http://test-license.com"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
+    }
+
+    @Test
+    public void shouldFixDependencyMatchingVersionRegexp() {
+        DependencyElement dependencyElement =
+                new DependencyElement("testGroupId4", "testArtifactId4", "1.0.0-redhat-1", Collections.emptySet());
+
+        DependencyElement fixedDependencyElement = exceptionLicenseSanitiser.fix(dependencyElement);
+
+        assertThat(fixedDependencyElement).isEqualTo(dependencyElement);
+        assertThat(fixedDependencyElement.getLicenses()).hasSize(1);
+
+        Collection<LicenseElement> fixedLicenseElements = fixedDependencyElement.getLicenses();
+        assertThat(fixedLicenseElements).containsOnly(
+                new LicenseElement("Test License Name", "http://test-license.com"));
+
+        verify(mockLicenseSanitiser, times(0)).fix(any());
+    }
+
+    @Test
     public void shouldDelegateUnknownLicense() {
         DependencyElement dependencyElement = new DependencyElement("", "", "", Collections.emptySet());
 

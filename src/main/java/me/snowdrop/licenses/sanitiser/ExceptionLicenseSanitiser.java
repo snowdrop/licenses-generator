@@ -18,6 +18,7 @@ package me.snowdrop.licenses.sanitiser;
 
 import java.util.Set;
 
+import me.snowdrop.licenses.sanitiser.exceptions.LicenseException;
 import me.snowdrop.licenses.utils.JsonUtils;
 import me.snowdrop.licenses.xml.DependencyElement;
 
@@ -26,21 +27,21 @@ import me.snowdrop.licenses.xml.DependencyElement;
  */
 public class ExceptionLicenseSanitiser implements LicenseSanitiser {
 
-    private final Set<DependencyElement> exceptions;
+    private final Set<LicenseException> exceptions;
 
     private final LicenseSanitiser next;
 
     public ExceptionLicenseSanitiser(String exceptionsFilePath, LicenseSanitiser next) {
-        this.exceptions = JsonUtils.loadJsonToSet(exceptionsFilePath, DependencyElement::new);
+        this.exceptions = JsonUtils.loadJsonToSet(exceptionsFilePath, LicenseException::new);
         this.next = next;
     }
 
     @Override
     public DependencyElement fix(DependencyElement dependencyElement) {
         return exceptions.stream()
-                .filter(dependencyElement::equals)
+                .filter(exception -> exception.matches(dependencyElement))
                 .findFirst()
-                .map(DependencyElement::new)
+                .map(exception -> new DependencyElement(dependencyElement, exception.getLicenses()))
                 .orElseGet(() -> next.fix(dependencyElement));
 
     }
