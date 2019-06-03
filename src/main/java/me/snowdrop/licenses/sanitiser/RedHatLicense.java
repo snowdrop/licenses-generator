@@ -16,12 +16,14 @@
 
 package me.snowdrop.licenses.sanitiser;
 
-import me.snowdrop.licenses.xml.LicenseElement;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.json.JsonObject;
 import javax.json.JsonString;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import me.snowdrop.licenses.xml.LicenseElement;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
@@ -42,20 +44,8 @@ public class RedHatLicense {
         this.name = jsonObject.getString("name");
         this.url = jsonObject.getString("url");
         this.textUrl = jsonObject.getString("textUrl", this.url);
-        this.aliases = jsonObject.getJsonArray("aliases")
-                .getValuesAs(JsonString.class)
-                .stream()
-                .map(JsonString::getString)
-                .map(String::toLowerCase)
-                .map(String::trim)
-                .collect(Collectors.toSet());
-        this.urlAliases = jsonObject.getJsonArray("urlAliases")
-                .getValuesAs(JsonString.class)
-                .stream()
-                .map(JsonString::getString)
-                .map(String::toLowerCase)
-                .map(String::trim)
-                .collect(Collectors.toSet());
+        this.aliases = initAliases(jsonObject);
+        this.urlAliases = initUrlAliases(jsonObject);
     }
 
     public String getName() {
@@ -80,5 +70,79 @@ public class RedHatLicense {
 
     public String getTextUrl() {
         return textUrl;
+    }
+
+    public boolean isAliasTo(LicenseElement licenseElement) {
+        return isNameAlias(licenseElement) || isUrlAlias(licenseElement);
+    }
+
+    private boolean isNameAlias(LicenseElement licenseElement) {
+        String name = sanitiseName(licenseElement.getName());
+
+        return name != null && aliases.contains(name);
+    }
+
+    private boolean isUrlAlias(LicenseElement licenseElement) {
+        String url = sanitiseUrl(licenseElement.getUrl());
+
+        return url != null && urlAliases.contains(url);
+    }
+
+    private String sanitiseName(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        return name.trim().toLowerCase();
+    }
+
+    private String sanitiseUrl(String url) {
+        if (url == null) {
+            return null;
+        }
+
+        String resultUrl = url.trim().toLowerCase();
+
+        if (resultUrl.startsWith("http://")) {
+            resultUrl = resultUrl.substring(7);
+        } else if (resultUrl.startsWith("https://")) {
+            resultUrl = resultUrl.substring(8);
+        }
+
+        if (resultUrl.startsWith("www.")) {
+            resultUrl = resultUrl.substring(4);
+        }
+
+        if (resultUrl.endsWith("/")) {
+            resultUrl = resultUrl.substring(0, resultUrl.length() - 1);
+        }
+
+        return resultUrl;
+    }
+
+    private Set<String> initAliases(JsonObject jsonObject) {
+        if (!jsonObject.containsKey("aliases")) {
+            return new HashSet<>();
+        }
+
+        return jsonObject.getJsonArray("aliases")
+                .getValuesAs(JsonString.class)
+                .stream()
+                .map(JsonString::getString)
+                .map(this::sanitiseName)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<String> initUrlAliases(JsonObject jsonObject) {
+        if (!jsonObject.containsKey("urlAliases")) {
+            return new HashSet<>();
+        }
+
+        return jsonObject.getJsonArray("urlAliases")
+                .getValuesAs(JsonString.class)
+                .stream()
+                .map(JsonString::getString)
+                .map(this::sanitiseUrl)
+                .collect(Collectors.toSet());
     }
 }
