@@ -16,11 +16,11 @@
 
 package me.snowdrop.licenses.sanitiser;
 
-import me.snowdrop.licenses.xml.DependencyElement;
-import me.snowdrop.licenses.xml.LicenseElement;
-
 import java.util.Optional;
 import java.util.Set;
+
+import me.snowdrop.licenses.xml.DependencyElement;
+import me.snowdrop.licenses.xml.LicenseElement;
 
 import static me.snowdrop.licenses.utils.JsonUtils.loadJsonToSet;
 
@@ -44,10 +44,10 @@ public class AliasLicenseSanitiser implements LicenseSanitiser {
         DependencyElement dependencyElement = new DependencyElement(originalDependencyElement);
 
         for (LicenseElement licenseElement : dependencyElement.getLicenses()) {
-            Optional<RedHatLicense> redHatLicenseOptional = getRedHatLicenseByUrl(licenseElement.getUrl());
-            if (!redHatLicenseOptional.isPresent()) {
-                redHatLicenseOptional = getRedHatLicenseByName(licenseElement.getName());
-            }
+            Optional<RedHatLicense> redHatLicenseOptional = redHatLicenses.stream()
+                    .filter(redHatLicense -> redHatLicense.isAliasTo(licenseElement))
+                    .findFirst();
+
             if (redHatLicenseOptional.isPresent()) {
                 RedHatLicense redHatLicense = redHatLicenseOptional.get();
                 licenseElement.setName(redHatLicense.getName());
@@ -63,26 +63,6 @@ public class AliasLicenseSanitiser implements LicenseSanitiser {
         }
 
         return dependencyElement;
-    }
-
-    private Optional<RedHatLicense> getRedHatLicenseByUrl(String url) {
-        if (url == null) {
-            return Optional.empty();
-        }
-        return redHatLicenses.stream()
-                .filter(l -> l.getUrlAliases()
-                        .contains(url.toLowerCase()))
-                .findFirst();
-    }
-
-    private Optional<RedHatLicense> getRedHatLicenseByName(String name) {
-        if (name == null) {
-            return Optional.empty();
-        }
-        return redHatLicenses.stream()
-                .filter(l -> l.getAliases()
-                        .contains(name.toLowerCase()))
-                .findFirst();
     }
 
 }
