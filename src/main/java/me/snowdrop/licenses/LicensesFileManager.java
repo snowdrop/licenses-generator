@@ -70,7 +70,7 @@ public class LicensesFileManager {
      *
      * @param licenseSummary license summary XML element, which should be written to a licenses.xml file.
      * @param directoryPath  directory where new file should be stored.
-     * @throws LicensesGeneratorException
+     * @throws LicensesGeneratorException on generation failure
      */
     public void createLicensesXml(LicenseSummary licenseSummary, String directoryPath)
             throws LicensesGeneratorException {
@@ -88,7 +88,7 @@ public class LicensesFileManager {
      *
      * @param licenseSummary license summary XML element, which should be written to a licenses.xml file.
      * @param directoryPath  directory where new file should be stored.
-     * @throws LicensesGeneratorException
+     * @throws LicensesGeneratorException on generation failure
      */
     public void createLicensesHtml(LicenseSummary licenseSummary, String directoryPath)
             throws LicensesGeneratorException {

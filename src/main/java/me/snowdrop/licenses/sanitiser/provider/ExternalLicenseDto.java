@@ -22,9 +22,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
- * <br>
- * Date: 10/20/17
- * <p>
 */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ExternalLicenseDto {
