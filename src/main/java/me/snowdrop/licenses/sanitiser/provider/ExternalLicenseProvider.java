@@ -15,15 +15,6 @@
  */
 package me.snowdrop.licenses.sanitiser.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import me.snowdrop.licenses.LicensesGeneratorException;
-import me.snowdrop.licenses.xml.LicenseElement;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +22,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import me.snowdrop.licenses.LicensesGeneratorException;
+import me.snowdrop.licenses.xml.LicenseElement;
 
 /**
  * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
@@ -40,25 +44,19 @@ import java.util.stream.Collectors;
 public class ExternalLicenseProvider {
 
     private static final Logger logger = Logger.getLogger(ExternalLicenseProvider.class.getSimpleName());
-    private final ResteasyClient client;
+    private final Client client;
     private final String licenseServiceUrl;
 
     public ExternalLicenseProvider(String licenseServiceUrl) {
         this.licenseServiceUrl = licenseServiceUrl;
         logger.info("Using license service " + licenseServiceUrl);
 
-        ResteasyClientBuilder clientBuilder = new ResteasyClientBuilder();
-        clientBuilder = clientBuilder.connectionPoolSize(20);
+        ClientBuilder clientBuilder = ResteasyClientBuilder.newBuilder();
         client = clientBuilder.build();
     }
 
     public Set<LicenseElement> getLicenses(String gav) {
-        Response response = client
-                .target(licenseServiceUrl)
-                .queryParam("gav", gav)
-                .request()
-                .get();
-        try {
+        try (Response response = client.target(licenseServiceUrl).queryParam("gav", gav).request().get()) {
             if (response.getStatus() != 200) {
                 logger.info("Unable to get license information for " + gav + " from license service: error "
                         + response.getStatus());
@@ -75,14 +73,9 @@ public class ExternalLicenseProvider {
                 if (areValid(licenses)) {
                     return licenses;
                 }
-
             }
         } catch (LicensesGeneratorException e) {
             throw new RuntimeException("Error getting license for gav: " + gav, e);
-        } finally {
-            try {
-                response.close();
-            } catch (Exception ignored) {}
         }
         return Collections.emptySet();
     }

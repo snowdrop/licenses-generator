@@ -45,27 +45,27 @@
 
   <properties>
     <aether.version>0.9.0.M4</aether.version>
-    <assertj.version>3.8.0</assertj.version>
-    <commons-beanutils.version>1.9.3</commons-beanutils.version>
-    <commons-configuration2.version>2.1.1</commons-configuration2.version>
-    <commons-io.version>2.5</commons-io.version>
-    <guice.version>4.0</guice.version>
-    <jaxb.version>2.2.11</jaxb.version>
-    <json.version>1.1</json.version>
+    <assertj.version>3.16.1</assertj.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-configuration2.version>2.7</commons-configuration2.version>
+    <commons-io.version>2.7</commons-io.version>
+    <guice.version>4.1.0</guice.version>
+    <jaxb.version>2.3.1</jaxb.version>
+    <json.version>1.1.4</json.version>
     <junit.version>4.12</junit.version>
     <maven-embedder.version>3.12.1</maven-embedder.version>
-    <mockito.version>2.8.47</mockito.version>
-    <resteasy.version>3.7.0.Final</resteasy.version>
-    <slf4j.version>1.7.25</slf4j.version>
-    <twig.version>5.86.1.RELEASE</twig.version>
-    <undertow.version>1.4.19.Final</undertow.version>
+    <mockito.version>3.3.3</mockito.version>
+    <resteasy.version>4.5.5.Final</resteasy.version>
+    <slf4j.version>1.7.30</slf4j.version>
+    <twig.version>5.87.0.RELEASE</twig.version>
+    <undertow.version>2.1.3.Final</undertow.version>
 
-    <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
-    <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-    <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
-    <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+    <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+    <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -222,7 +222,7 @@
     <!--JAX-RS-->
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxrs</artifactId>
+      <artifactId>resteasy-core</artifactId>
       <version>${resteasy.version}</version>
     </dependency>
     <dependency>

@@ -27,11 +27,15 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class MavenProjectFactory {
+
+    private final Logger logger = LoggerFactory.getLogger(MavenProjectFactory.class);
 
     private final ProjectBuilder projectBuilder;
 
@@ -51,7 +55,7 @@ public class MavenProjectFactory {
             ProjectBuildingResult result = projectBuilder.build(artifact, request);
             return Optional.ofNullable(result.getProject());
         } catch (ProjectBuildingException e) {
-            e.printStackTrace(); // TODO add logging
+            logger.warn("Failed to get maven project for " + artifact, e);
             return Optional.empty();
         }
     }
@@ -68,7 +72,7 @@ public class MavenProjectFactory {
                     .map(ProjectBuildingResult::getProject)
                     .collect(Collectors.toList());
         } catch (ProjectBuildingException e) {
-            e.printStackTrace(); // TODO add logging
+            logger.warn("Failed to get maven project for " + pom.getName(), e);
             return Collections.emptyList();
         }
 
@@ -89,7 +93,7 @@ public class MavenProjectFactory {
             ProjectBuildingResult result = projectBuilder.build(mavenProject.getFile(), request);
             return Optional.ofNullable(result.getProject());
         } catch (ProjectBuildingException e) {
-            e.printStackTrace();
+            logger.warn("Failed to resolve maven project", e);
             return Optional.empty();
         }
     }

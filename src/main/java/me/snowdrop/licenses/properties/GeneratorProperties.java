@@ -35,7 +35,7 @@ public class GeneratorProperties {
 
     private static final String DEFAULT_REPOSITORY_NAME = "Maven Central";
 
-    private static final String DEFAULT_REPOSITORY_URL = "http://repo1.maven.org/maven2";
+    private static final String DEFAULT_REPOSITORY_URL = "https://repo1.maven.org/maven2";
 
     private static final String DEFAULT_ALIASES_FILE_PATH = "rh-license-names.json";
 
