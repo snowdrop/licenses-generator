@@ -29,6 +29,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -40,8 +42,6 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +55,7 @@ public class LicensesFileManager {
 
     private static final String CONTENTS_DIR = "contents";
 
-    private final Logger logger = Logger.getLogger(LicensesFileManager.class.getSimpleName());
+    private final Logger logger = LoggerFactory.getLogger(LicensesFileManager.class);
 
     private final CloseableHttpClient httpClient = HttpClientBuilder.create()
             .setDefaultRequestConfig(RequestConfig.custom()
@@ -74,6 +74,7 @@ public class LicensesFileManager {
      */
     public void createLicensesXml(LicenseSummary licenseSummary, String directoryPath)
             throws LicensesGeneratorException {
+        logger.debug("Generating licenses.xml at {}", directoryPath);
         File file = new File(directoryPath, "licenses.xml");
         try {
             FileUtils.writeStringToFile(file, licenseSummary.toXmlString(), StandardCharsets.UTF_8);
@@ -91,6 +92,7 @@ public class LicensesFileManager {
      */
     public void createLicensesHtml(LicenseSummary licenseSummary, String directoryPath)
             throws LicensesGeneratorException {
+        logger.debug("Generating licenses.html at {}", directoryPath);
         Map<String, String> licenseFiles = downloadLicenseFiles(licenseSummary.getDependencies(), directoryPath);
 
         File file = new File(directoryPath, "licenses.html");
@@ -126,6 +128,7 @@ public class LicensesFileManager {
         if (StringUtils.isBlank(textUrl)) {
             return Optional.empty();
         }
+        logger.debug("Downloading license file for {} from {}", dependency.toGavString(), textUrl);
         try {
             String fileName = getLocalLicenseFileName(license);
             File file = new File(licenseContentsDirectory, fileName);
@@ -152,8 +155,8 @@ public class LicensesFileManager {
             return Optional.of(
                     new AbstractMap.SimpleEntry<>(license.getName(), String.format("%s/%s", CONTENTS_DIR, fileName)));
         } catch (Exception e) {
-            logger.log(Level.WARNING, String.format("Failed to download license '%s' for '%s' from '%s'",
-                    license.getName(), dependency.toGavString(), textUrl), e);
+            logger.warn("Failed to download license '{}' for '{}' from '{}'", license.getName(), dependency.toGavString(),
+                    textUrl, e);
             return Optional.empty();
         }
     }

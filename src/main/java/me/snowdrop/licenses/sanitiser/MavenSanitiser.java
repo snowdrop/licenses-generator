@@ -18,47 +18,56 @@ package me.snowdrop.licenses.sanitiser;
 import me.snowdrop.licenses.maven.MavenProjectFactory;
 import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseElement;
-import org.apache.maven.project.MavenProject;
 
+import org.apache.maven.model.License;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
- * <br>
- * Date: 1/25/18
+ * A pass-through sanitiser.
+ * If the dependency element does not have a license, the sanitiser will try to get it from a maven project.
+ * Then, the dependency element will be given to the next sanitiser.
+ *
+ * @author <a href="mailto:michal.l.szynkiewicz@gmail.com">Michal Szynkiewicz</a>
+ * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class MavenSanitiser implements LicenseSanitiser {
 
+    private final Logger logger = LoggerFactory.getLogger(MavenSanitiser.class);
+
     private final MavenProjectFactory mavenProjectFactory;
+
     private final LicenseSanitiser next;
 
     public MavenSanitiser(MavenProjectFactory mavenProjectFactory, LicenseSanitiser next) {
         this.mavenProjectFactory = mavenProjectFactory;
         this.next = next;
     }
-    
+
     @Override
     public DependencyElement fix(DependencyElement dependencyElement) {
-        DependencyElement result;
-        Set<LicenseElement> licenses = dependencyElement.getLicenses();
-        if (licenses == null || licenses.isEmpty()) {
-            Optional<MavenProject> mavenProject =
-                    mavenProjectFactory.getMavenProject(dependencyElement.getArtifact(), false);
-            Set<LicenseElement> licensesFromPom = mavenProject
-                    .orElseThrow(() ->
-                            new RuntimeException("Unable to find licenses neither through maven or previous sanitisers for " + dependencyElement))
-                    .getLicenses()
-                    .stream()
-                    .map(LicenseElement::new)
-                    .collect(Collectors.toSet());
-
-            result = new DependencyElement(dependencyElement, licensesFromPom);
-        } else {
-            result = dependencyElement;
+        if (dependencyElement.getLicenses().size() > 0) {
+            return next.fix(dependencyElement);
         }
+        return next.fix(new DependencyElement(dependencyElement, getMavenProjectLicenses(dependencyElement)));
+    }
 
-        return next.fix(result);
+    private Set<LicenseElement> getMavenProjectLicenses(DependencyElement dependencyElement) {
+        Set<LicenseElement> licenses = new HashSet<>();
+        Optional<MavenProject> mavenProject = mavenProjectFactory
+                .getMavenProject(dependencyElement.getArtifact(), false);
+        if (mavenProject.isPresent()) {
+            for (License license : mavenProject.get().getLicenses()) {
+                licenses.add(new LicenseElement(license));
+            }
+        } else {
+            logger.warn("Could not get maven project for {}", dependencyElement);
+        }
+        return licenses;
     }
 }

@@ -43,20 +43,17 @@ public class DependencyElement {
 
     private String version;
 
-    private Set<LicenseElement> licenses;
+    private Set<LicenseElement> licenses = new HashSet<>();
     
     private Artifact artifact;
 
     public DependencyElement() {
     }
 
-
-
     public DependencyElement(Artifact artifact) {
         this.groupId = artifact.getGroupId();
         this.artifactId = artifact.getArtifactId();
         this.version = artifact.getVersion();
-
         this.artifact = artifact;
     }
 
@@ -86,6 +83,7 @@ public class DependencyElement {
         Objects.requireNonNull(groupId, "groupId cannot be null");
         Objects.requireNonNull(artifactId, "artifactId cannot be null");
         Objects.requireNonNull(version, "version cannot be null");
+        Objects.requireNonNull(licenses, "licenses set cannot be null");
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;

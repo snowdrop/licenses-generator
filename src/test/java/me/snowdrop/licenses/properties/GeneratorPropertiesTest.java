@@ -29,7 +29,7 @@ public class GeneratorPropertiesTest {
     public void shouldGetDefaultProperties() {
         GeneratorProperties properties = new GeneratorProperties("test_properties/empty.properties");
         assertThat(properties.getRepositories()).containsOnlyKeys("Maven Central")
-                .containsValues("http://repo1.maven.org/maven2");
+                .containsValues("https://repo1.maven.org/maven2");
         assertThat(properties.getLicenseServiceUrl()).isEmpty();
     }
 

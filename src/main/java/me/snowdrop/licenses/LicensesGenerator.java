@@ -16,10 +16,8 @@
 
 package me.snowdrop.licenses;
 
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,15 +37,18 @@ import me.snowdrop.licenses.utils.Gav;
 import me.snowdrop.licenses.xml.LicenseSummary;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:gytis@redhat.com">Gytis Trikleris</a>
  */
 public class LicensesGenerator {
+
+    private final Logger logger = LoggerFactory.getLogger(LicensesGenerator.class);
 
     private final ArtifactFactory artifactFactory;
 
@@ -96,33 +97,37 @@ public class LicensesGenerator {
     }
 
     public void generateLicensesForPom(String pomPath, String resultPath) throws LicensesGeneratorException {
+        logger.debug("Generating licenses for {}", pomPath);
         Collection<Artifact> artifacts = gavFinder.getArtifactsForMavenProject(Paths.get(pomPath))
                 .collect(Collectors.toSet());
         generateLicensesForArtifacts(artifacts, resultPath);
     }
 
     public void generateLicensesForGavs(Collection<Gav> gavs, String resultPath) throws LicensesGeneratorException {
+        logger.debug("Generating licenses for a collection of {} gavs", gavs.size());
         Set<Artifact> artifacts = gavs.parallelStream()
                 .map(this::gavToArtifact)
                 .collect(Collectors.toSet());
-
         generateLicensesForArtifacts(artifacts, resultPath);
     }
 
     private void generateLicensesForArtifacts(Collection<Artifact> artifacts, String resultPath)
             throws LicensesGeneratorException {
+        logger.debug("Generating licenses for artifacts");
         LicenseSummary licenseSummary = licenseSummaryFactory.getLicenseSummary(artifacts);
         licensesFileManager.createLicensesXml(licenseSummary, resultPath);
         licensesFileManager.createLicensesHtml(licenseSummary, resultPath);
     }
 
     protected Artifact gavToArtifact(Gav gav) {
+        logger.debug("Getting artifact for " + gav);
         return artifactFactory.createArtifact(gav.getGroupId(), gav.getArtifactId(), gav.getVersion(), null,
                 gav.getType());
     }
 
 
     protected LicenseSummaryFactory createLicenseSummaryFactory() {
+        logger.debug("Initialising license sanitisers");
         LicenseSanitiser noopLicenseSanitiser = new NoopLicenseSanitiser();
         LicenseSanitiser aliasLicenseSanitiser = new AliasLicenseSanitiser(aliasesFilePath, noopLicenseSanitiser);
         LicenseSanitiser mavenSanitiser = new MavenSanitiser(mavenProjectFactory, aliasLicenseSanitiser);
@@ -137,6 +142,7 @@ public class LicensesGenerator {
         LicenseSanitiser exceptionLicenseSanitiser =
                 new ExceptionLicenseSanitiser(exceptionsFilePath, secondSanitiser);
 
+        logger.debug("Initialising license summary factory");
         return new LicenseSummaryFactory(exceptionLicenseSanitiser);
     }
 }

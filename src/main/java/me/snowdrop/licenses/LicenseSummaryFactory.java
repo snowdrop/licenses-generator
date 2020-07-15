@@ -20,6 +20,8 @@ import me.snowdrop.licenses.sanitiser.LicenseSanitiser;
 import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseSummary;
 import org.apache.maven.artifact.Artifact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
  */
 public class LicenseSummaryFactory {
 
+    private final Logger logger = LoggerFactory.getLogger(LicenseSummaryFactory.class);
+
     private final LicenseSanitiser licenseSanitiser;
 
     public LicenseSummaryFactory(LicenseSanitiser licenseSanitiser) {
@@ -40,6 +44,7 @@ public class LicenseSummaryFactory {
     }
 
     public LicenseSummary getLicenseSummary(Collection<Artifact> artifacts) {
+        logger.debug("Getting license summary for a collection of " + artifacts.size() + " artifacts");
         List<DependencyElement> dependencyElements =
                 artifacts.parallelStream()
                         .map(DependencyElement::new)
