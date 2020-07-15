@@ -1,5 +1,4 @@
 # Overview
-[![Build Status](https://travis-ci.org/snowdrop/licenses-generator.svg?branch=master)](https://travis-ci.org/snowdrop/licenses-generator)
 
 This project generates `licenses.xml` and `licenses.html` files based on a `pom.xml`. It loads all transitive dependnencies from `dependencies` section of the project's `pom.xml` and collects all their licenses. Then it aligns the license names and URLs to comply with the approved Red Hat license names and URLs. Finally, when generating `licenses.html`, it also downloads license contents for offline use.
 
