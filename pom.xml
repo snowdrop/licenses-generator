@@ -52,7 +52,7 @@
     <guice.version>4.1.0</guice.version>
     <jaxb.version>2.3.1</jaxb.version>
     <json.version>1.1.4</json.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <maven-embedder.version>3.12.1</maven-embedder.version>
     <mockito.version>3.3.3</mockito.version>
     <resteasy.version>4.5.5.Final</resteasy.version>
