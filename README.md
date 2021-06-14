@@ -40,6 +40,13 @@ exceptionsFile | An absolute path to the license exceptions file (can be overwri
 
 # Releasing
 
+## GitHub Action
+
+From the up to date master branch create a release tag such as `release-1.2.3`, where `1.2.3` is your desired release version, and push it to GitHub.
+Once the GitHub action succeeds, the release artifact will be pushed to the JBoss staging repository.
+
+## Manually
+
 Dry run:
 ```
 mvn release:prepare -DdryRun
