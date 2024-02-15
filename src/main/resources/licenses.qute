@@ -31,27 +31,27 @@
     <tr>
       <th>Package Group</th><th>Package Artifact</th><th>Package Version</th><th>Remote Licenses</th><th>Local Licenses</th>
     </tr>
-    {% for dependency in dependencies %}
+    {#for dependency in dependencies}
     <tr>
-      <td>{{ dependency.getGroupId() }}</td>
-      <td>{{ dependency.getArtifactId() }}</td>
-      <td>{{ dependency.getVersion() }}</td>
+      <td>{dependency.groupId}</td>
+      <td>{dependency.artifactId}</td>
+      <td>{dependency.version}</td>
       <td>
-        {% for license in dependency.getLicenses() %}
-        <a href="{{ license.getUrl() }}">{{ license.getName() }}</a>
+        {#for license in dependency.licenses}
+        <a href="{license.url}">{license.name}</a>
         <br/>
-        {% endfor %}
+        {/for}
       </td>
       <td>
-        {% for license in dependency.getLicenses() %}
-        {% if licenseFiles.containsKey(license.getName()) %}
-          <a href="{{ licenseFiles.get(license.getName()) }}">{{ license.getName() }}</a>
+        {#for license in dependency.licenses}
+        {#if licenseFiles.containsKey(license.name)}
+          <a href="{licenseFiles.get(license.name)}">{license.name}</a>
           <br/>
-        {% endif %}
-        {% endfor %}
+        {/if}
+        {/for}
       </td>
     </tr>
-    {% endfor %}
+    {/for}
   </table>
 </body>
 </html>
