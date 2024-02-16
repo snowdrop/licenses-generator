@@ -16,6 +16,7 @@
 
 package me.snowdrop.licenses;
 
+import io.quarkus.qute.Qute;
 import me.snowdrop.licenses.xml.DependencyElement;
 import me.snowdrop.licenses.xml.LicenseElement;
 import me.snowdrop.licenses.xml.LicenseSummary;
@@ -27,16 +28,19 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.jtwig.JtwigModel;
-import org.jtwig.JtwigTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.List;
@@ -54,6 +58,7 @@ public class LicensesFileManager {
     private static final int DOWNLOAD_TIMEOUT = 60_000;
 
     private static final String CONTENTS_DIR = "contents";
+    private static final String LICENSES_QUTE = "licenses.qute";
 
     private final Logger logger = LoggerFactory.getLogger(LicensesFileManager.class);
 
@@ -96,15 +101,33 @@ public class LicensesFileManager {
         Map<String, String> licenseFiles = downloadLicenseFiles(licenseSummary.getDependencies(), directoryPath);
 
         File file = new File(directoryPath, "licenses.html");
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("licenses.twig");
-        JtwigModel model = JtwigModel.newModel()
-                .with("dependencies", licenseSummary.getDependencies())
-                .with("licenseFiles", licenseFiles);
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            template.render(model, fileOutputStream);
+        try (FileWriter fileOutputStream = new FileWriter(file)) {
+            fileOutputStream.write(
+                    Qute.fmt(loadTemplate())
+                            .data("dependencies", licenseSummary.getDependencies())
+                            .data("licenseFiles", licenseFiles)
+                            .render());
         } catch (IOException e) {
             throw new LicensesGeneratorException("Failed to create licenses.html", e);
+        }
+    }
+
+    private static String loadTemplate() {
+        final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(LICENSES_QUTE);
+        if(is == null) {
+            throw new IllegalStateException("Failed to locate " + LICENSES_QUTE + " on the classpath");
+        }
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+            while(line != null) {
+                sb.append(line).append(System.lineSeparator());
+                line = reader.readLine();
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
