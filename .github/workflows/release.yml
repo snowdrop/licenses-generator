@@ -22,7 +22,7 @@ jobs:
       - name: Release
         uses: gytis/maven-release-action@master
         with:
-          email: gytis@redhat.com
+          email: antcosta@redhat.com
           profiles: release
           releaseVersion: ${{env.RELEASE_VERSION}}
           prepareArguments: -DskipTests
